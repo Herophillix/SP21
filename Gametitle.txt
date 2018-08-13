@@ -5,7 +5,7 @@
         \__/\___|_|  \___|_| |_|\__,_|_| .__/|_|\__|\__, |        
                                        |_|          |___/
                         
-                      Press Enter To Start
+                      Press Space To Start
       
     xxxxxx               
    xxxxx@xx            (')) ^v^  _           (`)_
