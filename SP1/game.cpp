@@ -10,17 +10,24 @@
 #include <fstream>
 #include <string>
 using namespace std;
+const int MAP_COLUMNS = 64;
+const int MAP_ROWS = 32;
 string line;
 string aline;
-int *Maze[32];
+int *Maze[MAP_ROWS];
 //int *SplashMaze[32];
 bool Bulletpos = false;
 bool BulletposPRed = false;
 bool BulletposPBlue = false;
 int ShootDirection = 2;
 int ShootDirectionFinal = 2;
+int ShootDirectionFinalBlue  = 2;
+int ShootDirectionEnemy = 2;
 bool Door = true;
 bool Portal = false;
+int timer;
+const int enemylocationX = 50;
+const int enemylocationY = 29;
 
 bool g_bStartGame = false;
 int g_bStartFrame = 0;
@@ -31,16 +38,13 @@ double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
-SGameChar   g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit;
+SGameChar   g_sChar, g_enemy, g_bullet, g_bulletP, g_portalEntrance, g_portalExit;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime;
 double  g_eBounceTime;// this is to prevent key bouncing, so we won't trigger keypresses more than once
 
 const int NUM_COLUMNS = 120;
 const int NUM_ROWS = 40;
-
-const int MAP_COLUMNS = 64;
-const int MAP_ROWS = 32;
 
 // Console object
 Console g_Console(NUM_COLUMNS, NUM_ROWS, "Game");
@@ -62,6 +66,10 @@ void init(void)
 
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
+
+	g_enemy.m_cLocation.X = enemylocationX;
+	g_enemy.m_cLocation.Y = enemylocationY;
+	g_enemy.m_bActive = true;
 
 	g_sChar.m_cLocation.X = 2;
 	g_sChar.m_cLocation.Y = 3;
@@ -286,6 +294,7 @@ void renderGame()
 {
 	renderMap();        // renders the map to the buffer first 
 	renderCharacter();  // renders the character into the buffer
+	renderenemy();
 	renderbullet();
 	renderbulletPRed();
 	renderbulletPBlue();
@@ -351,6 +360,90 @@ void renderCharacter()
 	}
 	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)3, charColor);
 }
+void renderenemy()
+{
+	// Draw the location of the character
+	WORD enemyColor = 0x0C;
+	if (g_enemy.m_bActive)
+	{
+		enemyColor = 0x0A;
+	}
+	g_Console.writeToBuffer(g_enemy.m_cLocation, (char)1, enemyColor);
+}
+
+
+void moveenemy()
+{
+	timer++;
+	//int num = rand() % 4 +1;
+	//if (timer > 10)
+	//{
+	//	if (num == 1 && g_enemy.m_cLocation.Y > 1)
+	//	{
+
+	//	if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.Y--;
+	//	ShootDirection = 1;
+	//	}
+	//	}
+	//	else if (num == 2 && g_enemy.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.Y++;
+	//	ShootDirection = 3;
+	//	}
+	//	}
+	//	else if (num == 3 && g_enemy.m_cLocation.X > 0)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.X--;
+	//	ShootDirection = 4;
+	//	}
+	//	}
+	//	else if (num == 4 && g_enemy.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.X++;
+	//	ShootDirection = 2;
+	//	}
+	//	timer = 0;
+	//	}
+	//}
+	//^crazy ai
+	
+	if (g_enemy.m_bActive = true)
+	{
+		if (timer > 10)
+		{
+			if (g_enemy.m_cLocation.Y == enemylocationY && g_enemy.m_cLocation.X != enemylocationX + 2)
+			{
+				g_enemy.m_cLocation.X++;
+				ShootDirectionEnemy = 2;
+			}
+			else if (g_enemy.m_cLocation.X == enemylocationX + 2 && g_enemy.m_cLocation.Y != enemylocationY - 1)
+			{
+				g_enemy.m_cLocation.Y--;
+				ShootDirectionEnemy = 1;
+			}
+			else if (g_enemy.m_cLocation.Y == enemylocationY - 1 && g_enemy.m_cLocation.X != enemylocationX - 5)
+			{
+				g_enemy.m_cLocation.X--;
+				ShootDirectionEnemy = 4;
+			}
+			else
+			{
+				g_enemy.m_cLocation.Y++;
+				ShootDirectionEnemy = 3;
+			}
+			timer = 0;
+		}
+
+	}
+}
 
 void renderbullet()
 {
@@ -406,7 +499,7 @@ void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter();    // moves the character, collision detection, physics, etc
-						// sound can be played here too.
+	moveenemy();				// sound can be played here too.
 	shoot();
 	movebullet();
 	shootPRed();
@@ -549,6 +642,12 @@ void movebullet()
 			{
 				g_bullet.m_cLocation.Y--;
 			}
+			else if (((g_bullet.m_cLocation.Y - 2 == g_portalEntrance.m_cLocation.Y) && (g_bullet.m_cLocation.X == g_portalEntrance.m_cLocation.X)))
+			{
+				ShootDirectionFinal = ShootDirectionFinalBlue + 2;
+				g_bullet.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
+				g_bullet.m_cLocation.X = g_portalExit.m_cLocation.X;
+			}
 			else
 			{
 				Bulletpos = false;
@@ -560,6 +659,12 @@ void movebullet()
 			if (rightcheck(g_bullet))
 			{
 				g_bullet.m_cLocation.X++;
+			}
+			else if (((g_bullet.m_cLocation.Y - 1 == g_portalEntrance.m_cLocation.Y) && (g_bullet.m_cLocation.X + 1 == g_portalEntrance.m_cLocation.X)))
+			{
+				ShootDirectionFinal = ShootDirectionFinalBlue + 2;
+				g_bullet.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
+				g_bullet.m_cLocation.X = g_portalExit.m_cLocation.X;
 			}
 			else
 			{
@@ -573,6 +678,12 @@ void movebullet()
 			{
 				g_bullet.m_cLocation.Y++;
 			}
+			else if (((g_bullet.m_cLocation.Y == g_portalEntrance.m_cLocation.Y) && (g_bullet.m_cLocation.X == g_portalEntrance.m_cLocation.X)))
+			{
+				ShootDirectionFinal = ShootDirectionFinalBlue - 2;
+				g_bullet.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
+				g_bullet.m_cLocation.X = g_portalExit.m_cLocation.X;
+			}
 			else
 			{
 				Bulletpos = false;
@@ -585,9 +696,11 @@ void movebullet()
 			{
 				g_bullet.m_cLocation.X--;
 			}
-			else if (((g_bullet.m_cLocation.Y - 1 == 28) && (g_bullet.m_cLocation.X - 1 == 54)))
+			else if (((g_bullet.m_cLocation.Y - 1 == g_portalEntrance.m_cLocation.Y) && (g_bullet.m_cLocation.X - 1 == g_portalEntrance.m_cLocation.X)))
 			{
-				g_bullet.m_cLocation.X = 43;
+				ShootDirectionFinal = ShootDirectionFinalBlue - 2;
+				g_bullet.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
+				g_bullet.m_cLocation.X = g_portalExit.m_cLocation.X;
 			}
 			else
 			{
@@ -678,7 +791,7 @@ void shootPBlue()
 			break;
 		}
 		}
-		ShootDirectionFinal = ShootDirection;
+		ShootDirectionFinalBlue = ShootDirection;
 		aSomethingHappened = true;
 		BulletposPBlue = true;
 	}
@@ -775,7 +888,7 @@ void movebulletPBlue()
 {
 	if (BulletposPBlue == true)
 	{
-		switch (ShootDirectionFinal)
+		switch (ShootDirectionFinalBlue)
 		{
 		case 1:
 		{
