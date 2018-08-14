@@ -15,6 +15,9 @@ int *Maze[30];
 bool Bulletpos = false;
 int ShootDirection = 2;
 
+bool g_bStartGame = false;
+int g_bStartFrame = 0;
+
 double  g_dElapsedTime;
 double  g_eElapsedTime;
 double  g_dDeltaTime;
@@ -27,7 +30,7 @@ double  g_dBounceTime;
 double  g_eBounceTime;// this is to prevent key bouncing, so we won't trigger keypresses more than once
 
 					   // Console object
-Console g_Console(160, 50, "Game");
+Console g_Console(66, 30, "Game");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -146,7 +149,9 @@ void render()
 
 void splashScreenWait()    // waits for time to pass in splash screen
 {
-	if (g_dElapsedTime > 3.0) // wait for 3 seconds to switch to game mode, else do nothing
+	if (g_abKeyPressed[K_SPACE])
+		g_bStartGame = true;
+	if (g_bStartGame == true) // wait for 3 seconds to switch to game mode, else do nothing
 		g_eGameState = S_GAME;
 }
 
@@ -166,16 +171,54 @@ void clearScreen()
 
 void renderSplashScreen()  // renders the splash screen
 {
-	COORD c = g_Console.getConsoleSize();
-	c.Y /= 3;
-	c.X = c.X / 2 - 9;
-	g_Console.writeToBuffer(c, "A game in 3 seconds", 0x03);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 20;
-	g_Console.writeToBuffer(c, "Press <Space> to change character colour", 0x09);
-	c.Y += 1;
-	c.X = g_Console.getConsoleSize().X / 2 - 9;
-	g_Console.writeToBuffer(c, "Press 'Esc' to quit", 0x09);
+	if (g_bStartFrame < 40)
+	{
+		ifstream mapOne("Gametitle.txt");
+		if (mapOne.is_open())
+		{
+			for (int i = 0; i < 29; i++)
+			{
+				int Columns = 62;
+				Maze[i] = new int[Columns];
+				getline(mapOne, line);
+
+				COORD c;
+				c.X = 0;
+				c.Y = i + 1;
+
+				g_Console.writeToBuffer(c, line, 0xe2);
+			}
+			mapOne.close();
+		}
+	}
+	else
+	{
+		ifstream mapOne("Gametitle2.txt");
+		if (mapOne.is_open())
+		{
+			for (int i = 0; i < 29; i++)
+			{
+				int Columns = 62;
+				Maze[i] = new int[Columns];
+				getline(mapOne, line);
+
+				COORD c;
+				c.X = 0;
+				c.Y = i + 1;
+
+				g_Console.writeToBuffer(c, line, 0xe2);
+			}
+			mapOne.close();
+		}
+	}
+	if (g_bStartFrame < 81)
+	{
+		g_bStartFrame++;
+	}
+	else
+	{
+		g_bStartFrame = 0;
+	}
 }
 
 void renderGame()
