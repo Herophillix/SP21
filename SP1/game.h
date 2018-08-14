@@ -17,6 +17,7 @@ enum EKEYS
     K_SPACE,
 	K_NUMPAD0,
 	K_NUMPAD1,
+	K_NUMPAD2,
 	K_E,
     K_COUNT
 };
@@ -51,14 +52,17 @@ void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
-void renderbulletP();
+void renderbulletPRed();
+void renderbulletPBlue();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderbullet();
 void shoot();
-void shootP();
+void shootPRed();
+void shootPBlue();
 void movebullet();
-void movebulletP();
+void movebulletPRed();
+void movebulletPBlue();
 
 bool upcheck(SGameChar Sprite);
 bool rightcheck(SGameChar Sprite);

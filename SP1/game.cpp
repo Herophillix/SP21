@@ -10,11 +10,15 @@
 #include <fstream>
 #include <string>
 using namespace std;
-string line = " ";
+string line;
+string aline;
 int *Maze[32];
-int *SplashMaze[32];
+//int *SplashMaze[32];
 bool Bulletpos = false;
+bool BulletposPRed = false;
+bool BulletposPBlue = false;
 int ShootDirection = 2;
+int ShootDirectionFinal = 2;
 bool Door = true;
 bool Portal = false;
 
@@ -27,13 +31,19 @@ double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
-SGameChar   g_sChar, g_bullet, g_bulletP;
+SGameChar   g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 double  g_dBounceTime;
 double  g_eBounceTime;// this is to prevent key bouncing, so we won't trigger keypresses more than once
 
-					   // Console object
-Console g_Console(120, 40, "Game");
+const int NUM_COLUMNS = 120;
+const int NUM_ROWS = 40;
+
+const int MAP_COLUMNS = 64;
+const int MAP_ROWS = 32;
+
+// Console object
+Console g_Console(NUM_COLUMNS, NUM_ROWS, "Game");
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -62,12 +72,12 @@ void init(void)
 	ifstream mapOne("map01.txt");
 	if (mapOne.is_open())
 	{
-		for (int i = 0; i < 31; i++)
+		for (int i = 0; i < MAP_ROWS; i++)
 		{
-			int Columns = 64;
+			int Columns = MAP_COLUMNS;
 			Maze[i] = new int[Columns];
 			getline(mapOne, line);
-			for (int a = 0; a < 64; a++)
+			for (int a = 0; a < MAP_COLUMNS; a++)
 			{
 				if ((line[a] == 43) || (line[a] == 124) || (line[a] == 45))
 				{
@@ -125,6 +135,7 @@ void getInput(void)
 	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
 	g_abKeyPressed[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
 	g_abKeyPressed[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
+	g_abKeyPressed[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
 	g_abKeyPressed[K_E] = isKeyPressed(69);
 
 }
@@ -209,10 +220,10 @@ void renderSplashScreen()  // renders the splash screen
 		ifstream splashScreen("Gametitle.txt");
 		if (splashScreen.is_open())
 		{
-			for (int i = 0; i < 29; i++)
+			for (int i = 0; i < NUM_ROWS; i++)
 			{
-				int Columns = 62;
-				SplashMaze[i] = new int[Columns];
+				int Columns = NUM_COLUMNS;
+				//SplashMaze[i] = new int[Columns];
 				getline(splashScreen, line);
 
 				COORD c;
@@ -221,10 +232,6 @@ void renderSplashScreen()  // renders the splash screen
 				if (i < 8 && i > 2)
 				{
 					g_Console.writeToBuffer(c, line, 0x99f);
-				}
-				else if (i < 64 && i > 19)
-				{
-					g_Console.writeToBuffer(c, line, 40);
 				}
 				else
 				{
@@ -239,10 +246,10 @@ void renderSplashScreen()  // renders the splash screen
 		ifstream splashScreen("Gametitle2.txt");
 		if (splashScreen.is_open())
 		{
-			for (int i = 0; i < 29; i++)
+			for (int i = 0; i < NUM_ROWS; i++)
 			{
-				int Columns = 62;
-				SplashMaze[i] = new int[Columns];
+				int Columns = NUM_COLUMNS;
+				//SplashMaze[i] = new int[Columns];
 				getline(splashScreen, line);
 
 				COORD c;
@@ -253,7 +260,7 @@ void renderSplashScreen()  // renders the splash screen
 				{
 					g_Console.writeToBuffer(c, line, 0x33f);
 				}
-				else if (i < 64 && i > 19)
+				else if (i < MAP_COLUMNS && i > 19)
 				{
 					g_Console.writeToBuffer(c, line, 40);
 				}
@@ -280,19 +287,22 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first 
 	renderCharacter();  // renders the character into the buffer
 	renderbullet();
-	//renderbulletP();
+	renderbulletPRed();
+	renderbulletPBlue();
 }
 
 void renderMap()
 {
 	COORD c;
-	string aline = " ";
-	aline.resize(64, ' ');
-	for (int i = 0; i < 31; i++)
+	string aline;
+	aline.resize(MAP_COLUMNS, ' ');
+	for (int i = 0; i < MAP_ROWS; i++)
 	{
 
-		for (int a = 0; a < 64; a++)
+		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
+			c.X = 0;
+			c.Y = i + 1;
 			aline[a] = Maze[i][a];
 			if (Door == true)
 			{
@@ -313,9 +323,21 @@ void renderMap()
 				}
 			}
 		}
-		c.X = 0;
-		c.Y = i + 1;
 		g_Console.writeToBuffer(c, aline, 0xe2);
+		for (int a = 0; a < MAP_COLUMNS; a++)
+		{
+			aline[a] = Maze[i][a];
+			if (a == g_portalEntrance.m_cLocation.X && i == g_portalEntrance.m_cLocation.Y)
+			{
+				aline[a] = (char)176;
+				g_Console.writeToBuffer(a,i + 1, aline[a], 0x60);
+			}
+			if (a == g_portalExit.m_cLocation.X && i == g_portalExit.m_cLocation.Y)
+			{
+				aline[a] = (char)177;
+				g_Console.writeToBuffer(a,i + 1, aline[a], 0x1f);
+			}
+		}
 	}
 }
 
@@ -338,12 +360,21 @@ void renderbullet()
 		g_Console.writeToBuffer(g_bullet.m_cLocation, (char)254, Char);
 	}
 }
-void renderbulletP()
+void renderbulletPRed()
 {
-	if (Bulletpos == true)
+	if (BulletposPRed == true)
 	{
-		WORD Char = 0xe2;
-		g_Console.writeToBuffer(g_bullet.m_cLocation, (char)254, Char);
+		WORD Char = 0x40;
+		g_Console.writeToBuffer(g_bulletP.m_cLocation, (char)254, Char);
+	}
+}
+
+void renderbulletPBlue()
+{
+	if (BulletposPBlue == true)
+	{
+		WORD Char = 0x1F;
+		g_Console.writeToBuffer(g_bulletP.m_cLocation, (char)254, Char);
 	}
 }
 
@@ -376,10 +407,12 @@ void gameplay()            // gameplay logic
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter();    // moves the character, collision detection, physics, etc
 						// sound can be played here too.
-	//shootP();
 	shoot();
 	movebullet();
-	//movebulletP();
+	shootPRed();
+	movebulletPRed();
+	shootPBlue();
+	movebulletPBlue();
 }
 
 void moveCharacter()
@@ -438,9 +471,13 @@ void moveCharacter()
 		{
 			Door = false;
 		}
-		if (((g_sChar.m_cLocation.Y - 1 == 28) && (g_sChar.m_cLocation.X - 1 == 54))) 
+		if (((g_sChar.m_cLocation.Y - 2 == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X == g_portalEntrance.m_cLocation.X)) ||
+			((g_sChar.m_cLocation.Y - 1 == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X + 1 == g_portalEntrance.m_cLocation.X)) ||
+			((g_sChar.m_cLocation.Y == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X == g_portalEntrance.m_cLocation.X)) ||
+			((g_sChar.m_cLocation.Y - 1 == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X - 1 == g_portalEntrance.m_cLocation.X)))
 		{
-			g_sChar.m_cLocation.X = 43;
+			g_sChar.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
+			g_sChar.m_cLocation.X = g_portalExit.m_cLocation.X;
 		}
 	}
 	if (g_abKeyPressed[K_SPACE])
@@ -489,6 +526,7 @@ void shoot()
 			break;
 		}
 		}
+		ShootDirectionFinal = ShootDirection;
 		aSomethingHappened = true;
 		Bulletpos = true;
 	}
@@ -503,7 +541,7 @@ void movebullet()
 {
 	if (Bulletpos == true)
 	{
-		switch (ShootDirection)
+		switch (ShootDirectionFinal)
 		{
 		case 1:
 		{
@@ -561,7 +599,7 @@ void movebullet()
 	}
 }
 
-void shootP()
+void shootPRed()
 {
 	bool aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
@@ -595,8 +633,9 @@ void shootP()
 			break;
 		}
 		}
+		ShootDirectionFinal = ShootDirection;
 		aSomethingHappened = true;
-		Bulletpos = true;
+		BulletposPRed = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -605,11 +644,56 @@ void shootP()
 	}
 }
 
-void movebulletP()
+void shootPBlue()
 {
-	if (Bulletpos == true)
+	bool aSomethingHappened = false;
+	if (g_eBounceTime > g_eElapsedTime)
+		return;
+	if (g_abKeyPressed[K_NUMPAD2])
 	{
 		switch (ShootDirection)
+		{
+		case 1:
+		{
+			g_bulletP.m_cLocation.X = g_sChar.m_cLocation.X;
+			g_bulletP.m_cLocation.Y = g_sChar.m_cLocation.Y - 1;
+			break;
+		}
+		case 2:
+		{
+			g_bulletP.m_cLocation.X = g_sChar.m_cLocation.X + 1;
+			g_bulletP.m_cLocation.Y = g_sChar.m_cLocation.Y;
+			break;
+		}
+		case 3:
+		{
+			g_bulletP.m_cLocation.X = g_sChar.m_cLocation.X;
+			g_bulletP.m_cLocation.Y = g_sChar.m_cLocation.Y + 1;
+			break;
+		}
+		case 4:
+		{
+			g_bulletP.m_cLocation.X = g_sChar.m_cLocation.X - 1;
+			g_bulletP.m_cLocation.Y = g_sChar.m_cLocation.Y;
+			break;
+		}
+		}
+		ShootDirectionFinal = ShootDirection;
+		aSomethingHappened = true;
+		BulletposPBlue = true;
+	}
+	if (aSomethingHappened)
+	{
+		// set the bounce time to some time in the future to prevent accidental triggers
+		g_eBounceTime = g_eElapsedTime + 1.0; // 125ms should be enough
+	}
+}
+
+void movebulletPRed()
+{
+	if (BulletposPRed == true)
+	{
+		switch (ShootDirectionFinal)
 		{
 		case 1:
 		{
@@ -617,10 +701,15 @@ void movebulletP()
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
-			else
+			else if (Maze[g_bulletP.m_cLocation.Y - 2][g_bulletP.m_cLocation.X] != (char)219) 
 			{
-				Maze[g_bulletP.m_cLocation.Y - 2][g_bulletP.m_cLocation.X] = 176;
-				Bulletpos = false;
+				BulletposPRed = false;
+			}
+			else
+			{ 
+				g_portalEntrance.m_cLocation.Y = g_bulletP.m_cLocation.Y - 2;
+				g_portalEntrance.m_cLocation.X = g_bulletP.m_cLocation.X;
+				BulletposPRed = false;
 			}
 			break;
 		}
@@ -630,10 +719,15 @@ void movebulletP()
 			{
 				g_bulletP.m_cLocation.X++;
 			}
+			else if (Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X + 1] != (char)219)
+			{
+				BulletposPRed = false;
+			}
 			else
 			{
-				Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X + 1] = 176;
-				Bulletpos = false;
+				g_portalEntrance.m_cLocation.Y = g_bulletP.m_cLocation.Y - 1;
+				g_portalEntrance.m_cLocation.X = g_bulletP.m_cLocation.X + 1;
+				BulletposPRed = false;
 			}
 			break;
 		}
@@ -643,10 +737,15 @@ void movebulletP()
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
+			else if (Maze[g_bulletP.m_cLocation.Y][g_bulletP.m_cLocation.X] != (char)219)
+			{
+				BulletposPRed = false;
+			}
 			else
 			{
-				Maze[g_bulletP.m_cLocation.Y][g_bulletP.m_cLocation.X] = 176;
-				Bulletpos = false;
+				g_portalEntrance.m_cLocation.Y = g_bulletP.m_cLocation.Y;
+				g_portalEntrance.m_cLocation.X = g_bulletP.m_cLocation.X;
+				BulletposPRed = false;
 			}
 			break;
 		}
@@ -656,10 +755,97 @@ void movebulletP()
 			{
 				g_bulletP.m_cLocation.X--;
 			}
+			else if (Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X - 1] != (char)219)
+			{
+				BulletposPRed = false;
+			}
 			else
 			{
-				Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X - 1] = 176;
-				Bulletpos = false;
+				g_portalEntrance.m_cLocation.Y = g_bulletP.m_cLocation.Y - 1;
+				g_portalEntrance.m_cLocation.X = g_bulletP.m_cLocation.X - 1;
+				BulletposPRed = false;
+			}
+			break;
+		}
+		}
+	}
+}
+
+void movebulletPBlue()
+{
+	if (BulletposPBlue == true)
+	{
+		switch (ShootDirectionFinal)
+		{
+		case 1:
+		{
+			if (upcheck(g_bulletP))
+			{
+				g_bulletP.m_cLocation.Y--;
+			}
+			else if (Maze[g_bulletP.m_cLocation.Y - 2][g_bulletP.m_cLocation.X] != (char)219)
+			{
+				BulletposPBlue = false;
+			}
+			else
+			{
+				g_portalExit.m_cLocation.Y = g_bulletP.m_cLocation.Y - 2;
+				g_portalExit.m_cLocation.X = g_bulletP.m_cLocation.X;
+				BulletposPBlue = false;
+			}
+			break;
+		}
+		case 2:
+		{
+			if (rightcheck(g_bulletP))
+			{
+				g_bulletP.m_cLocation.X++;
+			}
+			else if (Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X + 1] != (char)219)
+			{
+				BulletposPBlue = false;
+			}
+			else
+			{
+				g_portalExit.m_cLocation.Y = g_bulletP.m_cLocation.Y - 1;
+				g_portalExit.m_cLocation.X = g_bulletP.m_cLocation.X + 1;
+				BulletposPBlue = false;
+			}
+			break;
+		}
+		case 3:
+		{
+			if (downcheck(g_bulletP))
+			{
+				g_bulletP.m_cLocation.Y++;
+			}
+			else if (Maze[g_bulletP.m_cLocation.Y][g_bulletP.m_cLocation.X] != (char)219)
+			{
+				BulletposPBlue = false;
+			}
+			else
+			{
+				g_portalExit.m_cLocation.Y = g_bulletP.m_cLocation.Y;
+				g_portalExit.m_cLocation.X = g_bulletP.m_cLocation.X;
+				BulletposPBlue = false;
+			}
+			break;
+		}
+		case 4:
+		{
+			if (leftcheck(g_bulletP))
+			{
+				g_bulletP.m_cLocation.X--;
+			}
+			else if (Maze[g_bulletP.m_cLocation.Y - 1][g_bulletP.m_cLocation.X - 1] != (char)219)
+			{
+				BulletposPBlue = false;
+			}
+			else
+			{
+				g_portalExit.m_cLocation.Y = g_bulletP.m_cLocation.Y - 1;
+				g_portalExit.m_cLocation.X = g_bulletP.m_cLocation.X - 1;
+				BulletposPBlue = false;
 			}
 			break;
 		}
