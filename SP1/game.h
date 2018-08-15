@@ -15,10 +15,14 @@ enum EKEYS
     K_RIGHT,
     K_ESCAPE,
     K_SPACE,
+	K_1,
+	K_2,
+	K_3,
 	K_NUMPAD0,
 	K_NUMPAD1,
 	K_NUMPAD2,
 	K_E,
+	K_Q,
     K_COUNT
 };
 
@@ -59,6 +63,7 @@ void renderFramerate();     // renders debug information, frame rate, elapsed ti
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderbullet();
 void moveenemy();
+void bulletchoice();
 void shoot();
 void shootPRed();
 void shootPBlue();

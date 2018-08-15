@@ -21,6 +21,7 @@ bool BulletposPRed = false;
 bool BulletposPBlue = false;
 int ShootDirection = 2;
 int ShootDirectionFinal = 2;
+int ShootDirectionFinalRed = 2;
 int ShootDirectionFinalBlue  = 2;
 int ShootDirectionEnemy = 2;
 bool Door = true;
@@ -28,6 +29,8 @@ bool Portal = false;
 int timer;
 const int enemylocationX = 50;
 const int enemylocationY = 29;
+int bulletcondition = 1;
+bool startbullet = false;
 
 bool g_bStartGame = false;
 int g_bStartFrame = 0;
@@ -48,6 +51,8 @@ const int NUM_ROWS = 40;
 
 // Console object
 Console g_Console(NUM_COLUMNS, NUM_ROWS, "Game");
+
+// Initialisation
 
 //--------------------------------------------------------------
 // Purpose  : Initialisation function
@@ -77,7 +82,7 @@ void init(void)
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(0, 16, L"Consolas");
 
-	ifstream mapOne("map01.txt");
+	ifstream mapOne("bossmap.txt");
 	if (mapOne.is_open())
 	{
 		for (int i = 0; i < MAP_ROWS; i++)
@@ -141,10 +146,14 @@ void getInput(void)
 	g_abKeyPressed[K_RIGHT] = isKeyPressed(VK_RIGHT);
 	g_abKeyPressed[K_SPACE] = isKeyPressed(VK_SPACE);
 	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
+	g_abKeyPressed[K_1] = isKeyPressed(0x31);
+	g_abKeyPressed[K_2] = isKeyPressed(0x32);
+	g_abKeyPressed[K_3] = isKeyPressed(0x33);
 	g_abKeyPressed[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
 	g_abKeyPressed[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
 	g_abKeyPressed[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
-	g_abKeyPressed[K_E] = isKeyPressed(69);
+	g_abKeyPressed[K_E] = isKeyPressed(0x45);
+	g_abKeyPressed[K_Q] = isKeyPressed(0x51);
 
 }
 
@@ -177,6 +186,30 @@ void update(double dt)
 		break;
 	}
 }
+
+void splashScreenWait()    // waits for time to pass in splash screen
+{
+	if (g_abKeyPressed[K_SPACE])
+		g_bStartGame = true;
+	if (g_bStartGame == true) // wait for 3 seconds to switch to game mode, else do nothing
+		g_eGameState = S_GAME;
+}
+
+void clearScreen()
+{
+	// Clears the buffer with this colour attribute
+	g_Console.clearBuffer(0xe2);
+}
+
+void processUserInput()
+{
+	// quits the game if player hits the escape key
+	if (g_abKeyPressed[K_ESCAPE])
+		g_bQuitGame = true;
+}
+
+//Rendering
+
 //--------------------------------------------------------------
 // Purpose  : Render function is to update the console screen
 //            At this point, you should know exactly what to draw onto the screen.
@@ -197,28 +230,6 @@ void render()
 	}
 	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
 	renderToScreen();   // dump the contents of the buffer to the screen, one frame worth of game
-}
-
-void splashScreenWait()    // waits for time to pass in splash screen
-{
-	if (g_abKeyPressed[K_SPACE])
-		g_bStartGame = true;
-	if (g_bStartGame == true) // wait for 3 seconds to switch to game mode, else do nothing
-		g_eGameState = S_GAME;
-}
-
-
-void processUserInput()
-{
-	// quits the game if player hits the escape key
-	if (g_abKeyPressed[K_ESCAPE])
-		g_bQuitGame = true;
-}
-
-void clearScreen()
-{
-	// Clears the buffer with this colour attribute
-	g_Console.clearBuffer(0xe2);
 }
 
 void renderSplashScreen()  // renders the splash screen
@@ -612,9 +623,12 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first 
 	renderCharacter();  // renders the character into the buffer
 	renderenemy();
-	renderbullet();
-	renderbulletPRed();
-	renderbulletPBlue();
+	if (startbullet == true)
+	{
+		renderbullet();
+		renderbulletPRed();
+		renderbulletPBlue();
+	}
 }
 
 void renderMap()
@@ -633,16 +647,20 @@ void renderMap()
 			{
 				if (aline[a] == 'k')
 				{
-					aline[a] = (char)254;
+					aline[a] = (char)168;
 				}
 				else if (aline[a] == 'D')
 				{
 					aline[a] = (char)219;
 				}
+				else if (aline[a] == 'd')
+				{
+					aline[a] = (char)254;
+				}
 			}
 			else
 			{
-				if ((aline[a] == 'k') || (aline[a] == 'D'))
+				if ((aline[a] == 'k') || (aline[a] == 'D') || (aline[a] == 'd'))
 				{
 					aline[a] = ' ';
 				}
@@ -670,20 +688,13 @@ void renderCharacter()
 {
 	// Draw the location of the character
 	WORD charColor = 0xe2;
-	if (g_sChar.m_bActive)
-	{
-		charColor = 0xe2;
-	}
 	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)3, charColor);
 }
+
 void renderenemy()
 {
 	// Draw the location of the character
 	WORD enemyColor = 0x0C;
-	if (g_enemy.m_bActive)
-	{
-		enemyColor = 0x0A;
-	}
 	g_Console.writeToBuffer(g_enemy.m_cLocation, (char)1, enemyColor);
 }
 
@@ -695,6 +706,7 @@ void renderbullet()
 		g_Console.writeToBuffer(g_bullet.m_cLocation, (char)254, Char);
 	}
 }
+
 void renderbulletPRed()
 {
 	if (BulletposPRed == true)
@@ -731,23 +743,27 @@ void renderFramerate()
 	c.Y = 0;
 	g_Console.writeToBuffer(c, ss.str(), 0x59);
 }
+
 void renderToScreen()
 {
 	// Writes the buffer to the console, hence you will see what you have written
 	g_Console.flushBufferToConsole();
 }
 
+//Gameplay
+
 void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveCharacter();    // moves the character, collision detection, physics, etc
 	moveenemy();				// sound can be played here too.
-	shoot();
-	movebullet();
-	shootPRed();
-	movebulletPRed();
-	shootPBlue();
-	movebulletPBlue();
+	bulletchoice();
+	if (startbullet == true)
+	{
+		movebullet();
+		movebulletPRed();
+		movebulletPBlue();
+	}
 }
 
 void moveCharacter()
@@ -814,11 +830,6 @@ void moveCharacter()
 			g_sChar.m_cLocation.Y = g_portalExit.m_cLocation.Y + 1;
 			g_sChar.m_cLocation.X = g_portalExit.m_cLocation.X;
 		}
-	}
-	if (g_abKeyPressed[K_SPACE])
-	{
-		g_sChar.m_bActive = !g_sChar.m_bActive;
-		bSomethingHappened = true;
 	}
 	if (bSomethingHappened)
 	{
@@ -899,12 +910,51 @@ void moveenemy()
 
 	}
 }
+
+void bulletchoice()
+{
+	if (g_abKeyPressed[K_1])
+	{
+		bulletcondition = 1;
+	}
+	else if (g_abKeyPressed[K_2])
+	{
+		bulletcondition = 2;
+	}
+	else if (g_abKeyPressed[K_3])
+	{
+		bulletcondition = 3;
+	}
+	else if (g_abKeyPressed[K_Q])
+	{
+		bulletcondition = bulletcondition % 3 + 1;
+	}
+	switch (bulletcondition)
+	{
+	case 1:
+	{
+		shoot();
+		break;
+	}
+	case 2:
+	{
+		shootPRed();
+		break;
+	}
+	case 3:
+	{
+		shootPBlue();
+		break;
+	}
+	}
+}
+
 void shoot()
 {
 	bool aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (g_abKeyPressed[K_NUMPAD0])
+	if (g_abKeyPressed[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -936,6 +986,7 @@ void shoot()
 		ShootDirectionFinal = ShootDirection;
 		aSomethingHappened = true;
 		Bulletpos = true;
+		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1031,7 +1082,7 @@ void shootPRed()
 	bool aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (g_abKeyPressed[K_NUMPAD1])
+	if (g_abKeyPressed[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -1060,9 +1111,10 @@ void shootPRed()
 			break;
 		}
 		}
-		ShootDirectionFinal = ShootDirection;
+		ShootDirectionFinalRed = ShootDirection;
 		aSomethingHappened = true;
 		BulletposPRed = true;
+		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1076,7 +1128,7 @@ void shootPBlue()
 	bool aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (g_abKeyPressed[K_NUMPAD2])
+	if (g_abKeyPressed[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -1108,6 +1160,7 @@ void shootPBlue()
 		ShootDirectionFinalBlue = ShootDirection;
 		aSomethingHappened = true;
 		BulletposPBlue = true;
+		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1120,7 +1173,7 @@ void movebulletPRed()
 {
 	if (BulletposPRed == true)
 	{
-		switch (ShootDirectionFinal)
+		switch (ShootDirectionFinalRed)
 		{
 		case 1:
 		{
@@ -1344,11 +1397,13 @@ BulletposPBlue = false;
 	}
 }
 
+//Condition function
 bool upcheck(SGameChar Sprite)
 {
 	if ((Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == ' ') ||
 		((Door == false) && ((Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == 'D') ||
-		(Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == 'k'))))
+		(Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == 'k') ||
+		(Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == 'd'))))
 	{
 		return true;
 	}
@@ -1361,7 +1416,8 @@ bool rightcheck(SGameChar Sprite)
 {
 	if ((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == ' ') ||
 		((Door == false) && ((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == 'D') ||
-		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == 'k'))))
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == 'k') ||
+			(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == 'd'))))
 	{
 		return true;
 	}
@@ -1374,7 +1430,8 @@ bool downcheck(SGameChar Sprite)
 {
 	if ((Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == ' ') ||
 		((Door == false) && ((Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == 'D') ||
-		(Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == 'k'))))
+		(Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == 'k') ||
+			(Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == 'd'))))
 	{
 		return true;
 	}
@@ -1387,7 +1444,8 @@ bool leftcheck(SGameChar Sprite)
 {
 	if (((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == ' ') ||
 		((Door == false) && ((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == 'D') ||
-		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == 'k')))))
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == 'k') ||
+			(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == 'd')))))
 	{
 		return true;
 	}
