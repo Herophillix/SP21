@@ -10,27 +10,39 @@
 #include <fstream>
 #include <string>
 using namespace std;
-const int MAP_COLUMNS = 64;
-const int MAP_ROWS = 32;
+
 string line;
 string aline;
+
 char *Maze[MAP_ROWS];
 char *SplashMaze[MAP_ROWS];
+
 bool Bulletpos = false;
 bool BulletposPRed = false;
 bool BulletposPBlue = false;
+
 int ShootDirection = 2;
 int ShootDirectionFinal = 2;
 int ShootDirectionFinalRed = 2;
 int ShootDirectionFinalBlue  = 2;
 int ShootDirectionEnemy = 2;
+int d = 0;
+int e = 0;
+
 bool Door = true;
 bool Portal = false;
+
 int timer;
+
 const int enemylocationX = 50;
 const int enemylocationY = 29;
+
 int bulletcondition = 1;
+
 bool startbullet = false;
+
+PlayerInformation Player;
+KDInformation Key, DoorA;
 
 bool g_bStartGame = false;
 int g_bStartFrame = 0;
@@ -82,7 +94,7 @@ void init(void)
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(0, 16, L"Consolas");
 
-	ifstream mapOne("bossmap.txt");
+	ifstream mapOne("map01.txt");
 	if (mapOne.is_open())
 	{
 		for (int i = 0; i < MAP_ROWS; i++)
@@ -96,20 +108,77 @@ void init(void)
 				{
 					line[a] = (char)219;
 				}
-				else if (line[a] == 'a')
+				else if (line[a] == 'k')
 				{
-					line[a] = (char)176;
+					Key.Location[d].X = a;
+					Key.Location[d].Y = i + 1;
+					d++;
 				}
-				else if (line[a] == 'A')
+				else if (line[a] == 'd')
 				{
-					line[a] = (char)178;
+					for (int f = a; f < MAP_COLUMNS - a; f++)
+					{
+						if (line[f] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[f].X = f;
+							DoorA.Sides[e].AdjacentSides[f].Y = i;
+						}
+						else
+						{
+							break;
+						}
+					}
+					for (int f = a; f > 0; f--)
+					{
+						if (line[f] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[f].X = f;
+							DoorA.Sides[e].AdjacentSides[f].Y = i;
+						}
+						else
+						{
+							break;
+						}
+					}
+					for (int g = i; g < MAP_ROWS - i; g++)
+					{
+						if (line[g] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[g].X = a;
+							DoorA.Sides[e].AdjacentSides[g].Y = g;
+						}
+						else
+						{
+							break;
+						}
+					}
+					for (int g = i; g > 0; g--)
+					{
+						if (line[g] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[g].X = a;
+							DoorA.Sides[e].AdjacentSides[g].Y = g;
+						}
+						else
+						{
+							break;
+						}
+					}
+					DoorA.Location[e].X = a;
+					DoorA.Location[e].Y = i + 1;
+					e++;
 				}
 				Maze[i][a] = line[a];
 			}
-	
 		}
 		mapOne.close();
 	}
+
+	Player.Health = 3;
+	Player.Points = 0;
+	Player.CurrentWeapon = 1;
+	Player.Key[2] = { 0, };
+
 }
 
 //--------------------------------------------------------------
@@ -190,7 +259,10 @@ void update(double dt)
 void splashScreenWait()    // waits for time to pass in splash screen
 {
 	if (g_abKeyPressed[K_SPACE])
+	{
 		g_bStartGame = true;
+		g_eBounceTime += 2.0;
+	}
 	if (g_bStartGame == true) // wait for 3 seconds to switch to game mode, else do nothing
 		g_eGameState = S_GAME;
 }
@@ -621,14 +693,12 @@ void renderSplashScreen()  // renders the splash screen
 void renderGame()
 {
 	renderMap();        // renders the map to the buffer first 
+	renderInfo();
 	renderCharacter();  // renders the character into the buffer
 	renderenemy();
-	if (startbullet == true)
-	{
-		renderbullet();
-		renderbulletPRed();
-		renderbulletPBlue();
-	}
+	renderbullet();
+	renderbulletPRed();
+	renderbulletPBlue();
 }
 
 void renderMap()
@@ -653,14 +723,10 @@ void renderMap()
 				{
 					aline[a] = (char)219;
 				}
-				else if (aline[a] == 'd')
-				{
-					aline[a] = (char)254;
-				}
 			}
 			else
 			{
-				if ((aline[a] == 'k') || (aline[a] == 'D') || (aline[a] == 'd'))
+				if ((aline[a] == 'k') || (aline[a] == 'D'))
 				{
 					aline[a] = ' ';
 				}
@@ -680,8 +746,43 @@ void renderMap()
 				aline[a] = (char)177;
 				g_Console.writeToBuffer(a,i + 1, aline[a], 0x1f);
 			}
+			if (Door == true)
+			{
+				if (aline[a] == 'd')
+				{
+					aline[a] = (char)219;
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
+				}
+			}
+			else
+			{
+				if (aline[a] == 'd')
+				{
+					aline[a] = ' ';
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0xe2);
+				}
+			}
 		}
 	}
+}
+
+void renderInfo()
+{
+	for (int i = 0; i < MAP_ROWS; i+=2)
+	{
+		COORD c;
+		c.X = 66;
+		c.Y = i + 1;
+		string Info[4] = { "Player Health: ", "Points: ", "Current Weapon: ", "Keys: " };
+		string Number[4] = { to_string(Player.Health), to_string(Player.Points), to_string(Player.CurrentWeapon), };
+		if (i < 8)
+		{
+			g_Console.writeToBuffer(c, Info[i / 2], 0xe2);
+			c.X += Info[i / 2].length();
+			g_Console.writeToBuffer(c, Number[i / 2], 0xe2);
+		}
+	}
+
 }
 
 void renderCharacter()
@@ -758,12 +859,10 @@ void gameplay()            // gameplay logic
 	moveCharacter();    // moves the character, collision detection, physics, etc
 	moveenemy();				// sound can be played here too.
 	bulletchoice();
-	if (startbullet == true)
-	{
-		movebullet();
-		movebulletPRed();
-		movebulletPBlue();
-	}
+	movebullet();
+	movebulletPRed();
+	movebulletPBlue();
+	Information();
 }
 
 void moveCharacter()
@@ -927,7 +1026,10 @@ void bulletchoice()
 	}
 	else if (g_abKeyPressed[K_Q])
 	{
+		if (g_eBounceTime > g_eElapsedTime)
+			return;
 		bulletcondition = bulletcondition % 3 + 1;
+		g_eBounceTime = g_eElapsedTime + 0.25;
 	}
 	switch (bulletcondition)
 	{
@@ -948,7 +1050,7 @@ void bulletchoice()
 	}
 	}
 }
-
+ 
 void shoot()
 {
 	bool aSomethingHappened = false;
@@ -1395,6 +1497,11 @@ BulletposPBlue = false;
 		}
 		}
 	}
+}
+
+void Information()
+{
+	Player.CurrentWeapon = bulletcondition;
 }
 
 //Condition function

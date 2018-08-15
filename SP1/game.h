@@ -55,6 +55,7 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
+void renderInfo();
 void renderCharacter();     // renders the character into the buffer
 void renderenemy();
 void renderbulletPRed();
@@ -70,6 +71,7 @@ void shootPBlue();
 void movebullet();
 void movebulletPRed();
 void movebulletPBlue();
+void Information();
 
 bool upcheck(SGameChar Sprite);
 bool rightcheck(SGameChar Sprite);
@@ -77,4 +79,28 @@ bool downcheck(SGameChar Sprite);
 bool leftcheck(SGameChar Sprite);
 
 int bulletAfterPortal();
+const int MAP_COLUMNS = 64;
+const int MAP_ROWS = 32;
+
+struct PlayerInformation 
+{
+	int Health;
+	int Points;
+	int CurrentWeapon;
+	bool Key[2];
+};
+
+struct Adjacent
+{
+	COORD AdjacentSides[MAP_COLUMNS];
+};
+
+struct KDInformation
+{
+	bool Checker[2];
+	COORD Location[2];
+	Adjacent Sides[2];
+};
+
+
 #endif // _GAME_H
