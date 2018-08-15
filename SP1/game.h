@@ -71,4 +71,5 @@ bool rightcheck(SGameChar Sprite);
 bool downcheck(SGameChar Sprite);
 bool leftcheck(SGameChar Sprite);
 
+int bulletAfterPortal();
 #endif // _GAME_H
