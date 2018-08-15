@@ -14,7 +14,8 @@ const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 string line;
 string aline;
-int *Maze[MAP_ROWS];
+char *Maze[MAP_ROWS];
+char *SplashMaze[MAP_ROWS];
 //int *SplashMaze[32];
 bool Bulletpos = false;
 bool BulletposPRed = false;
@@ -83,7 +84,7 @@ void init(void)
 		for (int i = 0; i < MAP_ROWS; i++)
 		{
 			int Columns = MAP_COLUMNS;
-			Maze[i] = new int[Columns];
+			Maze[i] = new char[Columns];
 			getline(mapOne, line);
 			for (int a = 0; a < MAP_COLUMNS; a++)
 			{
@@ -228,23 +229,187 @@ void renderSplashScreen()  // renders the splash screen
 		ifstream splashScreen("Gametitle.txt");
 		if (splashScreen.is_open())
 		{
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < 29; i++)
 			{
-				int Columns = NUM_COLUMNS;
-				//SplashMaze[i] = new int[Columns];
+				int Columns = 72;
+				SplashMaze[i] = new char[Columns];
 				getline(splashScreen, line);
-
+				line.resize(72);
 				COORD c;
 				c.X = 0;
 				c.Y = i + 1;
-				if (i < 8 && i > 2)
+
+				if (i > 19)
 				{
-					g_Console.writeToBuffer(c, line, 0x99f);
+					g_Console.writeToBuffer(c, line, 0x20);
 				}
-				else
+				else if (i == 10)
 				{
-					g_Console.writeToBuffer(c, line, 0xe2);
+					for (int a = 0; a < 70; a++)
+					{
+						if ((a > 22) && (a < 43))
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x0E);
+						}
+					}
 				}
+				else if (i > 9)
+				{
+					for (int a = 0; a < 70; a++)
+					{
+						if (a < 16)
+						{
+							switch (line[a])
+							{
+							case 'x':
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0x20);
+								break;
+							}
+							case '@':
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0xc0);
+								break;
+							}
+							case '|':
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0x60);
+								break;
+							}
+							case '/':
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0x60);
+								break;
+							}
+							default:
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0xe2);
+								break;
+							}
+							}
+						}
+						if (a > 15)
+						{
+							switch (line[a])
+							{
+							default:
+							{
+								g_Console.writeToBuffer(a, c.Y, line[a], 0xe2);
+								break;
+							}
+							}
+						}
+					}
+				}
+
+				else if (i > 2)
+				{
+					for (int a = 0; a < 70; a++)
+					{
+						switch (line[a])
+						{
+						case '(':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case ')':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '/':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '|':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case ',':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '\'':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '\\':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '.':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBB);
+							break;
+						}
+						case '`':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						case '_':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xBF);
+							break;
+						}
+						default:
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xe2);
+							break;
+						}
+						}
+					}
+				}
+				else if (i < 2)
+				{
+					for (int a = 0; a < 70; a++)
+					{
+						switch (line[a])
+						{
+						case '(':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFB);
+							break;
+						}
+						case ')':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFB);
+							break;
+						}
+						case '_':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFB);
+							break;
+						}
+						case '`':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFB);
+							break;
+						}
+						case '.':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFF);
+							break;
+						}
+						case '\'':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xFB);
+							break;
+						}
+						}
+					}
+				}
+
+				//if (i < 8 && i > 2)
+				//{
+				//	g_Console.writeToBuffer(c, line, 0x99f);
+				//}
 			}
 			splashScreen.close();
 		}
@@ -254,27 +419,117 @@ void renderSplashScreen()  // renders the splash screen
 		ifstream splashScreen("Gametitle2.txt");
 		if (splashScreen.is_open())
 		{
-			for (int i = 0; i < NUM_ROWS; i++)
+			for (int i = 0; i < 29; i++)
 			{
-				int Columns = NUM_COLUMNS;
-				//SplashMaze[i] = new int[Columns];
+				int Columns = 62;
+				SplashMaze[i] = new char[Columns];
 				getline(splashScreen, line);
 
 				COORD c;
 				c.X = 0;
 				c.Y = i + 1;
 
-				if (i < 9 && i > 3)
+				if (i > 19)
 				{
-					g_Console.writeToBuffer(c, line, 0x33f);
+					g_Console.writeToBuffer(c, line, 0x20);
 				}
-				else if (i < MAP_COLUMNS && i > 19)
+				else if (i > 9)
 				{
-					g_Console.writeToBuffer(c, line, 40);
+					for (int a = 0; a < 70; a++)
+					{
+						switch (line[a])
+						{
+						case 'x':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x20);
+							break;
+						}
+						case '@':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xc0);
+							break;
+						}
+						case '|':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x60);
+							break;
+						}
+						case '/':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x60);
+							break;
+						}
+						default:
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xe2);
+							break;
+						}
+						}
+					}
 				}
 				else
 				{
-					g_Console.writeToBuffer(c, line, 0xe2);
+					for (int a = 0; a < 70; a++)
+					{
+						switch (line[a])
+						{
+						case '(':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case ')':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '/':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '|':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case ',':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '\'':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '\\':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '.':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x33);
+							break;
+						}
+						case '`':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						case '_':
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0x3F);
+							break;
+						}
+						default:
+						{
+							g_Console.writeToBuffer(a, c.Y, line[a], 0xe2);
+							break;
+						}
+						}
+					}
 				}
 			}
 			splashScreen.close();
@@ -371,80 +626,6 @@ void renderenemy()
 	g_Console.writeToBuffer(g_enemy.m_cLocation, (char)1, enemyColor);
 }
 
-
-void moveenemy()
-{
-	timer++;
-	//int num = rand() % 4 +1;
-	//if (timer > 10)
-	//{
-	//	if (num == 1 && g_enemy.m_cLocation.Y > 1)
-	//	{
-
-	//	if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
-	//	{
-	//	g_enemy.m_cLocation.Y--;
-	//	ShootDirection = 1;
-	//	}
-	//	}
-	//	else if (num == 2 && g_enemy.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-	//	{
-	//	if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] != (char)219)
-	//	{
-	//	g_enemy.m_cLocation.Y++;
-	//	ShootDirection = 3;
-	//	}
-	//	}
-	//	else if (num == 3 && g_enemy.m_cLocation.X > 0)
-	//	{
-	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] != (char)219)
-	//	{
-	//	g_enemy.m_cLocation.X--;
-	//	ShootDirection = 4;
-	//	}
-	//	}
-	//	else if (num == 4 && g_enemy.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-	//	{
-	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
-	//	{
-	//	g_enemy.m_cLocation.X++;
-	//	ShootDirection = 2;
-	//	}
-	//	timer = 0;
-	//	}
-	//}
-	//^crazy ai
-	
-	if (g_enemy.m_bActive = true)
-	{
-		if (timer > 10)
-		{
-			if (g_enemy.m_cLocation.Y == enemylocationY && g_enemy.m_cLocation.X != enemylocationX + 2)
-			{
-				g_enemy.m_cLocation.X++;
-				ShootDirectionEnemy = 2;
-			}
-			else if (g_enemy.m_cLocation.X == enemylocationX + 2 && g_enemy.m_cLocation.Y != enemylocationY - 1)
-			{
-				g_enemy.m_cLocation.Y--;
-				ShootDirectionEnemy = 1;
-			}
-			else if (g_enemy.m_cLocation.Y == enemylocationY - 1 && g_enemy.m_cLocation.X != enemylocationX - 5)
-			{
-				g_enemy.m_cLocation.X--;
-				ShootDirectionEnemy = 4;
-			}
-			else
-			{
-				g_enemy.m_cLocation.Y++;
-				ShootDirectionEnemy = 3;
-			}
-			timer = 0;
-		}
-
-	}
-}
-
 void renderbullet()
 {
 	if (Bulletpos == true)
@@ -521,8 +702,8 @@ void moveCharacter()
 		if (upcheck(g_sChar))
 		{
 			g_sChar.m_cLocation.Y--;
-			ShootDirection = 1;
 		}
+		ShootDirection = 1;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
@@ -531,8 +712,8 @@ void moveCharacter()
 		if (rightcheck(g_sChar))
 		{
 			g_sChar.m_cLocation.X++;
-			ShootDirection = 2;
 		}
+		ShootDirection = 2;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
@@ -541,8 +722,8 @@ void moveCharacter()
 		if (downcheck(g_sChar))
 		{
 			g_sChar.m_cLocation.Y++;
-			ShootDirection = 3;
 		}
+		ShootDirection = 3;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_LEFT] && g_sChar.m_cLocation.X > 0)
@@ -551,8 +732,8 @@ void moveCharacter()
 		if (leftcheck(g_sChar))
 		{
 			g_sChar.m_cLocation.X--;
-			ShootDirection = 4;
 		}
+		ShootDirection = 4;
 		bSomethingHappened = true;
 	}
 	if (g_abKeyPressed[K_E])
@@ -585,6 +766,78 @@ void moveCharacter()
 	}
 }
 
+void moveenemy()
+{
+	timer++;
+	//int num = rand() % 4 +1;
+	//if (timer > 10)
+	//{
+	//	if (num == 1 && g_enemy.m_cLocation.Y > 1)
+	//	{
+
+	//	if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.Y--;
+	//	ShootDirection = 1;
+	//	}
+	//	}
+	//	else if (num == 2 && g_enemy.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.Y++;
+	//	ShootDirection = 3;
+	//	}
+	//	}
+	//	else if (num == 3 && g_enemy.m_cLocation.X > 0)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.X--;
+	//	ShootDirection = 4;
+	//	}
+	//	}
+	//	else if (num == 4 && g_enemy.m_cLocation.X < g_Console.getConsoleSize().X - 1)
+	//	{
+	//	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
+	//	{
+	//	g_enemy.m_cLocation.X++;
+	//	ShootDirection = 2;
+	//	}
+	//	timer = 0;
+	//	}
+	//}
+	//^crazy ai
+
+	if (g_enemy.m_bActive = true)
+	{
+		if (timer > 10)
+		{
+			if (g_enemy.m_cLocation.Y == enemylocationY && g_enemy.m_cLocation.X != enemylocationX + 2)
+			{
+				g_enemy.m_cLocation.X++;
+				ShootDirectionEnemy = 2;
+			}
+			else if (g_enemy.m_cLocation.X == enemylocationX + 2 && g_enemy.m_cLocation.Y != enemylocationY - 1)
+			{
+				g_enemy.m_cLocation.Y--;
+				ShootDirectionEnemy = 1;
+			}
+			else if (g_enemy.m_cLocation.Y == enemylocationY - 1 && g_enemy.m_cLocation.X != enemylocationX - 5)
+			{
+				g_enemy.m_cLocation.X--;
+				ShootDirectionEnemy = 4;
+			}
+			else
+			{
+				g_enemy.m_cLocation.Y++;
+				ShootDirectionEnemy = 3;
+			}
+			timer = 0;
+		}
+
+	}
+}
 void shoot()
 {
 	bool aSomethingHappened = false;
