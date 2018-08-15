@@ -71,23 +71,25 @@ void shootPBlue();
 void movebullet();
 void movebulletPRed();
 void movebulletPBlue();
-void Information();
+void information();
 
 bool upcheck(SGameChar Sprite);
 bool rightcheck(SGameChar Sprite);
 bool downcheck(SGameChar Sprite);
 bool leftcheck(SGameChar Sprite);
 
+
 int bulletAfterPortal();
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
+const int NUM_OF_KEYS = 2;
 
 struct PlayerInformation 
 {
 	int Health;
 	int Points;
 	int CurrentWeapon;
-	bool Key[2];
+	bool Key[NUM_OF_KEYS];
 };
 
 struct Adjacent
@@ -97,10 +99,12 @@ struct Adjacent
 
 struct KDInformation
 {
-	bool Checker[2];
-	COORD Location[2];
-	Adjacent Sides[2];
+	bool Checker[NUM_OF_KEYS];
+	bool isKey = false;
+	COORD Location[NUM_OF_KEYS];
+	Adjacent Sides[NUM_OF_KEYS];
 };
 
+bool doorcheck(KDInformation Item, int ItemNumber);
 
 #endif // _GAME_H

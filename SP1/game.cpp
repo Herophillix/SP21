@@ -39,8 +39,6 @@ const int enemylocationY = 29;
 
 int bulletcondition = 1;
 
-bool startbullet = false;
-
 PlayerInformation Player;
 KDInformation Key, DoorA;
 
@@ -112,52 +110,57 @@ void init(void)
 				{
 					Key.Location[d].X = a;
 					Key.Location[d].Y = i + 1;
+					Key.isKey = true;
 					d++;
 				}
 				else if (line[a] == 'd')
 				{
-					for (int f = a; f < MAP_COLUMNS - a; f++)
-					{
-						if (line[f] == 'D')
-						{
-							DoorA.Sides[e].AdjacentSides[f].X = f;
-							DoorA.Sides[e].AdjacentSides[f].Y = i;
-						}
-						else
-						{
-							break;
-						}
-					}
-					for (int f = a; f > 0; f--)
-					{
-						if (line[f] == 'D')
-						{
-							DoorA.Sides[e].AdjacentSides[f].X = f;
-							DoorA.Sides[e].AdjacentSides[f].Y = i;
-						}
-						else
-						{
-							break;
-						}
-					}
-					for (int g = i; g < MAP_ROWS - i; g++)
+					for (int g = i; g > 0; g--) // Up // Check the fucking maze bitch
 					{
 						if (line[g] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[g].X = a;
 							DoorA.Sides[e].AdjacentSides[g].Y = g;
+							DoorA.Checker[e] = false;
 						}
 						else
 						{
 							break;
 						}
 					}
-					for (int g = i; g > 0; g--)
+					for (int f = a + 1; f < MAP_COLUMNS - a; f++) //Right
+					{
+						if (line[f] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[f].X = f;
+							DoorA.Sides[e].AdjacentSides[f].Y = i;
+							DoorA.Checker[e] = false;
+						}
+						else
+						{
+							break;
+						}
+					}
+					for (int g = i; g < MAP_ROWS - i; g++) // Down
 					{
 						if (line[g] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[g].X = a;
 							DoorA.Sides[e].AdjacentSides[g].Y = g;
+							DoorA.Checker[e] = false;
+						}
+						else
+						{
+							break;
+						}
+					}
+					for (int f = a - 1; f > 0; f--) // Left
+					{
+						if (line[f] == 'D')
+						{
+							DoorA.Sides[e].AdjacentSides[f].X = f;
+							DoorA.Sides[e].AdjacentSides[f].Y = i;
+							DoorA.Checker[e] = false;
 						}
 						else
 						{
@@ -166,6 +169,7 @@ void init(void)
 					}
 					DoorA.Location[e].X = a;
 					DoorA.Location[e].Y = i + 1;
+					DoorA.Checker[e] = false;
 					e++;
 				}
 				Maze[i][a] = line[a];
@@ -177,7 +181,7 @@ void init(void)
 	Player.Health = 3;
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
-	Player.Key[2] = { 0, };
+	Player.Key[NUM_OF_KEYS] = { 0, };
 
 }
 
@@ -713,23 +717,13 @@ void renderMap()
 		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			aline[a] = Maze[i][a];
-			if (Door == true)
+			if (aline[a] == 'k')
 			{
-				if (aline[a] == 'k')
-				{
-					aline[a] = (char)168;
-				}
-				else if (aline[a] == 'D')
-				{
-					aline[a] = (char)219;
-				}
+				aline[a] = (char)168;
 			}
-			else
+			else if (aline[a] == 'D')
 			{
-				if ((aline[a] == 'k') || (aline[a] == 'D'))
-				{
-					aline[a] = ' ';
-				}
+				aline[a] = (char)219;
 			}
 		}
 		g_Console.writeToBuffer(c, aline, 0xe2);
@@ -746,21 +740,10 @@ void renderMap()
 				aline[a] = (char)177;
 				g_Console.writeToBuffer(a,i + 1, aline[a], 0x1f);
 			}
-			if (Door == true)
+			if (aline[a] == 'd')
 			{
-				if (aline[a] == 'd')
-				{
-					aline[a] = (char)219;
-					g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
-				}
-			}
-			else
-			{
-				if (aline[a] == 'd')
-				{
-					aline[a] = ' ';
-					g_Console.writeToBuffer(a, i + 1, aline[a], 0xe2);
-				}
+				aline[a] = (char)219;
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
 			}
 		}
 	}
@@ -862,7 +845,7 @@ void gameplay()            // gameplay logic
 	movebullet();
 	movebulletPRed();
 	movebulletPBlue();
-	Information();
+	information();
 }
 
 void moveCharacter()
@@ -914,12 +897,28 @@ void moveCharacter()
 	}
 	if (g_abKeyPressed[K_E])
 	{
-		if ((Maze[g_sChar.m_cLocation.Y - 2][g_sChar.m_cLocation.X] == 'k') || 
-			(Maze[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X + 1] == 'k') || 
-			(Maze[g_sChar.m_cLocation.Y][g_sChar.m_cLocation.X] == 'k') || 
-			(Maze[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == 'k'))
+		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
 		{
-			Door = false;
+			if (doorcheck(Key, ItemNumber))
+			{
+				Key.Checker[ItemNumber] = true;
+				DoorA.Checker[ItemNumber] = true;
+				ItemNumber = NUM_OF_KEYS;
+			}
+			else if (doorcheck(DoorA, ItemNumber))
+			{
+				for (int i = 0; i < MAP_ROWS; i++)
+				{
+					for (int a = 0; a < MAP_COLUMNS; a++)
+					{
+						if ((a == DoorA.Sides[ItemNumber].AdjacentSides[a].X) && (i == DoorA.Sides[ItemNumber].AdjacentSides[a].Y))
+						{
+							Maze[DoorA.Location[ItemNumber].Y][DoorA.Location[ItemNumber].X] = ' ';
+							Maze[i][a] = ' ';
+						}
+					}
+				}
+			}
 		}
 		if (((g_sChar.m_cLocation.Y - 2 == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X == g_portalEntrance.m_cLocation.X)) ||
 			((g_sChar.m_cLocation.Y - 1 == g_portalEntrance.m_cLocation.Y) && (g_sChar.m_cLocation.X + 1 == g_portalEntrance.m_cLocation.X)) ||
@@ -1088,7 +1087,6 @@ void shoot()
 		ShootDirectionFinal = ShootDirection;
 		aSomethingHappened = true;
 		Bulletpos = true;
-		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1216,7 +1214,6 @@ void shootPRed()
 		ShootDirectionFinalRed = ShootDirection;
 		aSomethingHappened = true;
 		BulletposPRed = true;
-		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1262,7 +1259,6 @@ void shootPBlue()
 		ShootDirectionFinalBlue = ShootDirection;
 		aSomethingHappened = true;
 		BulletposPBlue = true;
-		startbullet = true;
 	}
 	if (aSomethingHappened)
 	{
@@ -1499,7 +1495,7 @@ BulletposPBlue = false;
 	}
 }
 
-void Information()
+void information()
 {
 	Player.CurrentWeapon = bulletcondition;
 }
@@ -1560,6 +1556,28 @@ bool leftcheck(SGameChar Sprite)
 	{
 		return false;
 	}
+}
+bool doorcheck(KDInformation Item, int ItemNumber)
+{
+	if ((Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y - 1) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X) ||
+		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X + 1) ||
+		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y + 1) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X) ||
+		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X - 1))
+	{
+		if (Item.isKey == true)
+		{
+			return true;
+		}
+		else if (Key.Checker[ItemNumber] == true)
+		{
+			return true;
+		}
+	}
+	else
+	{
+		return false;
+	}
+	return false;
 }
 
 int bulletAfterPortal()
