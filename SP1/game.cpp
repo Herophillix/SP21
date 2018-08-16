@@ -91,7 +91,7 @@ void init(void)
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(0, 16, L"Consolas");
 
-	ifstream mapOne("map02.txt");
+	ifstream mapOne("map03.txt");
 	if (mapOne.is_open())
 	{
 		for (int i = 0; i < MAP_ROWS; i++)
@@ -1176,7 +1176,7 @@ void movebullet()
 		{
 		case 1:
 		{
-			if (upcheck(g_bullet))
+			if (upcheck(g_bullet) || upcheckB(g_bullet))
 			{
 				g_bullet.m_cLocation.Y--;
 			}
@@ -1194,7 +1194,7 @@ void movebullet()
 		}
 		case 2:
 		{
-			if (rightcheck(g_bullet))
+			if (rightcheck(g_bullet) || rightcheckB(g_bullet))
 			{
 				g_bullet.m_cLocation.X++;
 			}
@@ -1212,7 +1212,7 @@ void movebullet()
 		}
 		case 3:
 		{
-			if (downcheck(g_bullet))
+			if (downcheck(g_bullet) || downcheckB(g_bullet))
 			{
 				g_bullet.m_cLocation.Y++;
 			}
@@ -1230,7 +1230,7 @@ void movebullet()
 		}
 		case 4:
 		{
-			if (leftcheck(g_bullet))
+			if (leftcheck(g_bullet) || leftcheckB(g_bullet))
 			{
 				g_bullet.m_cLocation.X--;
 			}
@@ -1348,7 +1348,7 @@ void movebulletPRed()
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP))
+			if (upcheck(g_bulletP) || upcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -1374,7 +1374,7 @@ void movebulletPRed()
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP))
+			if (rightcheck(g_bulletP) || rightcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -1400,7 +1400,7 @@ void movebulletPRed()
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP))
+			if (downcheck(g_bulletP) || downcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -1426,7 +1426,7 @@ void movebulletPRed()
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP))
+			if (leftcheck(g_bulletP) || leftcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
@@ -1462,7 +1462,7 @@ void movebulletPBlue()
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP))
+			if (upcheck(g_bulletP) || upcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -1488,7 +1488,7 @@ void movebulletPBlue()
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP))
+			if (rightcheck(g_bulletP) || rightcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -1514,7 +1514,7 @@ void movebulletPBlue()
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP))
+			if (downcheck(g_bulletP) || downcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -1540,7 +1540,7 @@ void movebulletPBlue()
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP))
+			if (leftcheck(g_bulletP) || leftcheckB(g_bulletP))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
@@ -1629,6 +1629,38 @@ bool leftcheck(SGameChar Sprite)
 	{
 		return false;
 	}
+}
+bool upcheckB(SGameChar Sprite)
+{
+	if (Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == '.')
+	{
+		return true;
+	}
+	return false;
+}
+bool rightcheckB(SGameChar Sprite)
+{
+	if (Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == '.')
+	{
+		return true;
+	}
+	return false;
+}
+bool downcheckB(SGameChar Sprite)
+{
+	if (Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == '.')
+	{
+		return true;
+	}
+	return false;
+}
+bool leftcheckB(SGameChar Sprite)
+{
+	if (Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == '.')
+	{
+		return true;
+	}
+	return false;
 }
 bool bulletcheck(char Character)
 {	

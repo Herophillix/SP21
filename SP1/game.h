@@ -77,15 +77,19 @@ bool upcheck(SGameChar Sprite);
 bool rightcheck(SGameChar Sprite);
 bool downcheck(SGameChar Sprite);
 bool leftcheck(SGameChar Sprite);
+bool upcheckB(SGameChar Sprite);
+bool rightcheckB(SGameChar Sprite);
+bool downcheckB(SGameChar Sprite);
+bool leftcheckB(SGameChar Sprite);
 bool bulletcheck(char Character);
 
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 130;
-const int NUM_ROWS = 40;
-const int MAP_COLUMNS = 104;
-const int MAP_ROWS = 30;
+const int NUM_COLUMNS = 200;
+const int NUM_ROWS = 50;
+const int MAP_COLUMNS = 135;
+const int MAP_ROWS = 33;
 const int NUM_OF_KEYS = 10;
 
 struct PlayerInformation 
