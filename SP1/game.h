@@ -82,7 +82,7 @@ bool leftcheck(SGameChar Sprite);
 int bulletAfterPortal();
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
-const int NUM_OF_KEYS = 2;
+const int NUM_OF_KEYS = 10;
 
 struct PlayerInformation 
 {
@@ -101,6 +101,7 @@ struct KDInformation
 {
 	bool Checker[NUM_OF_KEYS];
 	bool isKey = false;
+	int id[NUM_OF_KEYS];
 	COORD Location[NUM_OF_KEYS];
 	Adjacent Sides[NUM_OF_KEYS];
 };

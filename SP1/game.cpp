@@ -28,6 +28,8 @@ int ShootDirectionFinalBlue  = 2;
 int ShootDirectionEnemy = 2;
 int d = 0;
 int e = 0;
+int q = 0;
+int ItemNumber = 0;
 
 bool Door = true;
 bool Portal = false;
@@ -106,18 +108,63 @@ void init(void)
 				{
 					line[a] = (char)219;
 				}
-				else if (line[a] == 'k')
+				Maze[i][a] = line[a];
+			}
+		}
+		for (int i = 0; i < MAP_ROWS; i++)
+		{
+			for (int a = 0; a < MAP_COLUMNS; a++)
+			{
+				if (Maze[i][a] == 'k')
 				{
 					Key.Location[d].X = a;
 					Key.Location[d].Y = i + 1;
+					switch (d)
+					{
+					case 0:
+					{
+						Key.id[d] = 0;
+						break;
+					}
+					case 1:
+					{
+						Key.id[d] = 1;
+						break;
+					}
+					case 2:
+					{
+						Key.id[d] = 5;
+						break;
+					}
+					case 3:
+					{
+						Key.id[d] = 4;
+						break;
+					}
+					case 4:
+					{
+						Key.id[d] = 2;
+						break;
+					}
+					case 5:
+					{
+						Key.id[d] = 6;
+						break;
+					}
+					case 6:
+					{
+						Key.id[d] = 3;
+						break;
+					}
+					}
 					Key.isKey = true;
 					d++;
 				}
-				else if (line[a] == 'd')
+				else if (Maze[i][a] == 'd')
 				{
-					for (int g = i; g > 0; g--) // Up // Check the fucking maze bitch
+					for (int g = i - 1; g > 0; g--) // Up // Check the fucking maze bitch
 					{
-						if (line[g] == 'D')
+						if (Maze[g][a] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[g].X = a;
 							DoorA.Sides[e].AdjacentSides[g].Y = g;
@@ -128,9 +175,9 @@ void init(void)
 							break;
 						}
 					}
-					for (int f = a + 1; f < MAP_COLUMNS - a; f++) //Right
+					for (int f = a + 1; f < MAP_COLUMNS; f++) //Right
 					{
-						if (line[f] == 'D')
+						if (Maze[i][f] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[f].X = f;
 							DoorA.Sides[e].AdjacentSides[f].Y = i;
@@ -141,9 +188,9 @@ void init(void)
 							break;
 						}
 					}
-					for (int g = i; g < MAP_ROWS - i; g++) // Down
+					for (int g = i + 1; g < MAP_ROWS; g++) // Down
 					{
-						if (line[g] == 'D')
+						if (Maze[g][a] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[g].X = a;
 							DoorA.Sides[e].AdjacentSides[g].Y = g;
@@ -154,9 +201,9 @@ void init(void)
 							break;
 						}
 					}
-					for (int f = a - 1; f > 0; f--) // Left
+					for (int f = a - 1; f > 1; f--) // Left
 					{
-						if (line[f] == 'D')
+						if (Maze[i][f] == 'D')
 						{
 							DoorA.Sides[e].AdjacentSides[f].X = f;
 							DoorA.Sides[e].AdjacentSides[f].Y = i;
@@ -167,12 +214,64 @@ void init(void)
 							break;
 						}
 					}
+					/*switch (e)
+					{
+					case 0:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 0;
+						break;
+					}
+					case 1:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 1;
+						break;
+					}
+					case 2:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 3;
+						break;
+					}
+					case 3:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 5;
+						break;
+					}
+					case 4:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 6;
+						break;
+					}
+					case 5:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = 4;
+						break;
+					}
+					case 6:
+					{
+						DoorA.Location[e].X = a;
+						DoorA.Location[e].Y = i + 1;
+						DoorA.id[e] = e;
+						break;
+					}*/
 					DoorA.Location[e].X = a;
 					DoorA.Location[e].Y = i + 1;
+					DoorA.id[e] = e;
 					DoorA.Checker[e] = false;
 					e++;
-				}
-				Maze[i][a] = line[a];
+					}
+				
 			}
 		}
 		mapOne.close();
@@ -717,11 +816,7 @@ void renderMap()
 		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			aline[a] = Maze[i][a];
-			if (aline[a] == 'k')
-			{
-				aline[a] = (char)168;
-			}
-			else if (aline[a] == 'D')
+			if (aline[a] == 'D')
 			{
 				aline[a] = (char)219;
 			}
@@ -740,10 +835,23 @@ void renderMap()
 				aline[a] = (char)177;
 				g_Console.writeToBuffer(a,i + 1, aline[a], 0x1f);
 			}
+			if (aline[a] == 'k')
+			{
+				aline[a] = (char)168;
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0xe5);
+			}
 			if (aline[a] == 'd')
 			{
 				aline[a] = (char)219;
 				g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
+			}
+			if (q < NUM_OF_KEYS)
+			{
+				q++;
+			}
+			else
+			{
+				q = 0;
 			}
 		}
 	}
@@ -901,8 +1009,9 @@ void moveCharacter()
 		{
 			if (doorcheck(Key, ItemNumber))
 			{
-				Key.Checker[ItemNumber] = true;
-				DoorA.Checker[ItemNumber] = true;
+				Key.Checker[Key.id[ItemNumber]] = true;
+				DoorA.Checker[Key.id[ItemNumber]] = true;
+				Maze[Key.Location[ItemNumber].Y - 1][Key.Location[ItemNumber].X] = ' ';
 				ItemNumber = NUM_OF_KEYS;
 			}
 			else if (doorcheck(DoorA, ItemNumber))
@@ -911,10 +1020,13 @@ void moveCharacter()
 				{
 					for (int a = 0; a < MAP_COLUMNS; a++)
 					{
-						if ((a == DoorA.Sides[ItemNumber].AdjacentSides[a].X) && (i == DoorA.Sides[ItemNumber].AdjacentSides[a].Y))
+ 						if ((DoorA.Sides[DoorA.id[ItemNumber]].AdjacentSides[a].X != 0) && (DoorA.Sides[DoorA.id[ItemNumber]].AdjacentSides[a].Y != 0))
 						{
-							Maze[DoorA.Location[ItemNumber].Y][DoorA.Location[ItemNumber].X] = ' ';
-							Maze[i][a] = ' ';
+							if (Key.Checker[ItemNumber] == DoorA.Checker[DoorA.id[ItemNumber]])
+							{
+								Maze[DoorA.Location[ItemNumber].Y - 1][DoorA.Location[ItemNumber].X] = ' ';
+								Maze[DoorA.Sides[ItemNumber].AdjacentSides[a].Y][DoorA.Sides[ItemNumber].AdjacentSides[a].X] = ' ';
+							}
 						}
 					}
 				}
@@ -1568,7 +1680,7 @@ bool doorcheck(KDInformation Item, int ItemNumber)
 		{
 			return true;
 		}
-		else if (Key.Checker[ItemNumber] == true)
+		else if (Key.Checker[Item.id[ItemNumber]] == true)
 		{
 			return true;
 		}
