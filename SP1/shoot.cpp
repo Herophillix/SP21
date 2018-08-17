@@ -1,80 +1,89 @@
 #include "game.h"
+#include "shoot.h"
 #include "Framework\console.h"
-bool add[K_COUNT];
+bool isKeyPressedShoot[K_COUNT];
+
+ bool Bulletpos = false;
+ bool BulletposPRed = false;
+ bool BulletposPBlue = false;
+
+ int ShootDirectionFinal = 2;
+ int ShootDirectionFinalRed = 2;
+ int ShootDirectionFinalBlue = 2;
+ int ShootDirectionEnemy = 2;
 void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_portalExit, bool &aSomethingHappened,
-	int &bulletcondition, int &ShootDirection, int &ShootDirectionFinal, bool &Bulletpos, int &ShootDirectionFinalRed, bool &BulletposPRed, int &ShootDirectionFinalBlue, 
-	bool &BulletposPBlue, char **Maze, double &g_eBounceTime, double &g_eElapsedTime, bool g_abKeyPressed[K_COUNT])
+	char **Maze, double &g_eBounceTime, double &g_eElapsedTime)
 {
-	asdf();
-	if (add[K_1])
+	getInputshoot();
+	if (isKeyPressedShoot[K_1])
 	{
 		bulletcondition = 1;
 	}
-	else if (add[K_2])
+	else if (isKeyPressedShoot[K_2])
 	{
 		bulletcondition = 2;
 	}
-	else if (add[K_3])
+	else if (isKeyPressedShoot[K_3])
 	{
 		bulletcondition = 3;
 	}
-	else if (add[K_Q])
+	else if (isKeyPressedShoot[K_Q])
 	{
 		if (g_eBounceTime > g_eElapsedTime)
 			return;
 		bulletcondition = bulletcondition % 3 + 1;
 		g_eBounceTime = g_eElapsedTime + 0.25;
 	}
-	if ((bulletcheck(' ', ShootDirection, Maze, g_sChar)) || (bulletcheck((char)219, ShootDirection, Maze, g_sChar)))
+	if ((bulletcheck(' ', Maze, g_sChar)) || (bulletcheck((char)219, Maze, g_sChar)))
 	{
 		switch (bulletcondition)
 		{
 		case 1:
 		{
-			shoot(aSomethingHappened, g_eBounceTime, g_eElapsedTime, ShootDirection, g_bullet, g_sChar, ShootDirectionFinal, Bulletpos, &g_abKeyPressed[K_COUNT]);
+			shoot(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bullet, g_sChar);
 			break;
 		}
 		case 2:
 		{
-			shootPRed(aSomethingHappened, g_eBounceTime, g_eElapsedTime, ShootDirection, g_bulletP, g_sChar, ShootDirectionFinalRed, BulletposPRed, &g_abKeyPressed[K_COUNT]);
+			shootPRed(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar);
 			break;
 		}
 		case 3:
 		{
-			shootPBlue(aSomethingHappened, g_eBounceTime, g_eElapsedTime, ShootDirection, g_bulletP, g_sChar, ShootDirectionFinalBlue, BulletposPBlue, &g_abKeyPressed[K_COUNT]);
+			shootPBlue(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar);
 			break;
 		}
 		}
 	}
-	movebullet(Bulletpos, ShootDirectionFinal, g_bullet, g_portalEntrance, g_portalExit);
-	movebulletPRed(BulletposPRed, ShootDirectionFinalRed, g_bulletP, g_portalEntrance, g_sChar, Maze);
-	movebulletPBlue(BulletposPBlue, ShootDirectionFinalBlue, g_bulletP, g_portalExit, g_sChar, Maze);
+	movebullet(g_bullet, g_portalEntrance, g_portalExit);
+	movebulletPRed(g_bulletP, g_portalEntrance, g_sChar, Maze);
+	movebulletPBlue(g_bulletP, g_portalExit, g_sChar, Maze);
 }
 
-void asdf(void)
+void getInputshoot(void)
 {
-	add[K_UP] = isKeyPressed(VK_UP);
-	add[K_DOWN] = isKeyPressed(VK_DOWN);
-	add[K_LEFT] = isKeyPressed(VK_LEFT);
-	add[K_RIGHT] = isKeyPressed(VK_RIGHT);
-	add[K_SPACE] = isKeyPressed(VK_SPACE);
-	add[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
-	add[K_1] = isKeyPressed(0x31);
-	add[K_2] = isKeyPressed(0x32);
-	add[K_3] = isKeyPressed(0x33);
-	add[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
-	add[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
-	add[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
-	add[K_E] = isKeyPressed(0x45);
-	add[K_Q] = isKeyPressed(0x51);
+	isKeyPressedShoot[K_UP] = isKeyPressed(VK_UP);
+	isKeyPressedShoot[K_DOWN] = isKeyPressed(VK_DOWN);
+	isKeyPressedShoot[K_LEFT] = isKeyPressed(VK_LEFT);
+	isKeyPressedShoot[K_RIGHT] = isKeyPressed(VK_RIGHT);
+	isKeyPressedShoot[K_SPACE] = isKeyPressed(VK_SPACE);
+	isKeyPressedShoot[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
+	isKeyPressedShoot[K_1] = isKeyPressed(0x31);
+	isKeyPressedShoot[K_2] = isKeyPressed(0x32);
+	isKeyPressedShoot[K_3] = isKeyPressed(0x33);
+	isKeyPressedShoot[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
+	isKeyPressedShoot[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
+	isKeyPressedShoot[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
+	isKeyPressedShoot[K_E] = isKeyPressed(0x45);
+	isKeyPressedShoot[K_Q] = isKeyPressed(0x51);
 }
 
-void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bullet , SGameChar &g_sChar, int &ShootDirectionFinal, bool &Bulletpos, bool g_abKeyPressed[K_COUNT])
+void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet , SGameChar &g_sChar)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (add[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -114,7 +123,7 @@ void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTi
 	}
 }
 
-void movebullet(bool &Bulletpos, int &ShootDirectionFinal, SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit)
+void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit)
 {
 	if (Bulletpos == true)
 	{
@@ -196,12 +205,12 @@ void movebullet(bool &Bulletpos, int &ShootDirectionFinal, SGameChar &g_bullet, 
 	}
 }
 
-void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bulletP, SGameChar &g_sChar, int &ShootDirectionFinalRed, bool &BulletposPRed, bool g_abKeyPressed[K_COUNT])
+void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (add[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -241,12 +250,12 @@ void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElaps
 	}
 }
 
-void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bulletP, SGameChar &g_sChar, int &ShootDirectionFinalBlue , bool &BulletposPBlue, bool g_abKeyPressed[K_COUNT])
+void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (add[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE])
 	{
 		switch (ShootDirection)
 		{
@@ -286,7 +295,7 @@ void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElap
 	}
 }
 
-void movebulletPRed(bool &BulletposPRed, int &ShootDirectionFinalRed, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_sChar, char **Maze)
+void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_sChar, char **Maze)
 {
 	if (BulletposPRed == true)
 	{
@@ -400,7 +409,7 @@ void movebulletPRed(bool &BulletposPRed, int &ShootDirectionFinalRed, SGameChar 
 	}
 }
 
-void movebulletPBlue(bool &BulletposPBlue, int &ShootDirectionFinalBlue, SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g_sChar, char **Maze)
+void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g_sChar, char **Maze)
 {
 	if (BulletposPBlue == true)
 	{
@@ -514,7 +523,7 @@ void movebulletPBlue(bool &BulletposPBlue, int &ShootDirectionFinalBlue, SGameCh
 	}
 }
 
-bool bulletcheck(char Character, int &ShootDirection, char **Maze, SGameChar &g_sChar)
+bool bulletcheck(char Character, char **Maze, SGameChar &g_sChar)
 {
 	switch (ShootDirection)
 	{
@@ -552,4 +561,33 @@ bool bulletcheck(char Character, int &ShootDirection, char **Maze, SGameChar &g_
 	}
 	}
 	return false;
+}
+
+int bulletAfterPortal()
+{
+	int BulletDirection = ShootDirectionFinalBlue;
+	switch (BulletDirection)
+	{
+	case 1:
+	{
+		BulletDirection += 2;
+		break;
+	}
+	case 2:
+	{
+		BulletDirection += 2;
+		break;
+	}
+	case 3:
+	{
+		BulletDirection -= 2;
+		break;
+	}
+	case 4:
+	{
+		BulletDirection -= 2;
+		break;
+	}
+	}
+	return BulletDirection;
 }

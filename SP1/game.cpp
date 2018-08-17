@@ -10,7 +10,8 @@
 #include <fstream>
 #include <string>
 using namespace std;
-
+int ShootDirection = 2;
+int bulletcondition = 1;
 bool g_abKeyPressed[K_COUNT];
 
 string line;
@@ -18,15 +19,7 @@ string aline;
 
 char *Maze[MAP_ROWS];
 char *SplashMaze[MAP_ROWS];
-bool Bulletpos = false;
-bool BulletposPRed = false;
-bool BulletposPBlue = false;
 
-int ShootDirection = 2;
-int ShootDirectionFinal = 2;
-int ShootDirectionFinalRed = 2;
-int ShootDirectionFinalBlue  = 2;
-int ShootDirectionEnemy = 2;
 int d = 0;
 int e = 0;
 int q = 0;
@@ -38,11 +31,10 @@ bool Portal = false;
 bool aSomethingHappened;
 
 int timer;
+int Direction = 2;
 
 const int enemylocationX = 50;
 const int enemylocationY = 29;
-
-int bulletcondition = 1;
 
 PlayerInformation Player;
 KDInformation Key, DoorA;
@@ -86,13 +78,14 @@ void init(void)
 	g_enemy.m_cLocation.Y = enemylocationY;
 	g_enemy.m_bActive = true;
 
+
 	g_sChar.m_cLocation.X = 2;
 	g_sChar.m_cLocation.Y = 3;
 	g_sChar.m_bActive = true;
 	// sets the width, height and the font name to use in the console
 	g_Console.setConsoleFont(0, 16, L"Consolas");
 
-	ifstream mapOne("map03.txt");
+	ifstream mapOne("map01.txt");
 	if (mapOne.is_open())
 	{
 		for (int i = 0; i < MAP_ROWS; i++)
@@ -743,11 +736,21 @@ void renderGame()
 	renderMap();        // renders the map to the buffer first 
 	renderInfo();
 	renderCharacter();  // renders the character into the buffer
+	renderenemy();
 	renderbullet();
 	renderbulletPRed();
 	renderbulletPBlue();
 }
 
+void renderenemy()
+{
+	WORD enemyColor = 0x0C;
+	if (g_enemy.m_bActive)
+	{
+		enemyColor = 0x0A;
+	}
+	g_Console.writeToBuffer(g_enemy.m_cLocation, (char)1, enemyColor);
+}
 void renderMap()
 {
 	COORD c;
@@ -894,9 +897,8 @@ void renderToScreen()
 void gameplay()            // gameplay logic
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
-	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened,
-		bulletcondition, ShootDirection, ShootDirectionFinal, Bulletpos, ShootDirectionFinalRed, BulletposPRed, ShootDirectionFinalBlue,
-		BulletposPBlue, Maze, g_eBounceTime, g_eElapsedTime, &g_abKeyPressed[K_COUNT]);
+	moveenemy(Maze, g_enemy, g_sChar, timer, Direction);
+	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened, Maze, g_eBounceTime, g_eElapsedTime);
 	moveCharacter();    // moves the character, collision detection, physics, etc, sound can be played here too.
 	information();
 }
@@ -1640,31 +1642,3 @@ bool doorcheck(KDInformation Item, int ItemNumber)
 	return false;
 }
 
-int bulletAfterPortal()
-{
-	int BulletDirection = ShootDirectionFinalBlue;
-	switch (BulletDirection)
-	{
-	case 1:
-	{
-		BulletDirection += 2;
-		break;
-	}
-	case 2:
-	{
-		BulletDirection += 2;
-		break;
-	}
-	case 3:
-	{
-		BulletDirection -= 2;
-		break;
-	}
-	case 4:
-	{
-		BulletDirection -= 2;
-		break;
-	}
-	}
-	return BulletDirection;
-}

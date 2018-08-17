@@ -2,6 +2,7 @@
 #define _GAME_H
 
 #include "Framework\timer.h"
+#include "shoot.h"
 using namespace std;
 
 extern CStopWatch g_swTimer;
@@ -55,6 +56,7 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
+void renderenemy();
 void renderInfo();
 void renderCharacter();     // renders the character into the buffer
 void renderbulletPRed();
@@ -62,14 +64,7 @@ void renderbulletPBlue();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderbullet();
-void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bullet, SGameChar &g_sChar, int &ShootDirectionFinal, bool &Bulletpos, bool g_abKeyPressed[K_COUNT]);
-void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bulletP, SGameChar &g_sChar, int &ShootDirectionFinalRed, bool &BulletposPRed, bool g_abKeyPressed[K_COUNT]);
-void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, int &ShootDirection, SGameChar &g_bulletP, SGameChar &g_sChar, int &ShootDirectionFinalBlue, bool &BulletposPBlue, bool g_abKeyPressed[K_COUNT]);
-void movebullet(bool &Bulletpos, int &ShootDirectionFinal, SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit);
-void movebulletPRed(bool&, int &ShootDirectionFinalRed, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_sChar, char **Maze);
-void movebulletPBlue(bool &BulletposPBlue, int &ShootDirectionFinalBlue, SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g_sChar, char **Maze);
 void information();
-void asdf();
 
 bool upcheck(SGameChar);
 bool rightcheck(SGameChar Sprite);
@@ -79,17 +74,30 @@ bool upcheckB(SGameChar Sprite);
 bool rightcheckB(SGameChar Sprite);
 bool downcheckB(SGameChar Sprite);
 bool leftcheckB(SGameChar Sprite);
-bool bulletcheck(char Character, int &ShootDirection, char **Maze, SGameChar &g_sChar);
 void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_portalExit, bool &aSomethingHappened,
-	int &bulletcondition, int &ShootDirection, int &ShootDirectionFinal, bool &Bulletpos, int &ShootDirectionFinalRed, bool &BulletposPRed, int &ShootDirectionFinalBlue,
-	bool &BulletposPBlue, char **Maze, double &g_eBounceTime, double &g_eElapsedTime, bool g_abKeyPressed[K_COUNT]);
+	char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
+void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet, SGameChar &g_sChar);
+void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar);
+void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar);
+void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit);
+void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_sChar, char **Maze);
+void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g_sChar, char **Maze);
+void getInputshoot();
+bool bulletcheck(char Character, char **Maze, SGameChar &g_sChar);
+
+void moveenemy(char **, SGameChar &g_enemy, SGameChar &g_sChar, int &timer, int &Direction);
+int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
+int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
+int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
+int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
+void track(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar);
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 200;
-const int NUM_ROWS = 50;
-const int MAP_COLUMNS = 135;
-const int MAP_ROWS = 33;
+const int NUM_COLUMNS = 140;
+const int NUM_ROWS = 40;
+const int MAP_COLUMNS = 64;
+const int MAP_ROWS = 32;
 const int NUM_OF_KEYS = 10;
 
 struct PlayerInformation 
