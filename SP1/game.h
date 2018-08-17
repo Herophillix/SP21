@@ -16,7 +16,9 @@ enum EKEYS
     K_ESCAPE,
     K_SPACE,
 	K_NUMPAD0,
-	K_Z,
+	K_NUMPAD1,
+	K_NUMPAD2,
+	K_E,
     K_COUNT
 };
 
@@ -25,9 +27,14 @@ enum EGAMESTATES
 {
     S_SPLASHSCREEN,
     S_GAME,
+	S_BOSS,
     S_COUNT
 };
-
+enum EGAMEMODES
+{	
+	S_STAGEONE,
+	S_BOSSONE
+};
 // struct for the game character
 struct SGameChar
 {
@@ -50,10 +57,33 @@ void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
 void renderCharacter();     // renders the character into the buffer
+void renderBossChar();      // renders the boss character into the map
+void renderbulletPRed();
+void renderbulletPBlue();
 void renderFramerate();     // renders debug information, frame rate, elapsed time, etc
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
-void teleport();
 void renderbullet();
+void renderBossmap();
+void renderBossHealth();
 void shoot();
+void shootPRed();
+void shootPBlue();
 void movebullet();
+void movebulletPRed();
+void movebulletPBlue();
+void Bossone();
+void Stageone();
+bool upcheck(SGameChar Sprite);
+bool rightcheck(SGameChar Sprite);
+bool downcheck(SGameChar Sprite);
+bool leftcheck(SGameChar Sprite);
+void renderBossonto();
+void bossMove();
+void changeMap();
+void renderbossattack();
+void bossAttackMachineGun();
+void bossAttackLazer();
+void charshootboss();
+void renderShootbossbullet();
+void movecharbullet();
 #endif // _GAME_H
