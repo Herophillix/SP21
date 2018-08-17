@@ -42,7 +42,7 @@ double  g_dDeltaTime;
 bool    g_abKeyPressed[K_COUNT];
 
 // Game specific variables here
-SGameChar   g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, g_boss, g_bossMainGun ,g_bossSubGun,g_Wordbullet;
+SGameChar   g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, g_boss, g_bossMainGun ,g_bossSubGun1, g_bossSubGun2,g_Wordbullet;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 EGAMEMODES  g_eGamemode = S_STAGEONE; /////// <---- Edit stageeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee
 double  g_dBounceTime;
@@ -362,7 +362,7 @@ void renderGame()
 	{
 		renderBossmap();
 		renderCharacter();
-		renderbossattack();
+		//renderbossattack();
 		renderShootbossbullet();
 		renderBossHealth();
 
@@ -440,11 +440,26 @@ void renderBossmap()
 		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			abossline[a] = BossMap[i][a];
+			switch (abossline[a])
+			{
+			case '0':
+			{
+				g_Console.writeToBuffer(a, i, abossline[a], 0xe0);
+				break;
+			}
+			case '1':
+			{
+				g_Console.writeToBuffer(a, i, abossline[a], 0x40);
+				break;
+			}
+			default:
+			{
+				g_Console.writeToBuffer(a, i, abossline[a], 0x02);
+				break;
+			}
+			}
 		}
-		g_Console.writeToBuffer(c, abossline, 0x02);
-	}/*
-	string bossline;
-	bossline.resize(25, ' ');*/
+	}
 	
 }
 void renderCharacter()
@@ -577,7 +592,7 @@ void bossMove()
 void renderBossChar()
 {
 	//render boss @ location onto first map 
-	g_Console.writeToBuffer(3,4, (char)64);
+	g_Console.writeToBuffer(4,3, (char)64);
 }
 void renderBossHealth()
 {
@@ -1162,8 +1177,149 @@ void changeMap()
 	}
 }
 
-void renderbossattack()
+//void renderbossattack()
+//{
+//	bossAttackFrame++;
+//	if (bossAttackFrame > 15)
+//	{
+//		if (bossAttackMax < 17)
+//		{
+//			bossAttackMax++;
+//		}
+//		bossAttackFrame = 0;
+//		k--;
+//		if (k == -1)
+//		{
+//			k = 7;
+//		}
+//	}
+//	bool bossMoves[2] = { 1, 1 };
+//	if (bossMoves[0] == true)
+//	{
+//		COORD c;
+//		for (int i = 0; i < bossAttackMax; i++)
+//		{
+//
+//			string bossAttackline = "0001111";
+//			string bossAttackBufferLine = "       ";
+//			c.Y = g_bossMainGun.m_cLocation.Y + i;
+//			for (int j = i; j < bossAttackMax + i; j++)
+//			{
+//				bossAttackBufferLine[(j - i) % 7] = bossAttackline[(j + k) % 7];
+//			}
+//			switch (i)
+//			{
+//			case 0:
+//			{
+//				bossAttackBufferLine = bossAttackBufferLine.substr(4, 1);
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 2] = ' ';
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 4] = ' ';
+//				for (int a = 0; a < 1; a++)
+//				{
+//					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 3] = bossAttackBufferLine[a];
+//					//switch (bossAttackBufferLine[a])
+//					//{
+//					//case '0':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0x40);
+//					//	break;
+//					//}
+//					//case '1':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0xe0);
+//					//	break;
+//					//}
+//					//}
+//				}
+//				break;
+//			}
+//			case 1:
+//			{
+//				bossAttackBufferLine = bossAttackBufferLine.substr(3, 3);
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 1] = ' ';
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 5] = ' ';
+//				for (int a = 0; a < 3; a++)
+//				{
+//					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 2 + a] = bossAttackBufferLine[a];
+//					//switch (bossAttackBufferLine[a])
+//					//{
+//					//case '0':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0x40);
+//					//	break;
+//					//}
+//					//case '1':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0xe0);
+//					//	break;
+//					//}
+//					//}
+//				}
+//				break;
+//			}
+//			case 2:
+//			{
+//				bossAttackBufferLine = bossAttackBufferLine.substr(1, 5);
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X] = ' ';
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 6] = ' ';
+//				for (int a = 0; a < 5; a++)
+//				{
+//					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 1 + a] = bossAttackBufferLine[a];
+//					//switch (bossAttackBufferLine[a])
+//					//{
+//					//case '0':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0x40);
+//					//	break;
+//					//}
+//					//case '1':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0xe0);
+//					//	break;
+//					//}
+//					//}
+//				}
+//				break;
+//			}
+//			default:
+//			{
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X - 1] = ' ';
+//				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 7] = ' ';
+//				for (int a = 0; a < 7; a++)
+//				{
+//					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + a] = bossAttackBufferLine[a];
+//					//switch (bossAttackBufferLine[a])
+//					//{
+//					//case '0':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0x40);
+//					//	break;
+//					//}
+//					//case '1':
+//					//{
+//					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0xe0);
+//					//	break;
+//					//}
+//					//}
+//				}
+//			}
+//			}
+//		}
+//	}
+//	if (bossMoves[1] == true)
+//	{
+//		if (bossAttackFrame == 10)
+//		{
+//
+//		}
+//	}
+//}
+
+void bossAttackLazer()
 {
+	g_bossMainGun.m_cLocation.X = g_boss.m_cLocation.X + 10;
+	g_bossMainGun.m_cLocation.Y = g_boss.m_cLocation.Y + 13;
+
 	bossAttackFrame++;
 	if (bossAttackFrame > 15)
 	{
@@ -1197,107 +1353,115 @@ void renderbossattack()
 			case 0:
 			{
 				bossAttackBufferLine = bossAttackBufferLine.substr(4, 1);
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 2] = ' ';
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 4] = ' ';
 				for (int a = 0; a < 1; a++)
 				{
-					switch (bossAttackBufferLine[a])
-					{
-					case '0':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0x40);
-						break;
-					}
-					case '1':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0xe0);
-						break;
-					}
-					}
+					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 3] = bossAttackBufferLine[a];
+					//switch (bossAttackBufferLine[a])
+					//{
+					//case '0':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0x40);
+					//	break;
+					//}
+					//case '1':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 3, c.Y, bossAttackBufferLine[a], 0xe0);
+					//	break;
+					//}
+					//}
 				}
 				break;
 			}
 			case 1:
 			{
 				bossAttackBufferLine = bossAttackBufferLine.substr(3, 3);
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 1] = ' ';
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 5] = ' ';
 				for (int a = 0; a < 3; a++)
 				{
-					switch (bossAttackBufferLine[a])
-					{
-					case '0':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0x40);
-						break;
-					}
-					case '1':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0xe0);
-						break;
-					}
-					}
+					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 2 + a] = bossAttackBufferLine[a];
+					//switch (bossAttackBufferLine[a])
+					//{
+					//case '0':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0x40);
+					//	break;
+					//}
+					//case '1':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2 + a, c.Y, bossAttackBufferLine[a], 0xe0);
+					//	break;
+					//}
+					//}
 				}
-				/*g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 2, c.Y, bossAttackBufferLine, 0xe2);*/
 				break;
 			}
 			case 2:
 			{
 				bossAttackBufferLine = bossAttackBufferLine.substr(1, 5);
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X] = ' ';
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 6] = ' ';
 				for (int a = 0; a < 5; a++)
 				{
-					switch (bossAttackBufferLine[a])
-					{
-					case '0':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0x40);
-						break;
-					}
-					case '1':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0xe0);
-						break;
-					}
-					}
+					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 1 + a] = bossAttackBufferLine[a];
+					//switch (bossAttackBufferLine[a])
+					//{
+					//case '0':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0x40);
+					//	break;
+					//}
+					//case '1':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1 + a, c.Y, bossAttackBufferLine[a], 0xe0);
+					//	break;
+					//}
+					//}
 				}
-				/*g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + 1, c.Y, bossAttackBufferLine, 0xe2);*/
 				break;
 			}
 			default:
 			{
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X - 1] = ' ';
+				BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + 7] = ' ';
 				for (int a = 0; a < 7; a++)
 				{
-					switch (bossAttackBufferLine[a])
-					{
-					case '0':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0x40);
-						break;
-					}
-					case '1':
-					{
-						g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0xe0);
-						break;
-					}
-					}
+					BossMap[c.Y - 1][g_bossMainGun.m_cLocation.X + a] = bossAttackBufferLine[a];
+					//switch (bossAttackBufferLine[a])
+					//{
+					//case '0':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0x40);
+					//	break;
+					//}
+					//case '1':
+					//{
+					//	g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X + a, c.Y, bossAttackBufferLine[a], 0xe0);
+					//	break;
+					//}
+					//}
 				}
-				/*g_Console.writeToBuffer(g_bossMainGun.m_cLocation.X, c.Y, bossAttackBufferLine, 0xe2);*/
 			}
 			}
 		}
 	}
 	if (bossMoves[1] == true)
 	{
-		
-	}
-}
+		if (bossAttackFrame == 10)
+		{
 
-void bossAttackLazer()
-{
-	g_bossMainGun.m_cLocation.X = g_boss.m_cLocation.X + 10;
-	g_bossMainGun.m_cLocation.Y = g_boss.m_cLocation.Y + 13;
+		}
+	}
 }
 
 void bossAttackMachineGun()
 {
-	g_bossSubGun.m_cLocation.X = g_boss.m_cLocation.X + 4;
-	g_bossSubGun.m_cLocation.Y = g_boss.m_cLocation.Y + 8;
+	g_bossSubGun1.m_cLocation.X = g_boss.m_cLocation.X + 4;
+	g_bossSubGun1.m_cLocation.Y = g_boss.m_cLocation.Y + 8;
+	g_bossSubGun2.m_cLocation.X = g_boss.m_cLocation.X + 17;
+	g_bossSubGun2.m_cLocation.Y = g_boss.m_cLocation.Y + 8;
 }
 void charshootboss()
 {
@@ -1311,10 +1475,10 @@ void charshootboss()
 	{
 		charWordBullet = false;
 	}
-	else if (BossMap[g_Wordbullet.m_cLocation.Y - 1][g_Wordbullet.m_cLocation.X] != ' ')
+	else if (BossMap[g_Wordbullet.m_cLocation.Y - 2][g_Wordbullet.m_cLocation.X] != ' ')
 	{
 		charWordBullet = false;
-		bossHealth -= 5;
+		bossHealth -= 1;
 		g_Wordbullet.m_cLocation.X = g_sChar.m_cLocation.X;
 		g_Wordbullet.m_cLocation.Y = g_sChar.m_cLocation.Y - 1;
 	}
