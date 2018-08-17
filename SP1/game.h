@@ -35,7 +35,11 @@ enum EGAMESTATES
     S_GAME,
     S_COUNT
 };
-
+enum EGAMEMODES
+{
+	S_STAGEONE,
+	S_BOSSONE
+};
 // struct for the game character
 struct SGameChar
 {
@@ -66,6 +70,18 @@ void renderToScreen();      // dump the contents of the buffer to the screen, on
 void renderbullet();
 void information();
 
+void Bossone();
+void Stageone();
+void bossMove();
+void changeMap();
+void bossAttackMachineGun();
+void bossAttackLazer();
+void charshootboss();
+void renderShootbossbullet();
+void renderBossChar();
+void renderBossmap();
+void renderBossHealth();
+
 bool upcheck(SGameChar);
 bool rightcheck(SGameChar Sprite);
 bool downcheck(SGameChar Sprite);
@@ -94,7 +110,7 @@ void track(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar);
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 140;
+const int NUM_COLUMNS = 120;
 const int NUM_ROWS = 40;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
