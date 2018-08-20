@@ -11,6 +11,18 @@ bool isKeyPressedShoot[K_COUNT];
  int ShootDirectionFinalRed = 2;
  int ShootDirectionFinalBlue = 2;
  int ShootDirectionEnemy = 2;
+
+ void getInputshoot()
+ {
+	 isKeyPressedShoot[K_SPACE] = isKeyPressed(VK_SPACE);
+	 isKeyPressedShoot[K_1] = isKeyPressed(0x31);
+	 isKeyPressedShoot[K_2] = isKeyPressed(0x32);
+	 isKeyPressedShoot[K_3] = isKeyPressed(0x33);
+	 isKeyPressedShoot[K_E] = isKeyPressed(0x45);
+	 isKeyPressedShoot[K_Q] = isKeyPressed(0x51);
+ }
+
+
 void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_portalExit, bool &aSomethingHappened,
 	char **Maze, double &g_eBounceTime, double &g_eElapsedTime)
 {
@@ -58,24 +70,6 @@ void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, 
 	movebullet(g_bullet, g_portalEntrance, g_portalExit);
 	movebulletPRed(g_bulletP, g_portalEntrance, g_sChar, Maze);
 	movebulletPBlue(g_bulletP, g_portalExit, g_sChar, Maze);
-}
-
-void getInputshoot(void)
-{
-	isKeyPressedShoot[K_UP] = isKeyPressed(VK_UP);
-	isKeyPressedShoot[K_DOWN] = isKeyPressed(VK_DOWN);
-	isKeyPressedShoot[K_LEFT] = isKeyPressed(VK_LEFT);
-	isKeyPressedShoot[K_RIGHT] = isKeyPressed(VK_RIGHT);
-	isKeyPressedShoot[K_SPACE] = isKeyPressed(VK_SPACE);
-	isKeyPressedShoot[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
-	isKeyPressedShoot[K_1] = isKeyPressed(0x31);
-	isKeyPressedShoot[K_2] = isKeyPressed(0x32);
-	isKeyPressedShoot[K_3] = isKeyPressed(0x33);
-	isKeyPressedShoot[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
-	isKeyPressedShoot[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
-	isKeyPressedShoot[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
-	isKeyPressedShoot[K_E] = isKeyPressed(0x45);
-	isKeyPressedShoot[K_Q] = isKeyPressed(0x51);
 }
 
 void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet , SGameChar &g_sChar)

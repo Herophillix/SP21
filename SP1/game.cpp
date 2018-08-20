@@ -313,20 +313,8 @@ void shutdown(void)
 //--------------------------------------------------------------
 void getInput(void)
 {
-	g_abKeyPressed[K_UP] = isKeyPressed(VK_UP);
-	g_abKeyPressed[K_DOWN] = isKeyPressed(VK_DOWN);
-	g_abKeyPressed[K_LEFT] = isKeyPressed(VK_LEFT);
-	g_abKeyPressed[K_RIGHT] = isKeyPressed(VK_RIGHT);
 	g_abKeyPressed[K_SPACE] = isKeyPressed(VK_SPACE);
 	g_abKeyPressed[K_ESCAPE] = isKeyPressed(VK_ESCAPE);
-	g_abKeyPressed[K_1] = isKeyPressed(0x31);
-	g_abKeyPressed[K_2] = isKeyPressed(0x32);
-	g_abKeyPressed[K_3] = isKeyPressed(0x33);
-	g_abKeyPressed[K_NUMPAD0] = isKeyPressed(VK_NUMPAD0);
-	g_abKeyPressed[K_NUMPAD1] = isKeyPressed(VK_NUMPAD1);
-	g_abKeyPressed[K_NUMPAD2] = isKeyPressed(VK_NUMPAD2);
-	g_abKeyPressed[K_E] = isKeyPressed(0x45);
-	g_abKeyPressed[K_Q] = isKeyPressed(0x51);
 }
 
 //--------------------------------------------------------------
@@ -1035,13 +1023,13 @@ void Stageone()
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exit
 	moveenemy(Maze, g_enemy, g_sChar, timer, Direction);
 	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened, Maze, g_eBounceTime, g_eElapsedTime);
-	moveCharacter();    // moves the character, collision detection, physics, etc, sound can be played here too.
+	moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, Maze,  Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);    // moves the character, collision detection, physics, etc, sound can be played here too.
 	information();
 }
 void Bossone()
 {
 	bossMove();
-	moveCharacter();
+	moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, Maze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
 	charshootboss();
 	processUserInput();
 	bossAttackLazer();
@@ -1363,6 +1351,8 @@ void changeMap()
 	{
 	case S_BOSSONE:
 	{
+		delete[] *Maze;
+		*Maze = new char[MAP_COLUMNS];
 		g_sChar.m_cLocation.X = 32;
 		g_sChar.m_cLocation.Y = 30;
 

@@ -2,6 +2,7 @@
 #define _GAME_H
 
 #include "Framework\timer.h"
+#include "Framework\console.h"
 #include "shoot.h"
 using namespace std;
 
@@ -54,7 +55,7 @@ void shutdown    ( void );      // do clean up, free memory
 
 void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
-void moveCharacter();       // moves the character, collision detection, physics, etc
+      // moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderSplashScreen();  // renders the splash screen
@@ -90,23 +91,22 @@ bool upcheckB(SGameChar Sprite);
 bool rightcheckB(SGameChar Sprite);
 bool downcheckB(SGameChar Sprite);
 bool leftcheckB(SGameChar Sprite);
-void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_portalExit, bool &aSomethingHappened,
-	char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
-void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet, SGameChar &g_sChar);
-void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar);
-void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar);
-void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit);
-void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar &g_sChar, char **Maze);
-void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g_sChar, char **Maze);
-void getInputshoot();
-bool bulletcheck(char Character, char **Maze, SGameChar &g_sChar);
+void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
+void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
+void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
+void shootPBlue(bool&, double&, double&, SGameChar&, SGameChar&);
+void movebullet(SGameChar&, SGameChar&, SGameChar&);
+void movebulletPRed(SGameChar&, SGameChar&, SGameChar&, char**);
+void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
 
-void moveenemy(char **, SGameChar &g_enemy, SGameChar &g_sChar, int &timer, int &Direction);
-int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
-int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
-int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
-int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction);
-void track(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar);
+bool bulletcheck(char, char**, SGameChar&);
+
+void moveenemy(char**, SGameChar&, SGameChar&, int&, int&);
+int upenemy(char**, SGameChar&, SGameChar&, int&);
+int rightenemy(char**, SGameChar&, SGameChar&, int&);
+int downenemy(char**, SGameChar&, SGameChar&, int&);
+int leftenemy(char**, SGameChar&, SGameChar&, int&);
+void track(char**, SGameChar&, SGameChar&);
 
 int bulletAfterPortal();
 
@@ -139,5 +139,6 @@ struct KDInformation
 };
 
 bool doorcheck(KDInformation Item, int ItemNumber);
-
+void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
+	char **Maze, PlayerInformation Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
 #endif // _GAME_H

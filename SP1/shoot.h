@@ -1,9 +1,9 @@
 #ifndef _SHOOT_H
 #define _SHOOT_H
 
-#include "game.h"
 using namespace std;
 
+void getInputshoot();
 extern int bulletcondition;
 extern int ShootDirection;
 extern bool Bulletpos;
