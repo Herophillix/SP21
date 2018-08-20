@@ -14,7 +14,7 @@ void getInputmove()
 }
 
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
-	char **Maze, PlayerInformation Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
+	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
 {
 	getInputmove();
 	bool bSomethingHappened = false;
@@ -25,7 +25,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_UP] && g_sChar.m_cLocation.Y > 1)
 	{
 		//Beep(1440, 30);
-		if (upcheck(g_sChar))
+		if (upcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.Y--;
 		}
@@ -35,7 +35,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
-		if (rightcheck(g_sChar))
+		if (rightcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.X++;
 		}
@@ -45,7 +45,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
 	{
 		//Beep(1440, 30);
-		if (downcheck(g_sChar))
+		if (downcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.Y++;
 		}
@@ -55,7 +55,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_LEFT] && g_sChar.m_cLocation.X > 0)
 	{
 		//Beep(1440, 30);
-		if (leftcheck(g_sChar))
+		if (leftcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.X--;
 		}

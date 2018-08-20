@@ -441,7 +441,7 @@ void moveenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &timer, 
 }
 int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 {
-	if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
+	if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == ' ')
 	{
 		if (!((g_enemy.m_cLocation.Y - 1 == g_sChar.m_cLocation.Y) && (g_enemy.m_cLocation.X == g_sChar.m_cLocation.X)))
 		{
@@ -449,7 +449,7 @@ int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 			Direction = 1;
 		}
 	}
-	else if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == (char)219)
+	else
 	{
 		if ((Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] == ' ') && (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == ' '))
 		{
@@ -462,7 +462,7 @@ int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 				return 4;
 			}
 		}
-		else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
+		else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == ' ')
 		{
 			return 2;
 		}
@@ -475,7 +475,7 @@ int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 }
 int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 {
-	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
+	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == ' ')
 	{
 		if (!((g_enemy.m_cLocation.Y == g_sChar.m_cLocation.Y) && (g_enemy.m_cLocation.X + 1 == g_sChar.m_cLocation.X)))
 		{
@@ -483,7 +483,7 @@ int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directi
 			Direction = 2;
 		}
 	}
-	else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == (char)219)
+	else
 	{
 		if ((Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == ' ') &&
 			(Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] == ' '))
@@ -497,7 +497,7 @@ int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directi
 				return 3;
 			}
 		}
-		else if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
+		else if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == ' ')
 		{
 			return 1;
 		}
@@ -511,7 +511,7 @@ int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directi
 }
 int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 {
-	if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] != (char)219)
+	if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] == ' ')
 	{
 		if (!((g_enemy.m_cLocation.Y + 1 == g_sChar.m_cLocation.Y) && (g_enemy.m_cLocation.X == g_sChar.m_cLocation.X)))
 		{
@@ -519,7 +519,7 @@ int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 			Direction = 3;
 		}
 	}
-	else if (Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] == (char)219)
+	else
 	{
 		if ((Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] == ' ') && (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == ' '))
 		{
@@ -532,7 +532,7 @@ int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 				return 4;
 			}
 		}
-		else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] != (char)219)
+		else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X + 1] == ' ')
 		{
 			return 2;
 		}
@@ -545,7 +545,7 @@ int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 }
 int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction)
 {
-	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] != (char)219)
+	if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] == ' ')
 	{
 		if (!((g_enemy.m_cLocation.Y == g_sChar.m_cLocation.Y) && (g_enemy.m_cLocation.X - 1 == g_sChar.m_cLocation.X)))
 		{
@@ -553,7 +553,7 @@ int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 			Direction = 4;
 		}
 	}
-	else if (Maze[g_enemy.m_cLocation.Y - 1][g_enemy.m_cLocation.X - 1] == (char)219)
+	else
 	{
 		if ((Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == ' ') &&
 			(Maze[g_enemy.m_cLocation.Y][g_enemy.m_cLocation.X] == ' '))
@@ -567,7 +567,7 @@ int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 				return 3;
 			}
 		}
-		else if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] != (char)219)
+		else if (Maze[g_enemy.m_cLocation.Y - 2][g_enemy.m_cLocation.X] == ' ')
 		{
 			return 1;
 		}

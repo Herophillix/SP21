@@ -21,9 +21,7 @@ enum EKEYS
 	K_1,
 	K_2,
 	K_3,
-	K_NUMPAD0,
-	K_NUMPAD1,
-	K_NUMPAD2,
+	K_P,
 	K_E,
 	K_Q,
     K_COUNT
@@ -32,8 +30,9 @@ enum EKEYS
 // Enumeration for the different screen states
 enum EGAMESTATES
 {
-    S_SPLASHSCREEN,
-    S_GAME,
+	S_SPLASHSCREEN,
+	S_GAME,
+	S_PAUSE,
     S_COUNT
 };
 enum EGAMEMODES
@@ -83,19 +82,19 @@ void renderBossChar();
 void renderBossmap();
 void renderBossHealth();
 
-bool upcheck(SGameChar);
-bool rightcheck(SGameChar Sprite);
-bool downcheck(SGameChar Sprite);
-bool leftcheck(SGameChar Sprite);
-bool upcheckB(SGameChar Sprite);
-bool rightcheckB(SGameChar Sprite);
-bool downcheckB(SGameChar Sprite);
-bool leftcheckB(SGameChar Sprite);
+bool upcheck(SGameChar, char** Maze);
+bool rightcheck(SGameChar Sprite, char** Maze);
+bool downcheck(SGameChar Sprite, char** Maze);
+bool leftcheck(SGameChar Sprite, char** Maze);
+bool upcheckB(SGameChar Sprite, char** Maze);
+bool rightcheckB(SGameChar Sprite, char** Maze);
+bool downcheckB(SGameChar Sprite, char** Maze);
+bool leftcheckB(SGameChar Sprite, char** Maze);
 void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
 void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPBlue(bool&, double&, double&, SGameChar&, SGameChar&);
-void movebullet(SGameChar&, SGameChar&, SGameChar&);
+void movebullet(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPRed(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
 
@@ -140,5 +139,6 @@ struct KDInformation
 
 bool doorcheck(KDInformation Item, int ItemNumber);
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
-	char **Maze, PlayerInformation Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
+	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
+void pause();
 #endif // _GAME_H
