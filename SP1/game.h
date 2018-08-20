@@ -62,6 +62,7 @@ void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
 void renderenemy();
 void renderInfo();
+void renderLegend();
 void renderCharacter();     // renders the character into the buffer
 void renderbulletPRed();
 void renderbulletPBlue();
@@ -114,6 +115,8 @@ const int NUM_ROWS = 40;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 const int NUM_OF_KEYS = 10;
+const int LEGEND_ROWS = 5;
+const int LEGEND_COLUMNS = 42;
 
 struct PlayerInformation 
 {

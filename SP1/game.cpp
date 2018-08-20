@@ -19,11 +19,13 @@ string bossmapline;
 string aline;
 string bossline;
 string pauseline;
+string legendline;
 
 char *BaseMaze[MAP_ROWS];
 char *Level1Maze[MAP_ROWS];
 char *SplashMaze[MAP_ROWS];
 char *Pause[MAP_ROWS];
+char *Legend[LEGEND_ROWS];
 char *BossMap[MAP_ROWS];
 char *BossChar[27];
 
@@ -300,6 +302,20 @@ void init(void)
 			}
 		}
 		pauseScreen.close();
+	}
+	ifstream legend("legend.txt");
+	if (legend.is_open())
+	{
+		for (int i = 0; i < LEGEND_ROWS; i++)
+		{
+			Legend[i] = new char[LEGEND_COLUMNS];
+			getline(legend, legendline);
+			for (int a = 0; a < LEGEND_COLUMNS; a++)
+			{
+				Legend[i][a] = legendline[a];
+			}
+		}
+		legend.close();
 	}
 	Player.Health = 3;
 	Player.Points = 0;
@@ -843,6 +859,7 @@ void renderGame()
 		{
 			renderMap();        // renders the map to the buffer first 
 			renderInfo();
+			renderLegend();
 			renderCharacter();  // renders the character into the buffer
 			renderenemy();
 			renderBossChar();
@@ -854,6 +871,7 @@ void renderGame()
 		{
 			renderBossmap();
 			renderInfo();
+			renderLegend();
 			renderCharacter();
 			//renderbossattack();
 			renderShootbossbullet();
@@ -864,6 +882,7 @@ void renderGame()
 	{
 		renderMap();
 		renderInfo();
+		renderLegend();
 	}
 }
 
@@ -989,6 +1008,68 @@ void renderInfo()
 					g_Console.writeToBuffer(keySpacing + keyCounter, (3 + 1) * infoIncrement - 2, (char)168, 0xe2);
 					keySpacing += 1;
 				}
+			}
+		}
+	}
+
+}
+
+void renderLegend()
+{
+
+	for (int i = 0; i < LEGEND_ROWS; i++)
+	{
+		COORD c;
+		c.X = 0;
+		c.Y = MAP_ROWS + i + 2;
+		legendline.resize(LEGEND_COLUMNS, ' ');
+		for (int a = 0; a < LEGEND_COLUMNS; a++)
+		{
+			legendline[a] = Legend[i][a];
+			g_Console.writeToBuffer(c, legendline, 0xe2);
+		}
+		for (int a = 0; a < LEGEND_COLUMNS; a++)
+		{
+			legendline[a] = Legend[i][a];
+			if (legendline[a] == '1')
+			{
+				legendline[a] = (char)3;
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], 0xe2);
+			}
+			else if (legendline[a] == '2')
+			{
+				legendline[a] = (char)168;
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], 0xe5);
+			}
+			else if (legendline[a] == '3')
+			{
+				legendline[a] = (char)1;
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], 0x0A);
+			}
+			else if (legendline[a] == '4')
+			{
+				legendline[a] = (char)64;
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a]);
+			}
+			else if (legendline[a] == '5')
+			{
+				legendline[a] = (char)219;
+				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], 0xe2);
+			}
+			else if (legendline[a] == '6')
+			{
+				legendline[a] = (char)219;
+				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], 0xe6);
+			}
+			else if (legendline[a] == '7')
+			{
+				legendline[a] = (char)176;
+				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], 0x40);
+			}
+			else if (legendline[a] == '8')
+			{
+				legendline[a] = (char)177;
+				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], 0x1f);
 			}
 		}
 	}
