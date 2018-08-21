@@ -29,7 +29,7 @@ string loseline;
 
 WORD Char = 0x02;
 WORD charColor = 0xe2;
-WORD baseColor = 0x02;
+WORD baseColor = 0xe2;
 WORD baseColor2 = 0x0b;
 
 char *BaseMaze[MAP_ROWS];
@@ -61,9 +61,10 @@ bool subBulletsAllCreated2 = false;
 bool bossLazerMaxReached = false;
 bool charWordBullet = false;
 bool charWordBulletHold = false;
+bool charWordBulletTimeout = false;
 int charWordBulletCharge = 0;
-int bossHealth = 10;
-int bossMaxHealth = 10;
+int bossHealth = 300;
+int bossMaxHealth = 300;
 int charbossX = 4;
 int charbossY = 3;
 int Rowrender;
@@ -94,8 +95,7 @@ int g_bStartFrame = 0;
 double  g_dElapsedTime;
 double  g_eElapsedTime;
 double  g_dDeltaTime;
-double  g_bBounceTime[5];
-
+double  g_bBounceTime[6];
 
 // Game specific variables here
 
@@ -413,7 +413,7 @@ void init(void)
 			}
 		}
 	}
-	Player.Health = 1;
+	Player.Health = 5;
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
 	Player.Key[NUM_OF_KEYS] = { 0, };
@@ -1063,12 +1063,12 @@ void renderMap()
 			if (aline[a] == 'k')
 			{
 				aline[a] = (char)168;
-				g_Console.writeToBuffer(a, i + 1, aline[a], 0x0e);
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0xe5);
 			}
 			if (aline[a] == 'd')
 			{
 				aline[a] = (char)219;
-				g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0xe6);
 			}
 		}
 	}
@@ -1260,7 +1260,7 @@ void renderInfo()
 		{
 			for (int heartCounter = 0; heartCounter < Player.Health; heartCounter++)
 			{
-				g_Console.writeToBuffer(c.X + (heartCounter * 2), c.Y + 1, (char)3, 0x04);
+				g_Console.writeToBuffer(c.X + (heartCounter * 2), c.Y + 1, (char)3, 0xe4);
 			}
 		}
 
@@ -1455,7 +1455,7 @@ void renderShootbossbullet()
 {
 	if (charWordBulletHold == true)
 	{
-		for (int i = 4; i >= -1; i--)
+		for (int i = 5; i >= -1; i--)
 		{
 			if (g_dElapsedTime > g_bBounceTime[i])
 			{
@@ -1493,6 +1493,15 @@ void renderShootbossbullet()
 				{
 					Char = 0x06;
 					charWordBulletCharge = i + 1;
+					i = -2;
+					break;
+				}
+				case 5:
+				{
+					Char = 0x06;
+					charWordBulletCharge = i;
+					charWordBulletHold = false;
+					charWordBulletTimeout = true;
 					i = -2;
 					break;
 				}
@@ -2116,21 +2125,32 @@ void charshootboss()
 	double j = 0.2;
 	if (g_abKeyPressed[K_SPACE])
 	{
-		g_Wordbullet.m_cLocation.X = g_sChar.m_cLocation.X;
-		g_Wordbullet.m_cLocation.Y = g_sChar.m_cLocation.Y - 1;
-		charWordBullet = true;
-		charWordBulletCharge = 0;
-		if (charWordBulletHold == false)
+		if (charWordBulletTimeout == false)
 		{
-			for (; i < 5; i++, j += 0.5)
+			g_Wordbullet.m_cLocation.X = g_sChar.m_cLocation.X;
+			g_Wordbullet.m_cLocation.Y = g_sChar.m_cLocation.Y - 1;
+			charWordBullet = true;
+			charWordBulletCharge = 0;
+			if (charWordBulletHold == false)
 			{
-				g_bBounceTime[i] = g_dElapsedTime + j;
+				for (; i < 6; i++, j += 0.5)
+				{
+					if (i == 5)
+					{
+						g_bBounceTime[i] = g_dElapsedTime + 3;
+					}
+					else
+					{
+						g_bBounceTime[i] = g_dElapsedTime + j;
+					}
+				}
 			}
+			charWordBulletHold = true;
 		}
-		charWordBulletHold = true;
 	}
 	else
 	{
+		charWordBulletTimeout = false;
 		charWordBulletHold = false;
 	}
 	if (BossMap[g_Wordbullet.m_cLocation.Y - 1][g_Wordbullet.m_cLocation.X] == (char)219)
