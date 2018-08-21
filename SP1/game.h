@@ -77,12 +77,15 @@ void Stageone();
 void bossMove();
 void changeMap();
 void bossAttackMachineGun();
+void bossAttackMachineGunLeft();
+void bossAttackMachineGunRight();
 void bossAttackLazer();
 void charshootboss();
 void renderShootbossbullet();
 void renderBossChar();
 void renderBossmap();
 void renderBossHealth();
+SGameChar createBossSubBullet(SGameChar&);
 
 bool upcheck(SGameChar, char** Maze);
 bool rightcheck(SGameChar Sprite, char** Maze);
@@ -148,5 +151,7 @@ struct KDInformation
 bool doorcheck(KDInformation Item, int ItemNumber);
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
 	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
+void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **, PlayerInformation &Player, bool &CharacterisHit);
 void pause();
+
 #endif // _GAME_H

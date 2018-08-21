@@ -13,7 +13,9 @@ bool upcheck(SGameChar Sprite, char** Maze)
 }
 bool rightcheck(SGameChar Sprite, char** Maze)
 {
-	if (Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == ' ')
+	if ((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == ' ') ||
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == '1') ||
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X + 1] == '2'))
 	{
 		return true;
 	}
@@ -24,7 +26,9 @@ bool rightcheck(SGameChar Sprite, char** Maze)
 }
 bool downcheck(SGameChar Sprite, char** Maze)
 {
-	if (Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == ' ')
+	if ((Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == ' ') ||
+		(Maze[Sprite.m_cLocation.Y ][Sprite.m_cLocation.X] == '1') ||
+		(Maze[Sprite.m_cLocation.Y][Sprite.m_cLocation.X] == '2'))
 	{
 		return true;
 	}
@@ -35,7 +39,9 @@ bool downcheck(SGameChar Sprite, char** Maze)
 }
 bool leftcheck(SGameChar Sprite, char** Maze)
 {
-	if (Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == ' ')
+	if ((Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == ' ') ||
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == '1') ||
+		(Maze[Sprite.m_cLocation.Y - 1][Sprite.m_cLocation.X - 1] == '2'))
 	{
 		return true;
 	}
@@ -46,7 +52,9 @@ bool leftcheck(SGameChar Sprite, char** Maze)
 }
 bool upcheckB(SGameChar Sprite, char** Maze)
 {
-	if (Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == '.')
+	if ((Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == '.') ||
+		(Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == '1') ||
+		(Maze[Sprite.m_cLocation.Y - 2][Sprite.m_cLocation.X] == '2'))
 	{
 		return true;
 	}
