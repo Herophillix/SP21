@@ -75,14 +75,15 @@ void Bossone();
 void Stageone();
 void bossMove();
 void changeMap();
-void bossAttackMachineGun();
+void bossAttackMachineGunLeft();
+void bossAttackMachineGunRight();
 void bossAttackLazer();
 void charshootboss();
 void renderShootbossbullet();
 void renderBossChar();
 void renderBossmap();
 void renderBossHealth();
-SGameChar createBossSubBullet();
+SGameChar createBossSubBullet(SGameChar&);
 
 bool upcheck(SGameChar);
 bool rightcheck(SGameChar Sprite);

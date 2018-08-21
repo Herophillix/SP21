@@ -127,7 +127,7 @@ void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g
 		return;
 	// Updating the location of the character based on the key press
 	// providing a beep sound whenver we shift the character
-	if (isKeyPressedMove[K_UP] && g_sChar.m_cLocation.Y > 13)
+	if (isKeyPressedMove[K_UP] && g_sChar.m_cLocation.Y > 14)
 	{
 		//Beep(1440, 30);
 		if (upcheck(g_sChar))
@@ -160,17 +160,25 @@ void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g
 		if (leftcheck(g_sChar))
 		{
 			g_sChar.m_cLocation.X--;
-			if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '1') ||
-				(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '0'))&&(g_eBounceTime < g_dElapsedTime))
-			{
-				Player.Health--;
-				CharacterisHit = true;
-				g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
-			}
+			//if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '1') ||
+			//	(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '0'))&&(g_eBounceTime < g_dElapsedTime))
+			//{
+			//	Player.Health--;
+			//	CharacterisHit = true;
+			//	g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
+			//}
 		}
 		bSomethingHappened = true;
 	}
 	
+	if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '1') ||
+		(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '0'))&&(g_eBounceTime < g_dElapsedTime))
+	{
+		Player.Health--;
+		CharacterisHit = true;
+		g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
+	}
+
 	//if ((g_sChar.m_cLocation.Y == charbossY) && (g_sChar.m_cLocation.X == charbossX))
 	//{
 	//	g_eGamemode = S_BOSSONE;
