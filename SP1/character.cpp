@@ -104,6 +104,10 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if ((g_sChar.m_cLocation.Y == charbossY) && (g_sChar.m_cLocation.X == charbossX))
 	{
 		g_eGamemode = S_BOSSONE;
+		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
+		{
+			Player.Key[ItemNumber] = false;
+		}
 		changeMap();
 	}
 	if (bSomethingHappened)

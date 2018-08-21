@@ -60,6 +60,7 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
+void renderPausescreen();
 void renderenemy();
 void renderInfo();
 void renderLegend();
@@ -115,8 +116,12 @@ const int NUM_ROWS = 40;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 const int NUM_OF_KEYS = 10;
-const int LEGEND_ROWS = 5;
 const int LEGEND_COLUMNS = 42;
+const int LEGEND_ROWS = 5;
+const int GUN_COLUMNS = 27;
+const int GUN_ROWS = 8;
+const int PORTAL_COLUMNS = 12;
+const int PORTAL_ROWS = 12;
 
 struct PlayerInformation 
 {
