@@ -33,14 +33,13 @@ enum EGAMESTATES
 	S_SPLASHSCREEN,
 	S_GAME,
 	S_PAUSE,
-	S_LOSE,
     S_COUNT
 };
 enum EGAMEMODES
 {
 	S_STAGEONE,
 	S_BOSSONE,
-	S_STAGETWO
+	S_CREATION
 };
 // struct for the game character
 struct SGameChar
@@ -73,10 +72,6 @@ void renderFramerate();     // renders debug information, frame rate, elapsed ti
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderbullet();
 void information();
-void playerlose();
-void renderLosescreen();
-
-void checkhealth();
 
 void Bossone();
 void Stageone();
@@ -120,12 +115,10 @@ void track(char**, SGameChar&, SGameChar&);
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 160;
-const int NUM_ROWS = 50;
+const int NUM_COLUMNS = 120;
+const int NUM_ROWS = 40;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
-const int MAP2_COLUMNS = 103;
-const int MAP2_ROWS = 29;
 const int NUM_OF_KEYS = 10;
 const int LEGEND_COLUMNS = 42;
 const int LEGEND_ROWS = 5;
@@ -161,5 +154,10 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
 void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **, PlayerInformation &Player, bool &CharacterisHit);
 void pause();
+
+void createCharacter();
+void renderCreation();
+void changeCharacter(WORD &charColor, char &charIcon);
+void renderCreationPreview();
 
 #endif // _GAME_H

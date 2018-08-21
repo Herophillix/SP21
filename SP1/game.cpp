@@ -21,23 +21,20 @@ string bossmapline;
 string aline;
 string bossline;
 string pauseline;
+string createline;
 string legendline;
 string gunline;
 string portalline;
-string stagetwoline;
-string loseline;
 
 WORD Char = 0x02;
 WORD charColor = 0xe2;
-WORD baseColor = 0xe2;
-WORD baseColor2 = 0x0b;
+char charIcon = (char)3;
 
 char *BaseMaze[MAP_ROWS];
 char *Level1Maze[MAP_ROWS];
-char *Level2Maze[MAP2_ROWS];
 char *SplashMaze[MAP_ROWS];
-char *Lose[MAP_ROWS];
 char *Pause[MAP_ROWS];
+char *Create[MAP_ROWS];
 char *Legend[LEGEND_ROWS];
 char *BossMap[MAP_ROWS];
 char *BossChar[27];
@@ -65,12 +62,10 @@ bool charWordBulletTimeout = false;
 int charWordBulletCharge = 0;
 int bossHealth = 300;
 int bossMaxHealth = 300;
-int charbossX = 4;
+int charbossX = 59;//59
 int charbossY = 3;
-int Rowrender;
 
 bool pausetoggle = false;
-bool losetoggle = false;
 
 int KeyonMap = 0;
 int DooronMap = 0;
@@ -97,12 +92,13 @@ double  g_eElapsedTime;
 double  g_dDeltaTime;
 double  g_bBounceTime[6];
 
+
 // Game specific variables here
 
 SGameChar   g_sChar, g_enemy, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, g_boss, g_bossMainGun, g_bossSubGun1, g_bossSubGun2, g_Wordbullet;
 vector <SGameChar> g_bossSubBullet, g_bossSubBullet2;
 EGAMESTATES g_eGameState = S_SPLASHSCREEN;
-EGAMEMODES  g_eGamemode = S_STAGEONE;
+EGAMEMODES  g_eGamemode = S_CREATION; // starts off with creating character
 double  g_dBounceTime;
 double  g_eBounceTime;// this is to prevent key bouncing, so we won't trigger keypresses more than once
 
@@ -336,23 +332,23 @@ void init(void)
 		}
 		pauseScreen.close();
 	}
-	ifstream loseScreen("Losescreen.txt");
-	if (loseScreen.is_open())
+	ifstream creationScreen("characterselection.txt");
+	if (creationScreen.is_open())
 	{
 		for (int i = 0; i < MAP_ROWS; i++)
 		{
-			Lose[i] = new char[MAP_COLUMNS];
-			getline(loseScreen, loseline);
-			for (int a = 0; a < MAP_COLUMNS; a++)
+			Create[i] = new char[72];
+			getline(creationScreen, createline);
+			for (int a = 0; a < 72; a++)
 			{
-				if ((loseline[a] == 43) || (loseline[a] == 124) || (loseline[a] == 45))
+				if ((createline[a] == '-') || (createline[a] == '+') || (createline[a] == '|') || (createline[a] == '_'))
 				{
-					loseline[a] = (char)219;
+					createline[a] = (char)219;
 				}
-				Lose[i][a] = loseline[a];
+				Create[i][a] = createline[a];
 			}
 		}
-		loseScreen.close();
+		creationScreen.close();
 	}
 	ifstream legend("legend.txt");
 	if (legend.is_open())
@@ -396,24 +392,7 @@ void init(void)
 		}
 		portalstream.close();
 	}
-	ifstream mapTwo("map02.txt");
-	if (mapTwo.is_open())
-	{
-		for (int i = 0; i < MAP2_ROWS; i++)
-		{
-			Level2Maze[i] = new char[MAP2_COLUMNS];
-			getline(mapTwo, stagetwoline);
-			for (int a = 0; a < MAP2_COLUMNS; a++)
-			{
-				if ((stagetwoline[a] == 43) || (stagetwoline[a] == 124) || (stagetwoline[a] == 45))
-				{
-					stagetwoline[a] = (char)219;
-				}
-				Level2Maze[i][a] = stagetwoline[a];
-			}
-		}
-	}
-	Player.Health = 5;
+	Player.Health = 3;
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
 	Player.Key[NUM_OF_KEYS] = { 0, };
@@ -481,8 +460,6 @@ void update(double dt)
 		break;
 	case S_PAUSE: pause();
 		break;
-	case S_LOSE: playerlose();
-		break;
 	}
 }
 
@@ -500,7 +477,7 @@ void splashScreenWait()    // waits for time to pass in splash screen
 void clearScreen()
 {
 	// Clears the buffer with this colour attribute
-	g_Console.clearBuffer(baseColor);
+	g_Console.clearBuffer(0xe2);
 }
 
 void processUserInput()
@@ -527,17 +504,6 @@ void processUserInput()
 	}
 }
 
-void processLoseUserInput()
-{
-	if (g_abKeyPressed[K_ESCAPE])
-		g_bQuitGame = true;
-	else if (g_abKeyPressed[K_SPACE])
-	{
-		g_eGamemode = S_STAGEONE;
-		init();
-	}
-}
-
 //Rendering
 
 //--------------------------------------------------------------
@@ -558,8 +524,6 @@ void render()
 	case S_GAME: renderGame();
 		break;
 	case S_PAUSE: renderGame();
-		break;
-	case S_LOSE: playerlose();
 		break;
 	}
 	renderFramerate();  // renders debug information, frame rate, elapsed time, etc
@@ -964,7 +928,15 @@ void renderGame()
 {
 	if (g_eGameState == S_GAME)
 	{
-		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_STAGETWO))
+		switch (g_eGamemode)
+		{
+		case S_CREATION:
+		{
+			renderCreation();
+			renderCreationPreview();
+			break;
+		}
+		case S_STAGEONE:
 		{
 			renderMap();        // renders the map to the buffer first 
 			renderInfo();
@@ -975,8 +947,9 @@ void renderGame()
 			renderbullet();
 			renderbulletPRed();
 			renderbulletPBlue();
+			break;
 		}
-		else if (g_eGamemode == S_BOSSONE)
+		case S_BOSSONE:
 		{
 			renderBossmap();
 			renderInfo();
@@ -985,6 +958,8 @@ void renderGame()
 			//renderbossattack();
 			renderShootbossbullet();
 			renderBossHealth();
+			break;
+		}
 		}
 	}
 	else if (g_eGameState == S_PAUSE)
@@ -993,10 +968,32 @@ void renderGame()
 		renderInfo();
 		renderLegend();
 	}
-	else if (g_eGameState == S_LOSE)
+}
+
+void renderCreation()
+{
+	COORD c;
+	string acreateline;
+	acreateline.resize(72, ' ');
+	for (int i = 0; i < MAP_ROWS; i++)
 	{
-		renderLosescreen();
+		c.X = 0;
+		c.Y = i + 1;
+		for (int a = 0; a < 72; a++)
+		{
+			acreateline[a] = Create[i][a];
+			if (acreateline[a] == 'D')
+			{
+				acreateline[a] = (char)219;
+			}
+		}
+		g_Console.writeToBuffer(c, acreateline, 0xe2);
 	}
+}
+
+void renderCreationPreview()
+{
+	g_Console.writeToBuffer(35,10, charIcon, charColor);
 }
 
 void renderenemy()
@@ -1013,32 +1010,12 @@ void renderMap()
 {
 	COORD c;
 	string aline;
-	switch (g_eGamemode)
-	{
-	case S_STAGEONE:
-	{
-		aline.resize(MAP_COLUMNS, ' ');
-		Rowrender = MAP_ROWS;
-		break;
-	}
-	case S_BOSSONE:
-	{
-		aline.resize(MAP_COLUMNS, ' ');
-		Rowrender = MAP_ROWS;
-		break;
-	}
-	case S_STAGETWO:
-	{
-		aline.resize(MAP2_COLUMNS, ' ');
-		Rowrender = MAP2_ROWS;
-		break;
-	}
-	}
-	for (int i = 0; i < Rowrender; i++)
+	aline.resize(MAP_COLUMNS, ' ');
+	for (int i = 0; i < MAP_ROWS; i++)
 	{
 		c.X = 0;
 		c.Y = i + 1;
-		for (int a = 0; a < (int)aline.size(); a++)
+		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			aline[a] = BaseMaze[i][a];
 			if (aline[a] == 'D')
@@ -1046,8 +1023,8 @@ void renderMap()
 				aline[a] = (char)219;
 			}
 		}
-		g_Console.writeToBuffer(c, aline, baseColor);
-		for (int a = 0; a < (int)aline.size(); a++)
+		g_Console.writeToBuffer(c, aline, 0xe2);
+		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			aline[a] = BaseMaze[i][a];
 			if (a == g_portalEntrance.m_cLocation.X && i == g_portalEntrance.m_cLocation.Y)
@@ -1068,7 +1045,7 @@ void renderMap()
 			if (aline[a] == 'd')
 			{
 				aline[a] = (char)219;
-				g_Console.writeToBuffer(a, i + 1, aline[a], 0xe6);
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x06);
 			}
 		}
 	}
@@ -1086,24 +1063,7 @@ void renderPausescreen()
 		for (int a = 0; a < MAP_COLUMNS; a++)
 		{
 			pauseline[a] = Pause[i][a];
-			g_Console.writeToBuffer(c, pauseline, baseColor);
-		}
-	}
-}
-
-void renderLosescreen()
-{
-	COORD c;
-	string loseline;
-	loseline.resize(MAP_COLUMNS, ' ');
-	for (int i = 0; i < MAP_ROWS; i++)
-	{
-		c.X = 0;
-		c.Y = i + 1;
-		for (int a = 0; a < MAP_COLUMNS; a++)
-		{
-			loseline[a] = Lose[i][a];
-			g_Console.writeToBuffer(c, loseline, 0xe2);
+			g_Console.writeToBuffer(c, pauseline, 0xe2);
 		}
 	}
 }
@@ -1228,31 +1188,23 @@ void renderInfo()
 	int SpriteRow[infoSize] = { 0, 3, 3 + 3, 3 + 3 + 3 + PORTAL_ROWS };
 	for (int i = 0; i < MAP_ROWS; i++)
 	{
-		switch (g_eGamemode)
-		{
-		case S_STAGEONE: c.X = MAP_COLUMNS + 2;
-			break;
-		case S_BOSSONE: c.X = MAP_COLUMNS + 2;
-			break;
-		case S_STAGETWO: c.X = MAP2_COLUMNS + 2;
-			break;
-		}
+		c.X = MAP_COLUMNS + 2;
 		c.Y = i + 1;
 		int keySpacing = c.X + Info[3].length();
 		for (int a = 0; a < infoSize; a++)
 		{
 			if (i == SpriteRow[a])
 			{
-				g_Console.writeToBuffer(c, Info[a], baseColor);
+				g_Console.writeToBuffer(c, Info[a], 0xe2);
 				c.X += Info[a].length();
-				g_Console.writeToBuffer(c, Number[a], baseColor);
+				g_Console.writeToBuffer(c, Number[a], 0xe2);
 			}
 		}
 		for (int keyCounter = 0; keyCounter < NUM_OF_KEYS; keyCounter++)
 		{
 			if (Player.Key[keyCounter] == true)
 			{
-				g_Console.writeToBuffer(keySpacing + keyCounter, SpriteRow[3] + 1, (char)168, baseColor);
+				g_Console.writeToBuffer(keySpacing + keyCounter, SpriteRow[3] + 1, (char)168, 0xe2);
 				keySpacing += 1;
 			}
 		}
@@ -1284,20 +1236,12 @@ void renderInfo()
 	{
 		for (int b = 0; b < GUN_ROWS; b++)
 		{
-			switch (g_eGamemode)
-			{
-			case S_STAGEONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_BOSSONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_STAGETWO: a.X = MAP2_COLUMNS + 2;
-				break;
-			}
+			a.X = MAP_COLUMNS + 2;
 			a.Y = SpriteRow[2] + 1;
 			for (int yt = 0; yt < GUN_COLUMNS; yt++)
 			{
 				gunline[yt] = GunInfo[b][yt];
-				g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, gunline[yt], baseColor);
+				g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, gunline[yt], 0xe2);
 			}
 		}
 	}
@@ -1305,41 +1249,25 @@ void renderInfo()
 	{
 		for (int b = 0; b < GUN_ROWS; b++)
 		{
-			switch (g_eGamemode)
-			{
-			case S_STAGEONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_BOSSONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_STAGETWO: a.X = MAP2_COLUMNS + 2;
-				break;
-			}
+			a.X = MAP_COLUMNS + 2;
 			a.Y = SpriteRow[2] + 1;
 			for (int yt = 0; yt < GUN_COLUMNS; yt++)
 			{
 				gunline[yt] = GunInfo[b][yt];
-				g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, gunline[yt], baseColor);
+				g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, gunline[yt], 0xe2);
 			}
 		}
 	}
 	else if ((bulletcondition == 2) || (bulletcondition == 3))
 	{
-	for (int b = 0; b < PORTAL_ROWS; b++)
+			for (int b = 0; b < PORTAL_ROWS; b++)
 	{
-		switch (g_eGamemode)
-		{
-		case S_STAGEONE: a.X = MAP_COLUMNS + 2;
-			break;
-		case S_BOSSONE: a.X = MAP_COLUMNS + 2;
-			break;
-		case S_STAGETWO: a.X = MAP2_COLUMNS + 2;
-			break;
-		}
+		a.X = MAP_COLUMNS + 2;
 		a.Y = SpriteRow[2] + 1;
 		for (int yt = 0; yt < PORTAL_COLUMNS; yt++)
 		{
 			portalline[yt] = PortalInfo[b][yt];
-			g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, portalline[yt], baseColor);
+			g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, portalline[yt], 0xe2);
 		}
 	}
 	}
@@ -1351,13 +1279,13 @@ void renderLegend()
 	for (int i = 0; i < LEGEND_ROWS; i++)
 	{
 		COORD c;
-		c.X = 1;
+		c.X = 0;
 		c.Y = MAP_ROWS + i + 2;
 		legendline.resize(LEGEND_COLUMNS, ' ');
 		for (int a = 0; a < LEGEND_COLUMNS; a++)
 		{
 			legendline[a] = Legend[i][a];
-			g_Console.writeToBuffer(c, legendline, baseColor);
+			g_Console.writeToBuffer(c, legendline, 0xe2);
 		}
 		for (int a = 0; a < LEGEND_COLUMNS; a++)
 		{
@@ -1365,7 +1293,7 @@ void renderLegend()
 			if (legendline[a] == '1')
 			{
 				legendline[a] = (char)3;
-				g_Console.writeToBuffer(c.X, c.Y, legendline[a], baseColor);
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], 0xe2);
 			}
 			else if (legendline[a] == '2')
 			{
@@ -1385,7 +1313,7 @@ void renderLegend()
 			else if (legendline[a] == '5')
 			{
 				legendline[a] = (char)219;
-				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], baseColor);
+				g_Console.writeToBuffer(c.X + a, c.Y, legendline[a], 0xe2);
 			}
 			else if (legendline[a] == '6')
 			{
@@ -1414,7 +1342,7 @@ void renderCharacter()
 	{
 	case S_STAGEONE:
 	{
-		charColor = baseColor;
+		charColor = 0xe2;
 		break;
 	}
 	case S_BOSSONE:
@@ -1525,7 +1453,7 @@ void renderbullet()
 {
 	if (Bulletpos == true)
 	{
-		WORD Char = baseColor;
+		WORD Char = 0xe2;
 		g_Console.writeToBuffer(g_bullet.m_cLocation, (char)254, Char);
 	}
 }
@@ -1579,13 +1507,17 @@ void gameplay()            // gameplay logic
 {
 	switch (g_eGamemode)
 	{
+	case S_CREATION: createCharacter();
+		break;
 	case S_STAGEONE: Stageone();
 		break;
 	case S_BOSSONE: Bossone();
 		break;
-	case S_STAGETWO: Stageone();
-		break;
 	}
+}
+void createCharacter()
+{
+	changeCharacter(charColor, charIcon);
 }
 void Stageone()
 {
@@ -1630,7 +1562,7 @@ void renderBossHealth()
 {
 	COORD c;
 	string bossline;
-	for (int i = 1; i < 5; i++)
+	for (int i = 1; i < 4; i++)
 	{
 		bossline.resize(22, ' ');
 		c.Y = i + 1;
@@ -1687,18 +1619,6 @@ void renderBossHealth()
 		{
 			g_Console.writeToBuffer(20, c.Y, bossline, 0xFF);
 			break;
-		}
-		case 4:
-		{
-			if (bossHealth <= 0)
-			{
-				g_eGamemode = S_STAGETWO;
-				g_sChar.m_cLocation.X = 2;
-				g_sChar.m_cLocation.Y = 3;
-				changeMap();
-			}
-			break;
-
 		}
 		}
 
@@ -1788,19 +1708,19 @@ void changeMap()
 {
 	switch (g_eGameState)
 	{
-		//case S_PAUSE:
-		//{
-		//	delete[] * BaseMaze;
-		//	*BaseMaze = new char[MAP_COLUMNS];
-		//	for (int i = 0; i < MAP_ROWS; i++)
-		//	{
-		//		for (int a = 0; a < MAP_COLUMNS; a++)
-		//		{
-		//			BaseMaze[i][a] = Pause[i][a];
-		//		}
-		//	}
-		//	break;
-		//}
+	//case S_PAUSE:
+	//{
+	//	delete[] * BaseMaze;
+	//	*BaseMaze = new char[MAP_COLUMNS];
+	//	for (int i = 0; i < MAP_ROWS; i++)
+	//	{
+	//		for (int a = 0; a < MAP_COLUMNS; a++)
+	//		{
+	//			BaseMaze[i][a] = Pause[i][a];
+	//		}
+	//	}
+	//	break;
+	//}
 	case S_GAME:
 	{
 		switch (g_eGamemode)
@@ -1829,19 +1749,6 @@ void changeMap()
 				for (int a = 0; a < MAP_COLUMNS; a++)
 				{
 					BaseMaze[i][a] = BossMap[i][a];
-				}
-			}
-			break;
-		}
-		case S_STAGETWO:
-		{
-			delete[] * BaseMaze;
-			*BaseMaze = new char[MAP2_COLUMNS];
-			for (int i = 0; i < MAP2_ROWS; i++)
-			{
-				for (int a = 0; a < MAP2_COLUMNS; a++)
-				{
-					BaseMaze[i][a] = Level2Maze[i][a];
 				}
 			}
 			break;
@@ -2219,15 +2126,4 @@ SGameChar createBossSubBullet(SGameChar &SubGunStart)
 void pause()
 {
 	processUserInput();
-}
-void playerlose()
-{
-	processLoseUserInput();
-}
-void checkhealth()
-{
-	if (Player.Health == 0)
-	{
-		g_eGameState = S_LOSE;
-	}
 }
