@@ -77,7 +77,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="boss.cpp" />
     <ClCompile Include="check.cpp" />
+    <ClCompile Include="createcharacter.cpp" />
     <ClCompile Include="enemy.cpp" />
     <ClCompile Include="Framework\console.cpp" />
     <ClCompile Include="Framework\timer.cpp" />
@@ -87,6 +89,7 @@
     <ClCompile Include="shoot.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="boss.h" />
     <ClInclude Include="Framework\console.h" />
     <ClInclude Include="Framework\timer.h" />
     <ClInclude Include="game.h" />

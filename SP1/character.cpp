@@ -1,6 +1,6 @@
 #include "game.h"
 #include "move.h"
-#include "Framework\console.h"
+
 bool isKeyPressedMove[K_COUNT];
 
 void getInputmove()
@@ -66,7 +66,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	{
 		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
 		{
-			if (doorcheck(Key, ItemNumber))
+			if (doorcheck(Key, ItemNumber, Key))
 			{
 				Key.Checker[Key.id[ItemNumber]] = true;
 				DoorA.Checker[Key.id[ItemNumber]] = true;
@@ -74,7 +74,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 				Player.Key[Key.id[ItemNumber]] = true;
 				ItemNumber = NUM_OF_KEYS;
 			}
-			else if (doorcheck(DoorA, ItemNumber))
+			else if (doorcheck(DoorA, ItemNumber, Key))
 			{
 				for (int i = 0; i < MAP_ROWS; i++)
 				{
@@ -113,8 +113,8 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	}
 	if (bSomethingHappened)
 	{
-		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.0875; // 125ms should be enough
+		// set the bounce time to some time in the future to prevent accidental triggers 
+		g_dBounceTime = g_dElapsedTime + 0.0875;  // 125ms should be enough
 	}
 }
 

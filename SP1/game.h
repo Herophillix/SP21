@@ -4,10 +4,27 @@
 #include "Framework\timer.h"
 #include "Framework\console.h"
 #include "shoot.h"
+#include "boss.h"
+#include <vector>
 using namespace std;
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
+const int NUM_COLUMNS = 160;
+const int NUM_ROWS = 50;
+const int MAP_COLUMNS = 64;
+const int MAP_ROWS = 32;
+const int MAP2_COLUMNS = 103;
+const int MAP2_ROWS = 29;
+const int NUM_OF_KEYS = 10;
+const int LEGEND_COLUMNS = 42;
+const int LEGEND_ROWS = 5;
+const int GUN_COLUMNS = 27;
+const int GUN_ROWS = 8;
+const int PORTAL_COLUMNS = 12;
+const int PORTAL_ROWS = 12;
+
+
 
 // Enumeration to store the control keys that your game will have
 enum EKEYS
@@ -24,6 +41,7 @@ enum EKEYS
 	K_P,
 	K_E,
 	K_Q,
+	K_R,
     K_COUNT
 };
 
@@ -40,6 +58,7 @@ enum EGAMEMODES
 {
 	S_STAGEONE,
 	S_BOSSONE,
+	S_CREATION,
 	S_STAGETWO
 };
 // struct for the game character
@@ -48,6 +67,29 @@ struct SGameChar
     COORD m_cLocation;
     bool  m_bActive;
 };
+
+struct PlayerInformation
+{
+	int Health;
+	int Points;
+	int CurrentWeapon;
+	bool Key[NUM_OF_KEYS];
+};
+
+struct Adjacent
+{
+	COORD AdjacentSides[MAP_COLUMNS];
+};
+
+struct KDInformation
+{
+	bool Checker[NUM_OF_KEYS];
+	bool isKey = false;
+	int id[NUM_OF_KEYS];
+	COORD Location[NUM_OF_KEYS];
+	Adjacent Sides[NUM_OF_KEYS];
+};
+
 void init        ( void );      // initialize your variables, allocate memory, etc
 void getInput    ( void );      // get input from player
 void update      ( double dt ); // update the game and the state of the game
@@ -77,16 +119,18 @@ void playerlose();
 void renderLosescreen();
 
 void checkhealth();
+void initafterlose();
 
 void Bossone();
+void BossoneVar(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, double(&g_bBounceTime)[6], vector<SGameChar>&, vector<SGameChar>&);
 void Stageone();
-void bossMove();
+void bossMove(SGameChar&);
 void changeMap();
-void bossAttackMachineGun();
-void bossAttackMachineGunLeft();
-void bossAttackMachineGunRight();
-void bossAttackLazer();
-void charshootboss();
+void bossAttackMachineGun(SGameChar&,SGameChar&, SGameChar&);
+void bossAttackMachineGunLeft(SGameChar&, SGameChar&, char**, vector<SGameChar>&);
+void bossAttackMachineGunRight(SGameChar&, SGameChar&, char**, vector<SGameChar>&);
+void bossAttackLazer(SGameChar&, SGameChar&, char**);
+void charshootboss(SGameChar&, SGameChar&, bool&, double(&g_bBounceTime)[6], double&, char**);
 void renderShootbossbullet();
 void renderBossChar();
 void renderBossmap();
@@ -120,46 +164,18 @@ void track(char**, SGameChar&, SGameChar&);
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 160;
-const int NUM_ROWS = 50;
-const int MAP_COLUMNS = 64;
-const int MAP_ROWS = 32;
-const int MAP2_COLUMNS = 103;
-const int MAP2_ROWS = 29;
-const int NUM_OF_KEYS = 10;
-const int LEGEND_COLUMNS = 42;
-const int LEGEND_ROWS = 5;
-const int GUN_COLUMNS = 27;
-const int GUN_ROWS = 8;
-const int PORTAL_COLUMNS = 12;
-const int PORTAL_ROWS = 12;
-
-struct PlayerInformation 
-{
-	int Health;
-	int Points;
-	int CurrentWeapon;
-	bool Key[NUM_OF_KEYS];
-};
-
-struct Adjacent
-{
-	COORD AdjacentSides[MAP_COLUMNS];
-};
-
-struct KDInformation
-{
-	bool Checker[NUM_OF_KEYS];
-	bool isKey = false;
-	int id[NUM_OF_KEYS];
-	COORD Location[NUM_OF_KEYS];
-	Adjacent Sides[NUM_OF_KEYS];
-};
-
-bool doorcheck(KDInformation Item, int ItemNumber);
+bool doorcheck(KDInformation Item, int ItemNumber, KDInformation Key);
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
 	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
 void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **, PlayerInformation &Player, bool &CharacterisHit);
 void pause();
+
+void createCharacter();
+void renderCreation();
+void changeCharacter(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
+void changeDetail(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
+void renderCreationPreview();
+void renderCreationOptions();
+void renderCreationDetails();
 
 #endif // _GAME_H
