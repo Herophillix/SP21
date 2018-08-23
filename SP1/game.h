@@ -24,8 +24,8 @@ const int GUN_COLUMNS = 27;
 const int GUN_ROWS = 8;
 const int PORTAL_COLUMNS = 12;
 const int PORTAL_ROWS = 12;
-
-
+const int SPACEGUNSHIP_COLUMNS = 19;
+const int SPACEGUNSHIP_ROWS = 10;
 
 // Enumeration to store the control keys that your game will have
 enum EKEYS

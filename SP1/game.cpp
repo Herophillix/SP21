@@ -27,8 +27,10 @@ string gunline;
 string portalline;
 string stagetwoline;
 string loseline;
+string spacegunshipline;
 
 WORD Char = 0x02;
+WORD Spaceguncolor = 0x20;
 WORD charColor = 0x02;
 WORD baseColor = 0x0b;
 WORD baseColor2 = 0x0b;
@@ -50,6 +52,7 @@ char *BossMap[MAP_ROWS];
 char *BossChar[27];
 char *GunInfo[GUN_ROWS];
 char *PortalInfo[PORTAL_ROWS];
+char *SpacegunshipInfo[SPACEGUNSHIP_ROWS];
 
 int Rowrender;
 
@@ -394,6 +397,20 @@ void init(void)
 			for (int a = 0; a < PORTAL_COLUMNS; a++)
 			{
 				PortalInfo[i][a] = portalline[a];
+			}
+		}
+		portalstream.close();
+	}
+	ifstream spacegunstream("spacegunship.txt");
+	if (spacegunstream.is_open())
+	{
+		for (int i = 0; i < SPACEGUNSHIP_ROWS; i++)
+		{
+			SpacegunshipInfo[i] = new char[SPACEGUNSHIP_COLUMNS];
+			getline(spacegunstream, spacegunshipline);
+			for (int a = 0; a < SPACEGUNSHIP_COLUMNS; a++)
+			{
+				SpacegunshipInfo[i][a] = spacegunshipline[a];
 			}
 		}
 		portalstream.close();
@@ -1617,7 +1634,7 @@ void renderInfo()
 			if (i == SpriteRow[a])
 			{
 				g_Console.writeToBuffer(c, Info[a], baseColor);
-				c.X += Info[a].length();
+				c.X += (short)Info[a].length();
 				g_Console.writeToBuffer(c, Number[a], baseColor);
 			}
 		}
@@ -1654,7 +1671,7 @@ void renderInfo()
 	}
 	if (g_eGamemode == S_BOSSONE)
 	{
-		for (int b = 0; b < GUN_ROWS; b++)
+		for (int b = 0; b < SPACEGUNSHIP_ROWS; b++)
 		{
 			switch (g_eGamemode)
 			{
@@ -1666,10 +1683,17 @@ void renderInfo()
 				break;
 			}
 			a.Y = SpriteRow[2] + 1;
-			for (int yt = 0; yt < GUN_COLUMNS; yt++)
+			for (int yt = 0; yt < SPACEGUNSHIP_COLUMNS; yt++)
 			{
-				gunline[yt] = GunInfo[b][yt];
-				g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, gunline[yt], baseColor);
+				spacegunshipline[yt] = SpacegunshipInfo[b][yt];
+				if (yt == 9 && b == 5)
+				{
+					g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, spacegunshipline[yt], Spaceguncolor);
+				}
+				else
+				{
+					g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, spacegunshipline[yt], baseColor);
+				}
 			}
 		}
 	}
@@ -1853,6 +1877,7 @@ void renderShootbossbullet()
 				case 0:
 				{
 					Char = 0x03;
+					Spaceguncolor = 0x30;
 					charWordBulletCharge = i + 1;
 					i = -2;
 					break;
@@ -1860,6 +1885,7 @@ void renderShootbossbullet()
 				case 1:
 				{
 					Char = 0x01;
+					Spaceguncolor = 0x10;
 					charWordBulletCharge = i + 1;
 					i = -2;
 					break;
@@ -1867,6 +1893,7 @@ void renderShootbossbullet()
 				case 2:
 				{
 					Char = 0x05;
+					Spaceguncolor = 0x50;
 					charWordBulletCharge = i + 1;
 					i = -2;
 					break;
@@ -1874,6 +1901,7 @@ void renderShootbossbullet()
 				case 3:
 				{
 					Char = 0x04;
+					Spaceguncolor = 0x40;
 					charWordBulletCharge = i + 1;
 					i = -2;
 					break;
@@ -1881,6 +1909,7 @@ void renderShootbossbullet()
 				case 4:
 				{
 					Char = 0x06;
+					Spaceguncolor = 0x60;
 					charWordBulletCharge = i + 1;
 					i = -2;
 					break;
@@ -1888,6 +1917,7 @@ void renderShootbossbullet()
 				case 5:
 				{
 					Char = 0x06;
+					Spaceguncolor = 0x60;
 					charWordBulletCharge = i;
 					charWordBulletHold = false;
 					charWordBulletTimeout = true;
@@ -1899,6 +1929,7 @@ void renderShootbossbullet()
 				if (i == -1)
 				{
 					Char = 0x02;
+					Spaceguncolor = 0x20;
 					charWordBulletCharge = 0;
 				}
 			}
@@ -2204,4 +2235,4 @@ void checkhealth()
 	{
 		g_eGameState = S_LOSE;
 	}
-}
+} 
