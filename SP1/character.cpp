@@ -16,12 +16,6 @@ void getInputmove()
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
 	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
 {
-	//if (g_eGamemode == S_BOSSONE)
-	//{
-	//	
-	//	return;
-	//}
-
 	getInputmove();
 	bool bSomethingHappened = false;
 	if (g_dBounceTime > g_dElapsedTime)
@@ -31,7 +25,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_UP] && g_sChar.m_cLocation.Y > 1)
 	{
 		//Beep(1440, 30);
-		if (upcheck(g_sChar))
+		if (upcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.Y--;
 		}
@@ -41,7 +35,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
 	{
 		//Beep(1440, 30);
-		if (rightcheck(g_sChar))
+		if (rightcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.X++;
 		}
@@ -51,7 +45,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
 	{
 		//Beep(1440, 30);
-		if (downcheck(g_sChar))
+		if (downcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.Y++;
 		}
@@ -61,7 +55,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if (isKeyPressedMove[K_LEFT] && g_sChar.m_cLocation.X > 0)
 	{
 		//Beep(1440, 30);
-		if (leftcheck(g_sChar))
+		if (leftcheck(g_sChar, Maze))
 		{
 			g_sChar.m_cLocation.X--;
 		}
@@ -110,80 +104,12 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime,SGameChar &g_sC
 	if ((g_sChar.m_cLocation.Y == charbossY) && (g_sChar.m_cLocation.X == charbossX))
 	{
 		g_eGamemode = S_BOSSONE;
+		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
+		{
+			Player.Key[ItemNumber] = false;
+		}
 		changeMap();
 	}
-	if (bSomethingHappened)
-	{
-		// set the bounce time to some time in the future to prevent accidental triggers
-		g_dBounceTime = g_dElapsedTime + 0.0875; // 125ms should be enough
-	}
-}
-
-void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **BossMap, PlayerInformation &Player, bool &CharacterisHit)
-{
-	getInputmove();
-	bool bSomethingHappened = false;
-	if (g_dBounceTime > g_dElapsedTime)
-		return;
-	// Updating the location of the character based on the key press
-	// providing a beep sound whenver we shift the character
-	if (isKeyPressedMove[K_UP] && g_sChar.m_cLocation.Y > 14)
-	{
-		//Beep(1440, 30);
-		if (upcheck(g_sChar))
-		{
-			g_sChar.m_cLocation.Y--;
-		}
-		bSomethingHappened = true;
-	}
-	if (isKeyPressedMove[K_RIGHT] && g_sChar.m_cLocation.X < g_Console.getConsoleSize().X - 1)
-	{
-		//Beep(1440, 30);
-		if (rightcheck(g_sChar))
-		{
-			g_sChar.m_cLocation.X++;
-		}
-		bSomethingHappened = true;
-	}
-	if (isKeyPressedMove[K_DOWN] && g_sChar.m_cLocation.Y < g_Console.getConsoleSize().Y - 1)
-	{
-		//Beep(1440, 30);
-		if (downcheck(g_sChar))
-		{
-			g_sChar.m_cLocation.Y++;
-		}
-		bSomethingHappened = true;
-	}
-	if (isKeyPressedMove[K_LEFT] && g_sChar.m_cLocation.X > 0)
-	{
-		//Beep(1440, 30);
-		if (leftcheck(g_sChar))
-		{
-			g_sChar.m_cLocation.X--;
-			//if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '1') ||
-			//	(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X - 1] == '0'))&&(g_eBounceTime < g_dElapsedTime))
-			//{
-			//	Player.Health--;
-			//	CharacterisHit = true;
-			//	g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
-			//}
-		}
-		bSomethingHappened = true;
-	}
-	
-	if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '1') ||
-		(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '0'))&&(g_eBounceTime < g_dElapsedTime))
-	{
-		Player.Health--;
-		CharacterisHit = true;
-		g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
-	}
-
-	//if ((g_sChar.m_cLocation.Y == charbossY) && (g_sChar.m_cLocation.X == charbossX))
-	//{
-	//	g_eGamemode = S_BOSSONE;
-	//	changeMap();
-	//}
 	if (bSomethingHappened)
 	{
 		// set the bounce time to some time in the future to prevent accidental triggers

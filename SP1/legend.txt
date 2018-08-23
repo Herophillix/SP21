@@ -1,0 +1,5 @@
+Legends                                  
+1 - Player          5 - Wall             
+2 - Key             6 - Door             
+3 - Enemy           7 - Portal Entrance  
+4 - Boss            8 - Portal Exit      

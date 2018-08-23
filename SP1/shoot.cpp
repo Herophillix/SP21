@@ -67,7 +67,7 @@ void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, 
 		}
 		}
 	}
-	movebullet(g_bullet, g_portalEntrance, g_portalExit);
+	movebullet(g_bullet, g_portalEntrance, g_portalExit, Maze);
 	movebulletPRed(g_bulletP, g_portalEntrance, g_sChar, Maze);
 	movebulletPBlue(g_bulletP, g_portalExit, g_sChar, Maze);
 }
@@ -117,7 +117,7 @@ void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTi
 	}
 }
 
-void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit)
+void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_portalExit, char** Maze)
 {
 	if (Bulletpos == true)
 	{
@@ -125,7 +125,7 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 		case 1:
 		{
-			if (upcheck(g_bullet) || upcheckB(g_bullet))
+			if (upcheck(g_bullet, Maze) || upcheckB(g_bullet, Maze))
 			{
 				g_bullet.m_cLocation.Y--;
 			}
@@ -143,7 +143,7 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 2:
 		{
-			if (rightcheck(g_bullet) || rightcheckB(g_bullet))
+			if (rightcheck(g_bullet, Maze) || rightcheckB(g_bullet, Maze))
 			{
 				g_bullet.m_cLocation.X++;
 			}
@@ -161,7 +161,7 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 3:
 		{
-			if (downcheck(g_bullet) || downcheckB(g_bullet))
+			if (downcheck(g_bullet, Maze) || downcheckB(g_bullet, Maze))
 			{
 				g_bullet.m_cLocation.Y++;
 			}
@@ -179,7 +179,7 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 4:
 		{
-			if (leftcheck(g_bullet) || leftcheckB(g_bullet))
+			if (leftcheck(g_bullet, Maze) || leftcheckB(g_bullet, Maze))
 			{
 				g_bullet.m_cLocation.X--;
 			}
@@ -297,7 +297,7 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP) || upcheckB(g_bulletP))
+			if (upcheck(g_bulletP, Maze) || upcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -323,7 +323,7 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP) || rightcheckB(g_bulletP))
+			if (rightcheck(g_bulletP, Maze) || rightcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -349,7 +349,7 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP) || downcheckB(g_bulletP))
+			if (downcheck(g_bulletP, Maze) || downcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -375,7 +375,7 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP) || leftcheckB(g_bulletP))
+			if (leftcheck(g_bulletP, Maze) || leftcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
@@ -411,7 +411,7 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP) || upcheckB(g_bulletP))
+			if (upcheck(g_bulletP, Maze) || upcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -437,7 +437,7 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP) || rightcheckB(g_bulletP))
+			if (rightcheck(g_bulletP, Maze) || rightcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -463,7 +463,7 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP) || downcheckB(g_bulletP))
+			if (downcheck(g_bulletP, Maze) || downcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -489,7 +489,7 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP) || leftcheckB(g_bulletP))
+			if (leftcheck(g_bulletP, Maze) || leftcheckB(g_bulletP, Maze))
 			{
 				g_bulletP.m_cLocation.X--;
 			}

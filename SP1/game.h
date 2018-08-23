@@ -21,9 +21,7 @@ enum EKEYS
 	K_1,
 	K_2,
 	K_3,
-	K_NUMPAD0,
-	K_NUMPAD1,
-	K_NUMPAD2,
+	K_P,
 	K_E,
 	K_Q,
     K_COUNT
@@ -32,14 +30,20 @@ enum EKEYS
 // Enumeration for the different screen states
 enum EGAMESTATES
 {
-    S_SPLASHSCREEN,
-    S_GAME,
-    S_COUNT
+	S_SPLASHSCREEN,
+	S_GAME,
+	S_PAUSE,
+	S_LOSE,
+    S_COUNT,
+
 };
 enum EGAMEMODES
 {
 	S_STAGEONE,
-	S_BOSSONE
+	S_BOSSONE,
+	S_STAGETWO,
+	S_BOSSTWO
+
 };
 // struct for the game character
 struct SGameChar
@@ -61,8 +65,10 @@ void clearScreen();         // clears the current screen and draw from scratch
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
 void renderMap();           // renders the map to the buffer first
+void renderPausescreen();
 void renderenemy();
 void renderInfo();
+void renderLegend();
 void renderCharacter();     // renders the character into the buffer
 void renderbulletPRed();
 void renderbulletPBlue();
@@ -70,34 +76,35 @@ void renderFramerate();     // renders debug information, frame rate, elapsed ti
 void renderToScreen();      // dump the contents of the buffer to the screen, one frame worth of game
 void renderbullet();
 void information();
+void checkhealth();
+void renderLosescreen();
 
 void Bossone();
 void Stageone();
 void bossMove();
 void changeMap();
-void bossAttackMachineGunLeft();
-void bossAttackMachineGunRight();
+void bossAttackMachineGun();
 void bossAttackLazer();
 void charshootboss();
 void renderShootbossbullet();
 void renderBossChar();
 void renderBossmap();
 void renderBossHealth();
-SGameChar createBossSubBullet(SGameChar&);
+void playerlose();
 
-bool upcheck(SGameChar);
-bool rightcheck(SGameChar Sprite);
-bool downcheck(SGameChar Sprite);
-bool leftcheck(SGameChar Sprite);
-bool upcheckB(SGameChar Sprite);
-bool rightcheckB(SGameChar Sprite);
-bool downcheckB(SGameChar Sprite);
-bool leftcheckB(SGameChar Sprite);
+bool upcheck(SGameChar, char** Maze);
+bool rightcheck(SGameChar Sprite, char** Maze);
+bool downcheck(SGameChar Sprite, char** Maze);
+bool leftcheck(SGameChar Sprite, char** Maze);
+bool upcheckB(SGameChar Sprite, char** Maze);
+bool rightcheckB(SGameChar Sprite, char** Maze);
+bool downcheckB(SGameChar Sprite, char** Maze);
+bool leftcheckB(SGameChar Sprite, char** Maze);
 void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
 void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPBlue(bool&, double&, double&, SGameChar&, SGameChar&);
-void movebullet(SGameChar&, SGameChar&, SGameChar&);
+void movebullet(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPRed(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
 
@@ -112,11 +119,19 @@ void track(char**, SGameChar&, SGameChar&);
 
 int bulletAfterPortal();
 
-const int NUM_COLUMNS = 120;
-const int NUM_ROWS = 40;
+const int NUM_COLUMNS = 160;
+const int NUM_ROWS = 50;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 const int NUM_OF_KEYS = 10;
+const int LEGEND_COLUMNS = 42;
+const int LEGEND_ROWS = 5;
+const int GUN_COLUMNS = 27;
+const int GUN_ROWS = 8;
+const int PORTAL_COLUMNS = 12;
+const int PORTAL_ROWS = 12;
+const int MAP2_COLUMNS = 103;
+const int MAP2_ROWS = 29;
 
 struct PlayerInformation 
 {
@@ -143,5 +158,5 @@ struct KDInformation
 bool doorcheck(KDInformation Item, int ItemNumber);
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
 	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
-void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **, PlayerInformation &Player, bool &CharacterisHit);
+void pause();
 #endif // _GAME_H
