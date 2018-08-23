@@ -5,6 +5,7 @@
 #include "Framework\console.h"
 #include "shoot.h"
 #include "boss.h"
+#include "enemy.h"
 #include <vector>
 using namespace std;
 
@@ -137,14 +138,14 @@ void renderBossmap();
 void renderBossHealth();
 SGameChar createBossSubBullet(SGameChar&);
 
-bool upcheck(SGameChar, char** Maze);
-bool rightcheck(SGameChar Sprite, char** Maze);
-bool downcheck(SGameChar Sprite, char** Maze);
-bool leftcheck(SGameChar Sprite, char** Maze);
-bool upcheckB(SGameChar Sprite, char** Maze);
-bool rightcheckB(SGameChar Sprite, char** Maze);
-bool downcheckB(SGameChar Sprite, char** Maze);
-bool leftcheckB(SGameChar Sprite, char** Maze);
+bool upcheck(SGameChar, char**);
+bool rightcheck(SGameChar, char**);
+bool downcheck(SGameChar, char**);
+bool leftcheck(SGameChar, char**);
+bool upcheckB(SGameChar , char**);
+bool rightcheckB(SGameChar, char**);
+bool downcheckB(SGameChar, char**);
+bool leftcheckB(SGameChar, char**);
 void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
 void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
@@ -155,25 +156,33 @@ void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
 
 bool bulletcheck(char, char**, SGameChar&);
 
-void moveenemy(char**, SGameChar&, SGameChar&, int&, int&);
-int upenemy(char**, SGameChar&, SGameChar&, int&);
-int rightenemy(char**, SGameChar&, SGameChar&, int&);
-int downenemy(char**, SGameChar&, SGameChar&, int&);
-int leftenemy(char**, SGameChar&, SGameChar&, int&);
-void track(char**, SGameChar&, SGameChar&);
+void moveenemy(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation &, SGameChar &);
+int upenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int rightenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int downenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int leftenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+void track(char**, SGameChar&, SGameChar&, int &, PlayerInformation &, SGameChar &);
+
+void moveenemy1(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy2(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy3(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy4(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy5(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy6(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy);
 
 int bulletAfterPortal();
 
-bool doorcheck(KDInformation Item, int ItemNumber, KDInformation Key);
-void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &DoorA,
-	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode);
-void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, char **, PlayerInformation &Player, bool &CharacterisHit);
+bool doorcheck(KDInformation, int, KDInformation);
+void moveCharacter(double&, double&, SGameChar&, Console&, KDInformation&, KDInformation&,
+	char**, PlayerInformation&, SGameChar&, SGameChar&, int&, int&, EGAMEMODES&);
+void moveCharacterInBoss(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, bool&);
 void pause();
 
 void createCharacter();
 void renderCreation();
-void changeCharacter(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
-void changeDetail(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
+void changeCharacter(WORD&, char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
+void changeDetail(WORD&, char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
 void renderCreationPreview();
 void renderCreationOptions();
 void renderCreationDetails();

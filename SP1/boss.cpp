@@ -55,12 +55,6 @@ void BossoneVar(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsed
 	charshootboss(g_Wordbullet, g_sChar, charWordBullet, g_bBounceTime, g_dElapsedTime, BossMap);
 	processUserInput();
 	checkhealth();
-	//bossMove();
-	//moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
-	//charshootboss();
-	//processUserInput();
-	//bossAttackLazer();
-	/*movecharbullet();*/
 
 }
 void bossMove(SGameChar& g_boss)
