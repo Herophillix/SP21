@@ -27,8 +27,12 @@ string gunline;
 string portalline;
 
 WORD Char = 0x02;
-WORD charColor = 0xe2;
+WORD charColor = 0xe4;
 char charIcon = (char)3;
+int  charOption = 0;
+int	 charDetail = 0;
+bool isDetail = false;
+char tempChar;
 
 char *BaseMaze[MAP_ROWS];
 char *Level1Maze[MAP_ROWS];
@@ -101,6 +105,7 @@ EGAMESTATES g_eGameState = S_SPLASHSCREEN;
 EGAMEMODES  g_eGamemode = S_CREATION; // starts off with creating character
 double  g_dBounceTime;
 double  g_eBounceTime;// this is to prevent key bouncing, so we won't trigger keypresses more than once
+double g_createBounceTime;
 
 // Console object
 Console g_Console(NUM_COLUMNS, NUM_ROWS, "Game");
@@ -933,7 +938,9 @@ void renderGame()
 		case S_CREATION:
 		{
 			renderCreation();
+			renderCreationOptions();
 			renderCreationPreview();
+			renderCreationDetails();
 			break;
 		}
 		case S_STAGEONE:
@@ -970,7 +977,7 @@ void renderGame()
 	}
 }
 
-void renderCreation()
+void renderCreation() // renders tha creation text map
 {
 	COORD c;
 	string acreateline;
@@ -991,9 +998,155 @@ void renderCreation()
 	}
 }
 
-void renderCreationPreview()
+void renderCreationPreview() // renders the character
 {
 	g_Console.writeToBuffer(35,10, charIcon, charColor);
+}
+
+void renderCreationOptions() // renders options at left
+{
+	string colour = "Colour";
+	string icon = "Icon";
+	string confirm = "Confirm";
+	switch (charOption)
+	{
+	case 0:
+	{
+		g_Console.writeToBuffer(4, 8, colour, 0x04);
+		g_Console.writeToBuffer(4, 10, icon, 0x0e);
+		g_Console.writeToBuffer(4, 12, confirm, 0x0e);
+		break;
+	}
+	case 1:
+	{
+		g_Console.writeToBuffer(4, 8, colour, 0x0e);
+		g_Console.writeToBuffer(4, 10, icon, 0x04);
+		g_Console.writeToBuffer(4, 12, confirm, 0x0e);
+		break;
+	}
+	case 2:
+	{
+		g_Console.writeToBuffer(4, 8, colour, 0x0e);
+		g_Console.writeToBuffer(4, 10, icon, 0x0e);
+		g_Console.writeToBuffer(4, 12, confirm, 0x04);
+		break;
+	}
+	}
+}
+
+void renderCreationDetails()
+{
+	string red = "Red", blue = "Blue", green = "Green", yellow = "Yellow";
+	string heart = "Heart", omega = "Omega", coolSymbol = "Cool Symbol", smallDot = "Inaccurate Hit Box";
+	switch (charOption)
+	{
+	case 0:
+	{
+		if (isDetail == true)
+		{
+			switch (charDetail)
+			{
+			case 0:
+			{
+				g_Console.writeToBuffer(48, 6, red, 0x04);
+				g_Console.writeToBuffer(48, 9, blue, 0x0e);
+				g_Console.writeToBuffer(48, 12, green, 0x0e);
+				g_Console.writeToBuffer(48, 15, yellow, 0x0e);
+				break;
+			}
+			case 1:
+			{
+				g_Console.writeToBuffer(48, 6, red, 0x0e);
+				g_Console.writeToBuffer(48, 9, blue, 0x04);
+				g_Console.writeToBuffer(48, 12, green, 0x0e);
+				g_Console.writeToBuffer(48, 15, yellow, 0x0e);
+				break;
+			}
+			case 2:
+			{
+				g_Console.writeToBuffer(48, 6, red, 0x0e);
+				g_Console.writeToBuffer(48, 9, blue, 0x0e);
+				g_Console.writeToBuffer(48, 12, green, 0x04);
+				g_Console.writeToBuffer(48, 15, yellow, 0x0e);
+				break;
+			}
+			case 3:
+			{
+				g_Console.writeToBuffer(48, 6, red, 0x0e);
+				g_Console.writeToBuffer(48, 9, blue, 0x0e);
+				g_Console.writeToBuffer(48, 12, green, 0x0e);
+				g_Console.writeToBuffer(48, 15, yellow, 0x04);
+				break;
+			}
+			}
+		}
+		break;
+	}
+	case 1:
+	{
+		if (isDetail == true)
+		{
+			switch (charDetail)
+			{
+			case 0:
+			{
+				g_Console.writeToBuffer(48, 6, heart, 0x04);
+				g_Console.writeToBuffer(48, 9, omega, 0x0e);
+				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
+				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
+				break;
+			}
+			case 1:
+			{
+				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 9, omega, 0x04);
+				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
+				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
+				break;
+			}
+			case 2:
+			{
+				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 9, omega, 0x0e);
+				g_Console.writeToBuffer(48, 12, coolSymbol, 0x04);
+				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
+				break;
+			}
+			case 3:
+			{
+				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 9, omega, 0x0e);
+				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
+				g_Console.writeToBuffer(48, 15, smallDot, 0x04);
+				break;
+			}
+			}
+		}
+		break;
+	}
+	case 2:
+	{
+		if (isDetail == true)
+		{
+			switch (charDetail)
+			{
+			case 0:
+			{
+				g_Console.writeToBuffer(48, 8, "Confirm", 0x04);
+				g_Console.writeToBuffer(48, 12, "Cancel", 0x0e);
+				break;
+			}
+			case 1:
+			{
+				g_Console.writeToBuffer(48, 8, "Confirm", 0x0e);
+				g_Console.writeToBuffer(48, 12, "Cancel", 0x04);
+				break;
+			}
+			}
+		}
+		break;
+	}
+	}
 }
 
 void renderenemy()
@@ -1292,8 +1445,8 @@ void renderLegend()
 			legendline[a] = Legend[i][a];
 			if (legendline[a] == '1')
 			{
-				legendline[a] = (char)3;
-				g_Console.writeToBuffer(c.X, c.Y, legendline[a], 0xe2);
+				legendline[a] = charIcon;
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], charColor);
 			}
 			else if (legendline[a] == '2')
 			{
@@ -1342,7 +1495,7 @@ void renderCharacter()
 	{
 	case S_STAGEONE:
 	{
-		charColor = 0xe2;
+		g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		break;
 	}
 	case S_BOSSONE:
@@ -1354,29 +1507,28 @@ void renderCharacter()
 			{
 				if (charColor == 0x02)
 				{
-					charColor = 0x00;
+					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, 0x0);
 				}
 				else
 				{
-					charColor = 0x02;
+					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 				}
 			}
 			if (playerIsHitFrame > 100)
 			{
 				characterIsHit = false;
-				charColor = 0x02;
 				playerIsHitFrame = 0;
 			}
 		}
 		else
 		{
-			charColor = 0x02;
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		}
 		break;
 	}
 	}
 
-	g_Console.writeToBuffer(g_sChar.m_cLocation, (char)3, charColor);
+	
 }
 
 void renderShootbossbullet()
@@ -1517,7 +1669,7 @@ void gameplay()            // gameplay logic
 }
 void createCharacter()
 {
-	changeCharacter(charColor, charIcon);
+	changeCharacter(charColor, charIcon, charOption, charDetail, g_createBounceTime, g_dElapsedTime, isDetail, g_eGamemode);
 }
 void Stageone()
 {

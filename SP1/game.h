@@ -157,7 +157,10 @@ void pause();
 
 void createCharacter();
 void renderCreation();
-void changeCharacter(WORD &charColor, char &charIcon);
+void changeCharacter(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
+void changeDetail(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode);
 void renderCreationPreview();
+void renderCreationOptions();
+void renderCreationDetails();
 
 #endif // _GAME_H
