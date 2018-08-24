@@ -29,6 +29,8 @@ const int PORTAL_COLUMNS = 12;
 const int PORTAL_ROWS = 12;
 const int SPACEGUNSHIP_COLUMNS = 19;
 const int SPACEGUNSHIP_ROWS = 10;
+const int BOSS_HEALTH = 300;
+const int GENERAL_DIRECTION = 2; // RIGHT
 
 // Enumeration to store the control keys that your game will have
 enum EKEYS

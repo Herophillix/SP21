@@ -7,10 +7,10 @@ bool isKeyPressedShoot[K_COUNT];
  bool BulletposPRed = false;
  bool BulletposPBlue = false;
 
- int ShootDirectionFinal = 2;
- int ShootDirectionFinalRed = 2;
- int ShootDirectionFinalBlue = 2;
- int ShootDirectionEnemy = 2;
+ int ShootDirectionFinal = GENERAL_DIRECTION;
+ int ShootDirectionFinalRed = GENERAL_DIRECTION;
+ int ShootDirectionFinalBlue = GENERAL_DIRECTION;
+ int ShootDirectionEnemy = GENERAL_DIRECTION;
 
  void getInputshoot()
  {
@@ -79,33 +79,8 @@ void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTi
 		return;
 	if (isKeyPressedShoot[K_SPACE])
 	{
-		switch (ShootDirection)
-		{
-		case 1:
-		{
-			g_bullet.m_cLocation.X = g_sChar.m_cLocation.X;
-			g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y - 1;
-			break;
-		}
-		case 2:
-		{
-			g_bullet.m_cLocation.X = g_sChar.m_cLocation.X + 1;
-			g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y;
-			break;
-		}
-		case 3:
-		{
-			g_bullet.m_cLocation.X = g_sChar.m_cLocation.X;
-			g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y + 1;
-			break;
-		}
-		case 4:
-		{
-			g_bullet.m_cLocation.X = g_sChar.m_cLocation.X - 1;
-			g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y;
-			break;
-		}
-		}
+		g_bullet.m_cLocation.X = g_sChar.m_cLocation.X;
+		g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y;
 		ShootDirectionFinal = ShootDirection;
 		aSomethingHappened = true;
 		Bulletpos = true;

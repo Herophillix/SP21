@@ -21,8 +21,8 @@ bool charWordBullet = false;
 bool charWordBulletHold = false;
 bool charWordBulletTimeout = false;
 int charWordBulletCharge = 0;
-int bossHealth = 10;
-int bossMaxHealth = 10;
+int bossHealth = BOSS_HEALTH;
+int bossMaxHealth = BOSS_HEALTH;
 int charbossX = 4;
 int charbossY = 3;
 

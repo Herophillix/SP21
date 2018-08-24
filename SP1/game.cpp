@@ -12,7 +12,7 @@
 #include <vector>
 
 using namespace std;
-int ShootDirection = 2;
+int ShootDirection = GENERAL_DIRECTION;
 int bulletcondition = 1;
 bool g_abKeyPressed[K_COUNT];
 bool bridge = false;
@@ -633,7 +633,7 @@ void initafterlose()
 
 void initstagetwo()
 {
-	bossHealth = 10;
+	bossHealth = BOSS_HEALTH;
 	Player.Points += 10000 / (g_dElapsedTime - g_bossElapsedTime);
 	g_sChar.m_cLocation.X = 2;
 	g_sChar.m_cLocation.Y = 3;
@@ -1738,24 +1738,54 @@ void renderInfo()
 	}
 	if (g_eGamemode == S_BOSSONE)
 	{
+		int ColorNumber;
 		for (int b = 0; b < SPACEGUNSHIP_ROWS; b++)
-		{
-			switch (g_eGamemode)
-			{
-			case S_STAGEONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_BOSSONE: a.X = MAP_COLUMNS + 2;
-				break;
-			case S_STAGETWO: a.X = MAP2_COLUMNS + 2;
-				break;
-			}
+		{   
+			a.X = MAP_COLUMNS + 2;
 			a.Y = SpriteRow[2] + 1;
 			for (int yt = 0; yt < SPACEGUNSHIP_COLUMNS; yt++)
 			{
 				spacegunshipline[yt] = SpacegunshipInfo[b][yt];
-				if (yt == 9 && b == 5)
+				if (yt == 9 && (b >= 2 && b <= 8))
 				{
-					g_Console.writeToBuffer(a.X + yt, a.Y + b + 1, spacegunshipline[yt], Spaceguncolor);
+					switch (Char)
+					{
+					case 0x02:
+					{
+						ColorNumber = 0;
+						break;
+					}
+					case 0x03:
+					{
+						ColorNumber = 1;
+						break;
+					}
+					case 0x01:
+					{
+						ColorNumber = 2;
+						break;
+					}
+					case 0x05:
+					{
+						ColorNumber = 3;
+						break;
+					}
+					case 0x04:
+					{
+						ColorNumber = 4;
+						break;
+					}
+					case 0x06:
+					{
+						ColorNumber = 5;
+						break;
+					}
+					}
+					WORD Spaceguncolore[] = { 0x20,0x30,0x10,0x50,0x40,0x60 };
+					for (ColorNumber; ColorNumber >= 0; ColorNumber--)
+					{
+						g_Console.writeToBuffer(a.X + yt, a.Y + 9 - ColorNumber, spacegunshipline[yt], Spaceguncolor);
+					}
 				}
 				else
 				{
