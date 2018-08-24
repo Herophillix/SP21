@@ -118,7 +118,7 @@ void changeDetail(WORD &charColor, char &charIcon, int &charOption, int &charDet
 			{
 			case 0:
 			{
-				charIcon = (char)3;
+				charIcon = (char)6;
 				break;
 			}
 			case 1:

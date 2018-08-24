@@ -15,6 +15,9 @@ using namespace std;
 int ShootDirection = 2;
 int bulletcondition = 1;
 bool g_abKeyPressed[K_COUNT];
+bool bridge = false;
+bool health = true;
+double g_bossElapsedTime = 0;
 
 string line;
 string bossmapline;
@@ -34,7 +37,7 @@ WORD Spaceguncolor = 0x20;
 WORD charColor = 0x02;
 WORD baseColor = 0x0b;
 WORD baseColor2 = 0x0b;
-char charIcon = (char)3;
+char charIcon = (char)6;
 int  charOption = 0;
 int	 charDetail = 0;
 bool isDetail = false;
@@ -430,6 +433,10 @@ void init(void)
 				{
 					stagetwoline[a] = (char)219;
 				}
+				if (stagetwoline[a] == 'h')
+				{
+					stagetwoline[a] = (char)3;
+				}
 				Level2Maze[i][a] = stagetwoline[a];
 			}
 		}
@@ -450,7 +457,7 @@ void init(void)
 					}
 					case 1:
 					{
-						Key2.id[KeyonMap] = 1;
+						Key2.id[KeyonMap] = 2;
 						break;
 					}
 					case 2:
@@ -460,22 +467,32 @@ void init(void)
 					}
 					case 3:
 					{
-						Key2.id[KeyonMap] = 4;
+						Key2.id[KeyonMap] = 1;
 						break;
 					}
 					case 4:
 					{
-						Key2.id[KeyonMap] = 2;
+						Key2.id[KeyonMap] = 3;
 						break;
 					}
 					case 5:
 					{
-						Key2.id[KeyonMap] = 6;
+						Key2.id[KeyonMap] = 8;
 						break;
 					}
 					case 6:
 					{
-						Key2.id[KeyonMap] = 3;
+						Key2.id[KeyonMap] = 4;
+						break;
+					}
+					case 7:
+					{
+						Key2.id[KeyonMap] = 6;
+						break;
+					}
+					case 8:
+					{
+						Key2.id[KeyonMap] = 7;
 						break;
 					}
 					}
@@ -568,6 +585,7 @@ void init(void)
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
 	Player.Key[NUM_OF_KEYS] = { 0, };
+	Player.Direction = "Right";
 }
 
 void initafterlose()
@@ -611,6 +629,20 @@ void initafterlose()
 			}
 		}
 	}
+}
+
+void initstagetwo()
+{
+	bossHealth = 10;
+	Player.Points += 10000 / (g_dElapsedTime - g_bossElapsedTime);
+	g_sChar.m_cLocation.X = 2;
+	g_sChar.m_cLocation.Y = 3;
+	g_portalEntrance.m_cLocation.X = 0;
+	g_portalEntrance.m_cLocation.Y = 0;
+	g_portalExit.m_cLocation.X = 0;
+	g_portalExit.m_cLocation.Y = 0;
+	charbossX = 98;
+	charbossY = 28;
 }
 
 //--------------------------------------------------------------
@@ -1266,7 +1298,7 @@ void renderCreationOptions() // renders options at left
 void renderCreationDetails()
 {
 	string red = "Red", blue = "Blue", green = "Green", yellow = "Yellow";
-	string heart = "Heart", omega = "Omega", coolSymbol = "Cool Symbol", smallDot = "Inaccurate Hit Box";
+	string spade = "Spade", omega = "Omega", coolSymbol = "Cool Symbol", smallDot = "Inaccurate Hit Box";
 	switch (charOption)
 	{
 	case 0:
@@ -1319,7 +1351,7 @@ void renderCreationDetails()
 			{
 			case 0:
 			{
-				g_Console.writeToBuffer(48, 6, heart, 0x04);
+				g_Console.writeToBuffer(48, 6, spade, 0x04);
 				g_Console.writeToBuffer(48, 9, omega, 0x0e);
 				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
 				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
@@ -1327,7 +1359,7 @@ void renderCreationDetails()
 			}
 			case 1:
 			{
-				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 6, spade, 0x0e);
 				g_Console.writeToBuffer(48, 9, omega, 0x04);
 				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
 				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
@@ -1335,7 +1367,7 @@ void renderCreationDetails()
 			}
 			case 2:
 			{
-				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 6, spade, 0x0e);
 				g_Console.writeToBuffer(48, 9, omega, 0x0e);
 				g_Console.writeToBuffer(48, 12, coolSymbol, 0x04);
 				g_Console.writeToBuffer(48, 15, smallDot, 0x0e);
@@ -1343,7 +1375,7 @@ void renderCreationDetails()
 			}
 			case 3:
 			{
-				g_Console.writeToBuffer(48, 6, heart, 0x0e);
+				g_Console.writeToBuffer(48, 6, spade, 0x0e);
 				g_Console.writeToBuffer(48, 9, omega, 0x0e);
 				g_Console.writeToBuffer(48, 12, coolSymbol, 0x0e);
 				g_Console.writeToBuffer(48, 15, smallDot, 0x04);
@@ -1431,9 +1463,13 @@ void renderMap()
 		for (int a = 0; a < (int)aline.size(); a++)
 		{
 			aline[a] = BaseMaze[i][a];
-			if (aline[a] == 'D')
+			if ((aline[a] == 'D') || (aline[a] == 'I'))
 			{
 				aline[a] = (char)219;
+			}
+			if (aline[a] == 's')
+			{
+				aline[a] = char(128);
 			}
 		}
 		g_Console.writeToBuffer(c, aline, baseColor);
@@ -1460,6 +1496,37 @@ void renderMap()
 				aline[a] = (char)219;
 				g_Console.writeToBuffer(a, i + 1, aline[a], 0xe6);
 			}
+			if (aline[a] == 'w')
+			{
+				aline[a] = (char)178;
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x91);
+			}
+			if (aline[a] == (char)240)
+			{
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x16);
+			}
+			if (aline[a] == (char)3)
+			{
+				if (health == false)
+				{
+					BaseMaze[i][a] = ' ';
+				}
+				else
+				{
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0x0c);
+				}
+			}
+			if ((aline[a] == 'b') && (bridge == true))
+			{
+				aline[a] = (char)240;
+				BaseMaze[i][a] = aline[a];
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x16);
+			}
+			else if (aline[a] == 'b')
+			{
+				aline[a] = (char)178;
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0x91);
+			}			
 		}
 	}
 }
@@ -1611,11 +1678,11 @@ void renderBossmap()
 void renderInfo()
 {
 	int infoIncrement = 3;
-	const int infoSize = 4;
+	const int infoSize = 5;
 	COORD c, a;
-	string Info[infoSize] = { "Player Health: ", "Points: ", "Current Weapon: ", "Keys: " };
-	string Number[infoSize] = { to_string(Player.Health), to_string(Player.Points), to_string(Player.CurrentWeapon), };
-	int SpriteRow[infoSize] = { 0, 3, 3 + 3, 3 + 3 + 3 + PORTAL_ROWS };
+	string Info[infoSize] = { "Player Health: ", "Points: ", "Current Weapon: ", "Keys: ", "Direction: "};
+	string Number[infoSize] = { to_string(Player.Health), to_string(Player.Points), to_string(Player.CurrentWeapon)," ",Player.Direction};
+	int SpriteRow[infoSize] = { 0, 3, 3 + 3, 3 + 3 + 3 + PORTAL_ROWS, 3 + 3 + 3 + 3 + PORTAL_ROWS };
 	for (int i = 0; i < MAP_ROWS; i++)
 	{
 		switch (g_eGamemode)
@@ -2009,10 +2076,12 @@ void gameplay()            // gameplay logic
 		break;
 	}
 }
+
 void createCharacter()
 {
 	changeCharacter(charColor, charIcon, charOption, charDetail, g_createBounceTime, g_dElapsedTime, isDetail, g_eGamemode);
 }
+
 void Stageone()
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exitmoveenemy(Maze, g_enemy, g_sChar, timer, Direction,Player,g_bullet);
@@ -2035,16 +2104,19 @@ void Stageone()
 	information();
 	checkhealth();
 }
+
 void Bossone()
 {
 	BossoneVar(g_dBounceTime, g_eBounceTime, g_dElapsedTime, g_sChar, g_Console, BossMap, Player, g_bossMainGun, g_boss,
 		g_bossSubGun1, g_bossSubGun2, g_Wordbullet, charWordBullet, g_bBounceTime, g_bossSubBullet, g_bossSubBullet2);
 }
+
 void renderBossChar()
 {
 	//render boss @ location onto first map 
 	g_Console.writeToBuffer(charbossX,charbossY,(char)64);
 }
+
 void renderBossHealth()
 {
 	COORD c;
@@ -2112,11 +2184,9 @@ void renderBossHealth()
 			if (bossHealth <= 0)
 			{
 				g_eGamemode = S_STAGETWO;
-				g_sChar.m_cLocation.X = 2;
-				g_sChar.m_cLocation.Y = 3;
-				charbossX = 98;
-				charbossY = 28;
+				initstagetwo();
 				changeMap();
+				
 			}
 			break;
 
@@ -2153,6 +2223,7 @@ bool doorcheck(KDInformation Item, int ItemNumber, KDInformation Key)
 	}
 	return false;
 }
+
 void changeMap()
 {
 	switch (g_eGameState)
@@ -2225,10 +2296,12 @@ void pause()
 {
 	processUserInput();
 }
+
 void playerlose()
 {
 	processLoseUserInput();
 }
+
 void checkhealth()
 {
 	if (Player.Health == 0)

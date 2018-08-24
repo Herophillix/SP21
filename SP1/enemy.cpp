@@ -31,7 +31,7 @@ int enemy6locationY = 17;
 void moveenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &timer, int &Direction, PlayerInformation &Player, SGameChar &g_bullet)
 {
 
-	ShootEnemy(g_bullet, g_enemy);
+	ShootEnemy(g_bullet, g_enemy, Player);
 	/*int num = rand() % 4 +1;
 	if (timer > 10)
 	{
@@ -495,6 +495,7 @@ int upenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction,
 		}
 		return Direction;
 	}
+	return Direction;
 }
 int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction, PlayerInformation &Player, SGameChar &g_bullet)
 {
@@ -546,6 +547,7 @@ int rightenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directi
 		}
 		return Direction;
 	}
+	return Direction;
 }
 int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction, PlayerInformation &Player, SGameChar &g_bullet)
 {
@@ -596,6 +598,7 @@ int downenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 		}
 		return Direction;
 	}
+	return Direction;
 }
 int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction, PlayerInformation &Player, SGameChar &g_bullet)
 {
@@ -647,6 +650,7 @@ int leftenemy(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Directio
 		}
 		return Direction;
 	}
+	return Direction;
 }
 void track(char **Maze, SGameChar &g_enemy, SGameChar &g_sChar, int &Direction, PlayerInformation &Player, SGameChar &g_bullet)
 {
@@ -678,7 +682,7 @@ void moveenemy1(char **Maze, SGameChar &g_enemy1, SGameChar &g_sChar, int &timer
 {
 
 	timer1++;
-	ShootEnemy(g_bullet, g_enemy1);
+	ShootEnemy(g_bullet, g_enemy1, Player);
 	if (timer1 > 5)
 	{
 		if ((g_enemy1.m_cLocation.Y == g_bullet.m_cLocation.Y) && (g_enemy1.m_cLocation.X + 1 == g_bullet.m_cLocation.X) || (g_enemy1.m_cLocation.Y == g_bullet.m_cLocation.Y) && (g_enemy1.m_cLocation.X - 1 == g_bullet.m_cLocation.X))
@@ -740,7 +744,7 @@ void moveenemy1(char **Maze, SGameChar &g_enemy1, SGameChar &g_sChar, int &timer
 void moveenemy2(char **Maze, SGameChar &g_enemy2, SGameChar &g_sChar, int &timer2, int &two, PlayerInformation &Player, SGameChar &g_bullet)
 {
 	timer2++;
-	ShootEnemy(g_bullet, g_enemy2);
+	ShootEnemy(g_bullet, g_enemy2, Player);
 	if (timer2 > 5)
 	{
 		if ((g_enemy2.m_cLocation.Y == g_bullet.m_cLocation.Y) && (g_enemy2.m_cLocation.X + 1 == g_bullet.m_cLocation.X) || (g_enemy2.m_cLocation.Y == g_bullet.m_cLocation.Y) && (g_enemy2.m_cLocation.X - 1 == g_bullet.m_cLocation.X))
@@ -801,7 +805,7 @@ void moveenemy2(char **Maze, SGameChar &g_enemy2, SGameChar &g_sChar, int &timer
 };
 void moveenemy3(char **Maze, SGameChar &g_enemy3, SGameChar &g_sChar, int &timer, int &Direction3, PlayerInformation &Player, SGameChar &g_bullet)
 {
-	ShootEnemy(g_bullet, g_enemy3);
+	ShootEnemy(g_bullet, g_enemy3, Player);
 
 	if (g_enemy3.m_bActive == true)
 	{
@@ -904,7 +908,7 @@ void moveenemy3(char **Maze, SGameChar &g_enemy3, SGameChar &g_sChar, int &timer
 }
 void moveenemy4(char **Maze, SGameChar &g_enemy4, SGameChar &g_sChar, int &timer, int &Direction4, PlayerInformation &Player, SGameChar &g_bullet)
 {
-	ShootEnemy(g_bullet, g_enemy4);
+	ShootEnemy(g_bullet, g_enemy4, Player);
 
 	if (g_enemy4.m_bActive == true)
 	{
@@ -1007,7 +1011,7 @@ void moveenemy4(char **Maze, SGameChar &g_enemy4, SGameChar &g_sChar, int &timer
 }
 void moveenemy5(char **Maze, SGameChar &g_enemy5, SGameChar &g_sChar, int &timer, int &Direction5, PlayerInformation &Player, SGameChar &g_bullet)
 {
-	ShootEnemy(g_bullet, g_enemy5);
+	ShootEnemy(g_bullet, g_enemy5, Player);
 
 	if (g_enemy5.m_bActive == true)
 	{
@@ -1110,7 +1114,7 @@ void moveenemy5(char **Maze, SGameChar &g_enemy5, SGameChar &g_sChar, int &timer
 }
 void moveenemy6(char **Maze, SGameChar &g_enemy6, SGameChar &g_sChar, int &timer, int &Direction6, PlayerInformation &Player, SGameChar &g_bullet)
 {
-	ShootEnemy(g_bullet, g_enemy6);
+	ShootEnemy(g_bullet, g_enemy6, Player);
 	if (g_enemy6.m_bActive == true)
 	{
 		timer++;
@@ -1223,10 +1227,21 @@ void moveenemy6(char **Maze, SGameChar &g_enemy6, SGameChar &g_sChar, int &timer
 		}
 	}
 }
-void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy)
+void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy, PlayerInformation& Player)
 {
-	if ((g_bullet.m_cLocation.X == g_Enemy.m_cLocation.X) && (g_bullet.m_cLocation.Y == g_Enemy.m_cLocation.Y))
+	if (g_Enemy.m_bActive == false)
 	{
-		g_Enemy.m_bActive = false;
+		Player.Points += 0;
 	}
+	else if ((g_bullet.m_cLocation.X == g_Enemy.m_cLocation.X) && (g_bullet.m_cLocation.Y == g_Enemy.m_cLocation.Y))
+	{
+		Player.Points += 10;
+		g_Enemy.m_bActive = false;
+
+	}
+	//if ((g_bullet.m_cLocation.X == g_Enemy.m_cLocation.X) && (g_bullet.m_cLocation.Y == g_Enemy.m_cLocation.Y))
+	//{
+	//	Player.Points += 100;
+	//	g_Enemy.m_bActive = false;
+	//}
 }

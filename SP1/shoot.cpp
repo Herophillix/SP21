@@ -125,7 +125,9 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 		case 1:
 		{
-			if (upcheck(g_bullet, Maze) || upcheckB(g_bullet, Maze))
+			if ((upcheck(g_bullet, Maze, ' ')) ||
+				(upcheck(g_bullet, Maze, '.')) ||
+				(upcheck(g_bullet, Maze, (char)240)))
 			{
 				g_bullet.m_cLocation.Y--;
 			}
@@ -143,7 +145,9 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 2:
 		{
-			if (rightcheck(g_bullet, Maze) || rightcheckB(g_bullet, Maze))
+			if ((rightcheck(g_bullet, Maze, ' ')) ||
+				(rightcheck(g_bullet, Maze, '.')) ||
+				(rightcheck(g_bullet, Maze, (char)240)))
 			{
 				g_bullet.m_cLocation.X++;
 			}
@@ -161,7 +165,9 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 3:
 		{
-			if (downcheck(g_bullet, Maze) || downcheckB(g_bullet, Maze))
+			if ((downcheck(g_bullet, Maze, ' ')) ||
+				(downcheck(g_bullet, Maze, '.')) ||
+				(downcheck(g_bullet, Maze, (char)240)))
 			{
 				g_bullet.m_cLocation.Y++;
 			}
@@ -179,7 +185,9 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		}
 		case 4:
 		{
-			if (leftcheck(g_bullet, Maze) || leftcheckB(g_bullet, Maze))
+			if ((leftcheck(g_bullet, Maze, ' ')) ||
+				(leftcheck(g_bullet, Maze, '.')) ||
+				(leftcheck(g_bullet, Maze, (char)240)))
 			{
 				g_bullet.m_cLocation.X--;
 			}
@@ -297,7 +305,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP, Maze) || upcheckB(g_bulletP, Maze))
+			if ((upcheck(g_bulletP, Maze, ' ')) ||
+				(upcheck(g_bulletP, Maze, '.')) ||
+				(upcheck(g_bulletP, Maze, 'w')) ||
+				(upcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -323,7 +334,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP, Maze) || rightcheckB(g_bulletP, Maze))
+			if ((rightcheck(g_bulletP, Maze, ' ')) ||
+				(rightcheck(g_bulletP, Maze, '.')) ||
+				(rightcheck(g_bulletP, Maze, 'w')) ||
+				(rightcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -349,7 +363,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP, Maze) || downcheckB(g_bulletP, Maze))
+			if ((downcheck(g_bulletP, Maze, ' ')) ||
+				(downcheck(g_bulletP, Maze, '.')) ||
+				(downcheck(g_bulletP, Maze, 'w')) ||
+				(downcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -375,7 +392,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP, Maze) || leftcheckB(g_bulletP, Maze))
+			if ((leftcheck(g_bulletP, Maze, ' ')) ||
+				(leftcheck(g_bulletP, Maze, '.')) ||
+				(leftcheck(g_bulletP, Maze, 'w')) ||
+				(leftcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
@@ -411,7 +431,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		{
 		case 1:
 		{
-			if (upcheck(g_bulletP, Maze) || upcheckB(g_bulletP, Maze))
+			if ((upcheck(g_bulletP, Maze, ' ')) ||
+				(upcheck(g_bulletP, Maze, '.')) ||
+				(upcheck(g_bulletP, Maze, 'w')) ||
+				(upcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
@@ -437,7 +460,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 2:
 		{
-			if (rightcheck(g_bulletP, Maze) || rightcheckB(g_bulletP, Maze))
+			if ((rightcheck(g_bulletP, Maze, ' ')) ||
+				(rightcheck(g_bulletP, Maze, '.')) ||
+				(rightcheck(g_bulletP, Maze, 'w')) ||
+				(rightcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -463,7 +489,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 3:
 		{
-			if (downcheck(g_bulletP, Maze) || downcheckB(g_bulletP, Maze))
+			if ((downcheck(g_bulletP, Maze, ' ')) ||
+				(downcheck(g_bulletP, Maze, '.')) ||
+				(downcheck(g_bulletP, Maze, 'w')) ||
+				(downcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
@@ -489,7 +518,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 		}
 		case 4:
 		{
-			if (leftcheck(g_bulletP, Maze) || leftcheckB(g_bulletP, Maze))
+			if ((leftcheck(g_bulletP, Maze, ' ')) ||
+				(leftcheck(g_bulletP, Maze, '.')) ||
+				(leftcheck(g_bulletP, Maze, 'w')) ||
+				(leftcheck(g_bulletP, Maze, (char)240)))
 			{
 				g_bulletP.m_cLocation.X--;
 			}

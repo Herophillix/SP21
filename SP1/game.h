@@ -11,12 +11,15 @@ using namespace std;
 
 extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
+extern bool bridge;
+extern bool health;
+extern double g_bossElapsedTime;
 const int NUM_COLUMNS = 160;
 const int NUM_ROWS = 50;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 const int MAP2_COLUMNS = 103;
-const int MAP2_ROWS = 29;
+const int MAP2_ROWS = 31;
 const int NUM_OF_KEYS = 10;
 const int LEGEND_COLUMNS = 42;
 const int LEGEND_ROWS = 5;
@@ -36,13 +39,15 @@ enum EKEYS
     K_RIGHT,
     K_ESCAPE,
     K_SPACE,
+	K_NUMPAD0,
 	K_1,
 	K_2,
 	K_3,
-	K_P,
 	K_E,
+	K_P,
 	K_Q,
 	K_R,
+	K_W,
     K_COUNT
 };
 
@@ -75,6 +80,7 @@ struct PlayerInformation
 	int Points;
 	int CurrentWeapon;
 	bool Key[NUM_OF_KEYS];
+	string Direction;
 };
 
 struct Adjacent
@@ -121,6 +127,7 @@ void renderLosescreen();
 
 void checkhealth();
 void initafterlose();
+void initstagetwo();
 
 void Bossone();
 void BossoneVar(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, double(&g_bBounceTime)[6], vector<SGameChar>&, vector<SGameChar>&);
@@ -138,14 +145,14 @@ void renderBossmap();
 void renderBossHealth();
 SGameChar createBossSubBullet(SGameChar&);
 
-bool upcheck(SGameChar, char**);
-bool rightcheck(SGameChar, char**);
-bool downcheck(SGameChar, char**);
-bool leftcheck(SGameChar, char**);
-bool upcheckB(SGameChar , char**);
-bool rightcheckB(SGameChar, char**);
-bool downcheckB(SGameChar, char**);
-bool leftcheckB(SGameChar, char**);
+bool upcheck(SGameChar&, char**, char);
+bool rightcheck(SGameChar&, char**, char);
+bool downcheck(SGameChar&, char**, char);
+bool leftcheck(SGameChar&, char**, char);
+//bool upcheckB(SGameChar&, char**);
+//bool rightcheckB(SGameChar&, char**);
+//bool downcheckB(SGameChar&, char**);
+//bool leftcheckB(SGameChar&, char**);
 void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
 void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
 void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
@@ -169,7 +176,7 @@ void moveenemy3(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, 
 void moveenemy4(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
 void moveenemy5(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
 void moveenemy6(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy);
+void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy, PlayerInformation&);
 
 int bulletAfterPortal();
 
