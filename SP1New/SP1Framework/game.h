@@ -13,6 +13,7 @@ extern CStopWatch g_swTimer;
 extern bool g_bQuitGame;
 extern bool bridge;
 extern bool health;
+extern bool characterIsHit;
 extern double g_bossElapsedTime;
 const int NUM_COLUMNS = 160;
 const int NUM_ROWS = 50;
@@ -29,7 +30,7 @@ const int PORTAL_COLUMNS = 12;
 const int PORTAL_ROWS = 12;
 const int SPACEGUNSHIP_COLUMNS = 19;
 const int SPACEGUNSHIP_ROWS = 10;
-const int BOSS_HEALTH = 300;
+const int BOSS_HEALTH = 10;
 const int GENERAL_DIRECTION = 2; // RIGHT
 
 								 // Enumeration to store the control keys that your game will have
@@ -60,6 +61,7 @@ enum EGAMESTATES
 	S_GAME,
 	S_PAUSE,
 	S_LOSE,
+	S_SCORE,
 	S_COUNT
 };
 enum EGAMEMODES
@@ -165,26 +167,26 @@ void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
 
 bool bulletcheck(char, char**, SGameChar&);
 
-void moveenemy(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation &, SGameChar &);
-int upenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
-int rightenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
-int downenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
-int leftenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
-void track(char**, SGameChar&, SGameChar&, int &, PlayerInformation &, SGameChar &);
+void moveenemy(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation &, SGameChar &);
+int upenemy(double&, double&, char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int rightenemy(double&, double&, char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int downenemy(double&, double&, char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+int leftenemy(double&, double&, char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
+void track(double&, double&, char**, SGameChar&, SGameChar&, int &, PlayerInformation &, SGameChar &);
 
-void moveenemy1(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy2(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy3(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy4(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy5(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy6(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy1(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy2(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy3(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy4(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy5(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
+void moveenemy6(double&, double&, char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
 void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy, PlayerInformation&);
 
 int bulletAfterPortal();
 
 bool doorcheck(KDInformation, int, KDInformation);
 void moveCharacter(double&, double&, SGameChar&, Console&, KDInformation&, KDInformation&,
-	char**, PlayerInformation&, SGameChar&, SGameChar&, int&, int&, EGAMEMODES&);
+	char**, PlayerInformation&, SGameChar&, SGameChar&, int&, int&, EGAMEMODES&, bool&, double&, int&);
 void moveCharacterInBoss(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, bool&);
 void pause();
 
@@ -196,4 +198,8 @@ void renderCreationPreview();
 void renderCreationOptions();
 void renderCreationDetails();
 
+void renderScoreScreen();
+void renderTopFive();
+
+void charIsHit();
 #endif // _GAME_H

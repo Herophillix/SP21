@@ -1,7 +1,6 @@
 #ifndef _BOSS_H
 #define _BOSS_H
 
-extern bool characterIsHit;
 extern int playerIsHitFrame;
 extern int bossInterval;
 extern bool bossDirection;

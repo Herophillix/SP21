@@ -18,11 +18,12 @@ bool g_abKeyPressed[K_COUNT];
 bool bridge = false;
 bool health = true;
 double g_bossElapsedTime = 0;
-
+int currentHealth;
 string line;
 string bossmapline;
 string aline;
 string bossline;
+string scoreline;
 string pauseline;
 string createline;
 string legendline;
@@ -31,6 +32,8 @@ string portalline;
 string stagetwoline;
 string loseline;
 string spacegunshipline;
+string topScore[5];
+string topName[5] = {"  ", };
 
 WORD Char = 0x02;
 WORD Spaceguncolor = 0x20;
@@ -38,6 +41,7 @@ WORD charColor = 0x02;
 WORD baseColor = 0x0b;
 WORD baseColor2 = 0x0b;
 char charIcon = (char)6;
+WORD charTempColor;
 int  charOption = 0;
 int	 charDetail = 0;
 bool isDetail = false;
@@ -48,6 +52,7 @@ char *Level1Maze[MAP_ROWS];
 char *Level2Maze[MAP2_ROWS];
 char *SplashMaze[MAP_ROWS];
 char *Lose[MAP_ROWS];
+char *Score[MAP_ROWS];
 char *Pause[MAP_ROWS];
 char *Create[MAP_ROWS];
 char *Legend[LEGEND_ROWS];
@@ -80,6 +85,7 @@ double  g_dElapsedTime;
 double  g_eElapsedTime;
 double  g_dDeltaTime;
 double  g_bBounceTime[6];
+double  g_sBounceTime;
 
 // Game specific variables here
 SGameChar g_enemy, g_enemy1, g_enemy2, g_enemy3, g_enemy4, g_enemy5, g_enemy6;
@@ -110,6 +116,7 @@ void init(void)
 	g_eElapsedTime = 0.0;
 	g_dBounceTime = 0.0;
 	g_eBounceTime = 0.0;
+	g_sBounceTime = 0.0;
 
 	// sets the initial state for the game
 	g_eGameState = S_SPLASHSCREEN;
@@ -340,6 +347,24 @@ void init(void)
 			}
 		}
 		pauseScreen.close();
+	}
+	ifstream scoreScreen("scorescreen.txt");
+	if (scoreScreen.is_open())
+	{
+		for (int i = 0; i < 19; i++)
+		{
+			Score[i] = new char[54];
+			getline(scoreScreen, scoreline);
+			for (int a = 0; a < 54; a++)
+			{
+				if (scoreline[a] == '|')
+				{
+					scoreline[a] = (char)219;
+				}
+				Score[i][a] = scoreline[a];
+			}
+		}
+		scoreScreen.close();
 	}
 	ifstream loseScreen("losescreen.txt");
 	if (loseScreen.is_open())
@@ -581,11 +606,12 @@ void init(void)
 		}
 		creationScreen.close();
 	}
-	Player.Health = 5;
+	Player.Health = 1;
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
 	Player.Key[NUM_OF_KEYS] = { 0, };
 	Player.Direction = "Right";
+	currentHealth = Player.Health;
 }
 
 void initafterlose()
@@ -634,7 +660,7 @@ void initafterlose()
 void initstagetwo()
 {
 	bossHealth = BOSS_HEALTH;
-	Player.Points += 10000 / (g_dElapsedTime - g_bossElapsedTime);
+	Player.Points += 1000;
 	g_sChar.m_cLocation.X = 2;
 	g_sChar.m_cLocation.Y = 3;
 	g_portalEntrance.m_cLocation.X = 0;
@@ -710,7 +736,19 @@ void update(double dt)
 	// get the delta time
 	g_dElapsedTime += dt;
 	g_eElapsedTime += dt;
+	//if (g_eGamemode == S_BOSSONE)
+	//{
+	//	g_bossElapsedTime += dt;
+	//}
 	g_dDeltaTime = dt;
+
+	if ((g_sBounceTime < g_dElapsedTime) && (g_eGameState != S_PAUSE))
+	{
+		Player.Points -= 5;
+		g_sBounceTime = g_dElapsedTime + 2.5;
+		if (Player.Points < 0) 
+			Player.Points = 0;
+	}
 
 	switch (g_eGameState)
 	{
@@ -800,6 +838,8 @@ void render()
 	case S_GAME: renderGame();
 		break;
 	case S_PAUSE: renderGame();
+		break;
+	case S_SCORE: renderGame();
 		break;
 	case S_LOSE: renderGame();
 		break;
@@ -1242,6 +1282,11 @@ void renderGame()
 		renderInfo();
 		renderLegend();
 	}
+	else if (g_eGameState == S_SCORE)
+	{
+		renderScoreScreen();
+		renderTopFive();
+	}
 	else if (g_eGameState == S_LOSE)
 	{
 		renderLosescreen();
@@ -1556,6 +1601,61 @@ void renderPausescreen()
 		{
 			pauseline[a] = Pause[i][a];
 			g_Console.writeToBuffer(c, pauseline, baseColor);
+		}
+	}
+}
+
+void renderScoreScreen()
+{
+	COORD c;
+	string scoreline;
+	scoreline.resize(MAP_COLUMNS, ' ');
+	for (int i = 0; i < 19; i++)
+	{
+		c.X = 0;
+		c.Y = i + 1;
+		for (int a = 0; a < 54; a++)
+		{
+			scoreline[a] = Score[i][a];
+			g_Console.writeToBuffer(c, scoreline, baseColor);
+		}
+	}
+}
+
+void renderTopFive()
+{
+	COORD Initials;
+	COORD Points;
+	Initials.X = 9;
+	Initials.Y = 12;
+	Points.X = 34;
+	Points.Y = 12;
+	for (int i = 0; i < 5; i++, Points.Y++, Initials.Y++)
+	{
+		Initials.X = 9;
+		Points.X = 34;
+		if (topName[i] != "")
+		{
+			for (int j = 0; j < 3; j++, Initials.X += 2)
+			{
+				g_Console.writeToBuffer(Initials, topName[i][j], baseColor);
+			}
+		}
+		for (int j = 0; j < 6; j++)
+		{
+			if (topScore[i][j] == ' ')
+			{
+				topScore[i] = topScore[i].substr(0, j);
+				j = 6;
+			}
+		}
+		for (int j = 0; j < 6; j++, Points.X += 2)
+		{
+			while (topScore[i].length() < 6)
+			{
+				topScore[i] = "0" + topScore[i];
+			}
+			g_Console.writeToBuffer(Points, topScore[i][j], baseColor);
 		}
 	}
 }
@@ -1884,7 +1984,7 @@ void renderLegend()
 			if (legendline[a] == '1')
 			{
 				legendline[a] = charIcon;
-				g_Console.writeToBuffer(c.X, c.Y, legendline[a], charColor);
+				g_Console.writeToBuffer(c.X, c.Y, legendline[a], charTempColor);
 			}
 			else if (legendline[a] == '2')
 			{
@@ -1933,28 +2033,18 @@ void renderCharacter()
 	{
 	case S_STAGEONE:
 	{
-		g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
-		break;
-	}
-	case S_STAGETWO:
-	{
-		g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
-		break;
-	}
-	case S_BOSSONE:
-	{
 		if (characterIsHit == true)
 		{
 			playerIsHitFrame++;
-			if (playerIsHitFrame % 10 == 9)
+			if (playerIsHitFrame % 10 == 0)
 			{
-				if (charColor == 0x02)
+				if (charColor == charTempColor)
 				{
-					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, 0x0);
+					charColor = 0x00;
 				}
 				else
 				{
-					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+					charColor = charTempColor;
 				}
 			}
 			if (playerIsHitFrame > 100)
@@ -1962,9 +2052,71 @@ void renderCharacter()
 				characterIsHit = false;
 				playerIsHitFrame = 0;
 			}
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		}
 		else
 		{
+			charColor = charTempColor;
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+		}
+		break;
+	}
+	case S_STAGETWO:
+	{
+		if (characterIsHit == true)
+		{
+			playerIsHitFrame++;
+			if (playerIsHitFrame % 10 == 0)
+			{
+				if (charColor == charTempColor)
+				{
+					charColor = 0x00;
+				}
+				else
+				{
+					charColor = charTempColor;
+				}
+			}
+			if (playerIsHitFrame > 100)
+			{
+				characterIsHit = false;
+				playerIsHitFrame = 0;
+			}
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+		}
+		else
+		{
+			charColor = charTempColor;
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+		}
+		break;
+	}
+	case S_BOSSONE:
+	{
+		if (characterIsHit == true)
+		{
+			playerIsHitFrame++;
+			if (playerIsHitFrame % 10 == 0)
+			{
+				if (charColor == charTempColor)
+				{
+					charColor = 0x00;
+				}
+				else
+				{
+					charColor = charTempColor;
+				}
+			}
+			if (playerIsHitFrame > 100)
+			{
+				characterIsHit = false;
+				playerIsHitFrame = 0;
+			}
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+		}
+		else
+		{
+			charColor = charTempColor;
 			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		}
 		break;
@@ -2121,28 +2273,31 @@ void gameplay()            // gameplay logic
 void createCharacter()
 {
 	changeCharacter(charColor, charIcon, charOption, charDetail, g_createBounceTime, g_dElapsedTime, isDetail, g_eGamemode);
+	charTempColor = charColor;
+	Player.Points = 2500;
 }
 
 void Stageone()
 {
 	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exitmoveenemy(Maze, g_enemy, g_sChar, timer, Direction,Player,g_bullet);
-	moveenemy(BaseMaze, g_enemy, g_sChar, timer, Direction, Player, g_bullet);
-	moveenemy1(BaseMaze, g_enemy1, g_sChar, timer1, one, Player, g_bullet);
-	moveenemy2(BaseMaze, g_enemy2, g_sChar, timer2, two, Player, g_bullet);
-	moveenemy3(BaseMaze, g_enemy3, g_sChar, timer, Direction3, Player, g_bullet);
-	moveenemy4(BaseMaze, g_enemy4, g_sChar, timer, Direction4, Player, g_bullet);
-	moveenemy5(BaseMaze, g_enemy5, g_sChar, timer, Direction5, Player, g_bullet);
-	moveenemy6(BaseMaze, g_enemy6, g_sChar, timer, Direction6, Player, g_bullet);
+	moveenemy(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy, g_sChar, timer, Direction, Player, g_bullet);
+	moveenemy1(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy1, g_sChar, timer1, one, Player, g_bullet);
+	moveenemy2(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy2, g_sChar, timer2, two, Player, g_bullet);
+	moveenemy3(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy3, g_sChar, timer, Direction3, Player, g_bullet);
+	moveenemy4(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy4, g_sChar, timer, Direction4, Player, g_bullet);
+	moveenemy5(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy5, g_sChar, timer, Direction5, Player, g_bullet);
+	moveenemy6(g_eBounceTime, g_dElapsedTime, BaseMaze, g_enemy6, g_sChar, timer, Direction6, Player, g_bullet);
 	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
 	if (g_eGamemode == S_STAGEONE)
 	{
-		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);	 // moves the character, collision detection, physics, etc, sound can be played here too.
+		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode, characterIsHit, g_eBounceTime, currentHealth);	 // moves the character, collision detection, physics, etc, sound can be played here too.
 	}
 	else if (g_eGamemode == S_STAGETWO)
 	{
-		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key2, DoorB, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
+		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key2, DoorB, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode, characterIsHit, g_eBounceTime, currentHealth);
 	}
 	information();
+	charIsHit();
 	checkhealth();
 }
 
@@ -2341,12 +2496,43 @@ void pause()
 void playerlose()
 {
 	processLoseUserInput();
+	
 }
 
 void checkhealth()
 {
 	if (Player.Health == 0)
 	{
-		g_eGameState = S_LOSE;
+		ifstream highScore("highscore.txt");
+		string scoreLine;
+		if (highScore.is_open())
+		{
+			for (int i = 0; i < 5; i++)
+			{
+				getline(highScore, scoreLine);
+				topScore[i].resize(6, ' ');
+				topName[i].resize(3, '~');
+				for (int j = 0; ((j < 3) && (scoreLine != "")); j++)
+				{
+					topName[i][j] = scoreLine[j];
+				}
+				for (int j = 3; ((scoreLine != "") && (scoreLine[j] != '\0')); j++)
+				{
+					topScore[i][j-3] = scoreLine[j];
+				}
+			}
+		}
+		g_eGameState = S_SCORE;
+	}
+}
+
+void charIsHit()
+{
+	if (currentHealth > Player.Health)
+	{
+		Player.Points -= 500;
+		currentHealth = Player.Health;
+		characterIsHit = true;
+		g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
 	}
 }

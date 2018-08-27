@@ -15,7 +15,7 @@ void getInputmove()
 }
 
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &Door,
-	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
+	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode, bool &CharacterisHit, double &g_eBounceTime, int &currentHealth)
 {
 	getInputmove();
 	bool bSomethingHappened = false;
@@ -118,6 +118,10 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		{
 			if (doorcheck(Key, ItemNumber, Key))
 			{
+				if (Player.Key[Key.id[ItemNumber]] == false)
+				{
+				Player.Points += 50;
+				}
 				Key.Checker[Key.id[ItemNumber]] = true;
 				Door.Checker[Key.id[ItemNumber]] = true;
 				Maze[Key.Location[ItemNumber].Y - 1][Key.Location[ItemNumber].X] = ' ';
@@ -189,6 +193,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		}
 		changeMap();
 	}
+
 	if (bSomethingHappened)
 	{
 		if (ChangeDirection == true)
@@ -267,6 +272,7 @@ void moveCharacterInBoss(double &g_dBounceTime, double &g_eBounceTime, double &g
 	if (((BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '1') ||
 		(BossMap[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] == '0')) && (g_eBounceTime < g_dElapsedTime))
 	{
+		Player.Points -= 500;
 		Player.Health--;
 		CharacterisHit = true;
 		g_eBounceTime = g_dElapsedTime + 2;// immunity time after getting hit by boss
