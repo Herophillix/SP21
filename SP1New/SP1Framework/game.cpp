@@ -26,6 +26,7 @@ string bossline;
 string pauseline;
 string createline;
 string legendline;
+string controlline;
 string gunline;
 string portalline;
 string stagetwoline;
@@ -51,6 +52,7 @@ char *Lose[MAP_ROWS];
 char *Pause[MAP_ROWS];
 char *Create[MAP_ROWS];
 char *Legend[LEGEND_ROWS];
+char *Control[CONTROL_ROWS];
 char *BossMap[MAP_ROWS];
 char *BossChar[27];
 char *GunInfo[GUN_ROWS];
@@ -64,6 +66,8 @@ bool losetoggle = false;
 
 int KeyonMap = 0;
 int DooronMap = 0;
+int TurretonMapt = 0;
+int TurretonMapT = 0;
 int q = 0;
 int ItemNumber = 0;
 char Character;
@@ -82,6 +86,13 @@ double  g_dDeltaTime;
 double  g_bBounceTime[6];
 
 // Game specific variables here
+SGameChar turret, turret1;
+SGameChar turretT, turretT1, turretT2;
+SGameChar g_turretbullet, g_turretbullet1, g_turretbullet2;
+SGameChar turretarrayt[2] = { turret, turret1 };
+SGameChar turretarrayT[3] = { turretT, turretT1,turretT2 };
+SGameChar g_turretbulletarrayt[2] = { g_turretbullet, g_turretbullet1 };
+SGameChar g_turretbulletarrayT[3] = { g_turretbullet, g_turretbullet1,g_turretbullet2 };
 SGameChar g_enemy, g_enemy1, g_enemy2, g_enemy3, g_enemy4, g_enemy5, g_enemy6;
 SGameChar enemy[] = { g_enemy, g_enemy1, g_enemy2 ,g_enemy3 ,g_enemy4 ,g_enemy5,g_enemy6 };
 SGameChar   g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, g_boss, g_bossMainGun, g_bossSubGun1, g_bossSubGun2, g_Wordbullet;
@@ -376,6 +387,20 @@ void init(void)
 		}
 		legend.close();
 	}
+	ifstream control("control.txt");
+	if (control.is_open())
+	{
+		for (int i = 0; i < CONTROL_ROWS; i++)
+		{
+			Control[i] = new char[CONTROL_COLUMNS];
+			getline(control, controlline);
+			for (int a = 0; a < CONTROL_COLUMNS; a++)
+			{
+				Control[i][a] = controlline[a];
+			}
+		}
+		control.close();
+	}
 	ifstream gunstream("gun.txt");
 	if (gunstream.is_open())
 	{
@@ -444,6 +469,21 @@ void init(void)
 		{
 			for (int a = 0; a < MAP2_COLUMNS; a++)
 			{
+				if (Level2Maze[i][a] == 't')
+				{
+					turretarrayt[TurretonMapt].m_bActive = true;
+					turretarrayt[TurretonMapt].m_cLocation.Y = i;
+					turretarrayt[TurretonMapt].m_cLocation.X = a;
+					TurretonMapt++;
+				}
+				if (Level2Maze[i][a] == 'T')
+				{
+					turretarrayT[TurretonMapT].m_bActive = true;
+					turretarrayT[TurretonMapT].m_cLocation.Y = i + 1;
+					turretarrayT[TurretonMapT].m_cLocation.X = a;
+					TurretonMapT++;
+				}
+
 				if (Level2Maze[i][a] == 'k')
 				{
 					Key2.Location[KeyonMap].X = a;
@@ -457,42 +497,42 @@ void init(void)
 					}
 					case 1:
 					{
-						Key2.id[KeyonMap] = 2;
+						Key2.id[KeyonMap] = 3;
 						break;
 					}
 					case 2:
 					{
-						Key2.id[KeyonMap] = 5;
+						Key2.id[KeyonMap] = 1;
 						break;
 					}
 					case 3:
 					{
-						Key2.id[KeyonMap] = 1;
+						Key2.id[KeyonMap] = 2;
 						break;
 					}
 					case 4:
 					{
-						Key2.id[KeyonMap] = 3;
+						Key2.id[KeyonMap] = 5;
 						break;
 					}
 					case 5:
 					{
-						Key2.id[KeyonMap] = 8;
+						Key2.id[KeyonMap] = 7;
 						break;
 					}
 					case 6:
 					{
-						Key2.id[KeyonMap] = 4;
+						Key2.id[KeyonMap] = 6;
 						break;
 					}
 					case 7:
 					{
-						Key2.id[KeyonMap] = 6;
+						Key2.id[KeyonMap] = 4;
 						break;
 					}
 					case 8:
 					{
-						Key2.id[KeyonMap] = 7;
+						Key2.id[KeyonMap] = 8;
 						break;
 					}
 					}
@@ -501,7 +541,7 @@ void init(void)
 				}
 				else if (Level2Maze[i][a] == 'd')
 				{
-					for (int g = i - 1; g > 0; g--) // Up // Check the fucking maze bitch
+					for (int g = i - 1; g > 0; g--) // Up 
 					{
 						if (Level2Maze[g][a] == 'D')
 						{
@@ -572,7 +612,8 @@ void init(void)
 			getline(creationScreen, createline);
 			for (int a = 0; a < 72; a++)
 			{
-				if ((createline[a] == '-') || (createline[a] == '+') || (createline[a] == '|') || (createline[a] == '_'))
+				if (((createline[a] == '-') || (createline[a] == '+') || (createline[a] == '|') || (createline[a] == '_')) && 
+					(!((a >=2 && a <= 69) && (i >= 21 && i <= 28))))
 				{
 					createline[a] = (char)219;
 				}
@@ -634,7 +675,7 @@ void initafterlose()
 void initstagetwo()
 {
 	bossHealth = BOSS_HEALTH;
-	Player.Points += 10000 / (g_dElapsedTime - g_bossElapsedTime);
+	Player.Points += 10000 / ((int)(g_dElapsedTime - g_bossElapsedTime));
 	g_sChar.m_cLocation.X = 2;
 	g_sChar.m_cLocation.Y = 3;
 	g_portalEntrance.m_cLocation.X = 0;
@@ -1213,11 +1254,12 @@ void renderGame()
 			renderCreationPreview();
 			renderCreationDetails();
 		}
-		else if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_STAGETWO))
+		else if ((g_eGamemode == S_STAGEONE))
 		{
 			renderMap();        // renders the map to the buffer first 
 			renderInfo();
 			renderLegend();
+			renderControl();
 			renderenemy();
 			renderCharacter();  // renders the character into the buffer
 			renderBossChar();
@@ -1225,11 +1267,26 @@ void renderGame()
 			renderbulletPRed();
 			renderbulletPBlue();
 		}
+		else if (g_eGamemode == S_STAGETWO)
+		{
+			renderMap();        // renders the map to the buffer first 
+			renderInfo();
+			renderLegend();
+			renderControl();
+			renderenemy();
+			renderCharacter();  // renders the character into the buffer
+			renderBossChar();
+			renderbullet();
+			renderbulletPRed();
+			renderbulletPBlue();
+			renderTbullet();
+		}
 		else if (g_eGamemode == S_BOSSONE)
 		{
 			renderBossmap();
 			renderInfo();
 			renderLegend();
+			renderControl();
 			renderCharacter();
 			//renderbossattack();
 			renderShootbossbullet();
@@ -1241,12 +1298,14 @@ void renderGame()
 		renderPausescreen();
 		renderInfo();
 		renderLegend();
+		renderControl();
 	}
 	else if (g_eGameState == S_LOSE)
 	{
 		renderLosescreen();
 		renderInfo();
 		renderLegend();
+		renderControl();
 	}
 }
 
@@ -1262,10 +1321,6 @@ void renderCreation() // renders tha creation text map
 		for (int a = 0; a < 72; a++)
 		{
 			acreateline[a] = Create[i][a];
-			if (acreateline[a] == 'D')
-			{
-				acreateline[a] = (char)219;
-			}
 		}
 		g_Console.writeToBuffer(c, acreateline, baseColor);
 	}
@@ -1528,16 +1583,49 @@ void renderMap()
 					g_Console.writeToBuffer(a, i + 1, aline[a], 0x0c);
 				}
 			}
-			if ((aline[a] == 'b') && (bridge == true))
-			{
-				aline[a] = (char)240;
-				BaseMaze[i][a] = aline[a];
-				g_Console.writeToBuffer(a, i + 1, aline[a], 0x16);
-			}
-			else if (aline[a] == 'b')
+			if (aline[a] == 'o')
 			{
 				aline[a] = (char)178;
-				g_Console.writeToBuffer(a, i + 1, aline[a], 0x91);
+				g_Console.writeToBuffer(a, i + 1, aline[a], 0xee);
+			}
+			if (aline[a] == 'b')
+			{
+				if (bridge == true)
+				{
+					aline[a] = ' ';
+					g_Console.writeToBuffer(a, i + 1, aline[a], baseColor);
+				}
+				else
+				{
+					aline[a] = (char)178;
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0xee);
+				}
+			}
+			if (aline[a] == 'g')
+			{
+				if (bridge == true)
+				{
+					aline[a] = (char)178;
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0xbb);
+				}
+				else
+				{
+					aline[a] = (char)178;
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0xee);
+				}
+			}
+			if (aline[a] == 'm')
+			{
+				if (bridge == true)
+				{
+					aline[a] = ' ';
+					g_Console.writeToBuffer(a, i + 1, aline[a], baseColor);
+				}
+				else
+				{
+					aline[a] = ' ';
+					g_Console.writeToBuffer(a, i + 1, aline[a], 0xbb);
+				}
 			}
 		}
 	}
@@ -1866,12 +1954,18 @@ void renderInfo()
 
 void renderLegend()
 {
-
 	for (int i = 0; i < LEGEND_ROWS; i++)
 	{
 		COORD c;
 		c.X = 1;
-		c.Y = MAP_ROWS + i + 2;
+		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE))
+		{
+			c.Y = MAP_ROWS + i + 2;
+		}
+		else if (g_eGamemode == S_STAGETWO)
+		{
+			c.Y = MAP2_ROWS + i + 2;
+		}
 		legendline.resize(LEGEND_COLUMNS, ' ');
 		for (int a = 0; a < LEGEND_COLUMNS; a++)
 		{
@@ -1924,6 +2018,29 @@ void renderLegend()
 		}
 	}
 
+}
+
+void renderControl()
+{
+	for (int i = 0; i < CONTROL_ROWS; i++)
+	{
+		COORD c;	
+		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE))
+		{
+			c.X = MAP_COLUMNS + 2;
+		}
+		else if (g_eGamemode == S_STAGETWO)
+		{
+			c.X = MAP2_COLUMNS + 2;
+		}
+		c.Y = 3 + 3 + 3 + 3 + 3 + PORTAL_ROWS + i;
+		controlline.resize(CONTROL_COLUMNS, ' ');
+		for (int a = 0; a < CONTROL_COLUMNS; a++)
+		{
+			controlline[a] = Control[i][a];
+			g_Console.writeToBuffer(c, controlline, baseColor);
+		}
+	}
 }
 
 void renderCharacter()
@@ -2076,6 +2193,19 @@ void renderbulletPBlue()
 	}
 }
 
+void renderTbullet()
+{
+	WORD Char = 0x08;
+	for (int TurretBullett = 0; TurretBullett < 2; TurretBullett++)
+	{
+		g_Console.writeToBuffer(g_turretbulletarrayt[TurretBullett].m_cLocation, (char)254, Char);
+	}
+	for (int TurretBulletT = 0; TurretBulletT < 3; TurretBulletT++)
+	{
+		g_Console.writeToBuffer(g_turretbulletarrayT[TurretBulletT].m_cLocation, (char)254, Char);
+	}
+}
+
 void renderFramerate()
 {
 	COORD c;
@@ -2141,6 +2271,8 @@ void Stageone()
 	else if (g_eGamemode == S_STAGETWO)
 	{
 		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key2, DoorB, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
+		turretshoott(turretarrayt, g_turretbulletarrayt, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+		turretshootT(turretarrayT, g_turretbulletarrayT, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
 	}
 	information();
 	checkhealth();
@@ -2240,29 +2372,6 @@ void renderBossHealth()
 void information()
 {
 	Player.CurrentWeapon = bulletcondition;
-}
-
-bool doorcheck(KDInformation Item, int ItemNumber, KDInformation Key)
-{
-	if ((Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y - 1) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X) ||
-		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X + 1) ||
-		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y + 1) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X) ||
-		(Item.Location[ItemNumber].Y == g_sChar.m_cLocation.Y) && (Item.Location[ItemNumber].X == g_sChar.m_cLocation.X - 1))
-	{
-		if (Item.isKey == true)
-		{
-			return true;
-		}
-		else if (Key.Checker[Item.id[ItemNumber]] == true)
-		{
-			return true;
-		}
-	}
-	else
-	{
-		return false;
-	}
-	return false;
 }
 
 void changeMap()

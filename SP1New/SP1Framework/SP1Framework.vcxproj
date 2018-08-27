@@ -78,6 +78,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="boss.cpp" />
+    <ClCompile Include="boss2.cpp" />
     <ClCompile Include="character.cpp" />
     <ClCompile Include="check.cpp" />
     <ClCompile Include="createcharacter.cpp" />
@@ -87,6 +88,7 @@
     <ClCompile Include="game.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="shoot.cpp" />
+    <ClCompile Include="turret.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="boss.h" />

@@ -57,6 +57,7 @@ void BossoneVar(double &g_dBounceTime, double &g_eBounceTime, double &g_dElapsed
 	checkhealth();
 
 }
+
 void bossMove(SGameChar& g_boss)
 {
 	bossInterval++;
@@ -109,6 +110,7 @@ void bossMove(SGameChar& g_boss)
 		bossInterval = 0;
 	}
 }
+
 void bossAttackLazer(SGameChar &g_bossMainGun, SGameChar &g_boss, char** BossMap)
 {
 	g_bossMainGun.m_cLocation.X = g_boss.m_cLocation.X + 10;
@@ -268,6 +270,7 @@ void bossAttackLazer(SGameChar &g_bossMainGun, SGameChar &g_boss, char** BossMap
 	}
 
 }
+
 void bossAttackMachineGunLeft(SGameChar &g_bossSubGun1, SGameChar &g_boss, char** BossMap, vector<SGameChar> &g_bossSubBullet)
 {
 	g_bossSubGun1.m_cLocation.X = g_boss.m_cLocation.X + 4;
@@ -319,6 +322,7 @@ void bossAttackMachineGunLeft(SGameChar &g_bossSubGun1, SGameChar &g_boss, char*
 		BossMap[g_bossSubBullet[bulletCount].m_cLocation.Y - 1][g_bossSubBullet[bulletCount].m_cLocation.X] = '0';
 	}
 }
+
 void bossAttackMachineGunRight(SGameChar &g_bossSubGun2, SGameChar &g_boss, char** BossMap, vector<SGameChar> &g_bossSubBullet2)
 {
 	g_bossSubGun2.m_cLocation.X = g_boss.m_cLocation.X + 21;
@@ -370,6 +374,7 @@ void bossAttackMachineGunRight(SGameChar &g_bossSubGun2, SGameChar &g_boss, char
 		BossMap[g_bossSubBullet2[bulletCount].m_cLocation.Y - 1][g_bossSubBullet2[bulletCount].m_cLocation.X] = '0';
 	}
 }
+
 void bossAttackMachineGun(SGameChar &g_bossSubGun1, SGameChar &g_bossSubGun2, SGameChar &g_boss)
 {
 	g_bossSubGun1.m_cLocation.X = g_boss.m_cLocation.X + 4;
@@ -377,6 +382,7 @@ void bossAttackMachineGun(SGameChar &g_bossSubGun1, SGameChar &g_bossSubGun2, SG
 	g_bossSubGun2.m_cLocation.X = g_boss.m_cLocation.X + 17;
 	g_bossSubGun2.m_cLocation.Y = g_boss.m_cLocation.Y + 8;
 }
+
 void charshootboss(SGameChar &g_Wordbullet, SGameChar &g_sChar, bool &charWordBullet, double(&g_bBounceTime)[6], double &g_dElapsedTime, char** BossMap)
 {
 	int i = 0;
@@ -467,6 +473,7 @@ void charshootboss(SGameChar &g_Wordbullet, SGameChar &g_sChar, bool &charWordBu
 
 
 }
+
 SGameChar createBossSubBullet(SGameChar &SubGunStart)
 {
 	SGameChar tempChar;

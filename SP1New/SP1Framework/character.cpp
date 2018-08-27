@@ -15,7 +15,7 @@ void getInputmove()
 }
 
 void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_sChar, Console &g_Console, KDInformation &Key, KDInformation &Door,
-	char **Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
+	char** Maze, PlayerInformation &Player, SGameChar &g_portalEntrance, SGameChar &g_portalExit, int &charbossX, int &charbossY, EGAMEMODES &g_eGamemode)
 {
 	getInputmove();
 	bool bSomethingHappened = false;
@@ -57,11 +57,25 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		//Beep(1440, 30);
 		if ((upcheck(g_sChar, Maze, ' ')) ||
 			(upcheck(g_sChar, Maze, 'I')) ||
-			(upcheck(g_sChar, Maze, '1')) ||
-			(upcheck(g_sChar, Maze, '2')) ||
+			(upcheck(g_sChar, Maze, 'o')) ||
+			(upcheck(g_sChar, Maze, 'b')) ||
 			(upcheck(g_sChar, Maze, (char)240)))
 		{
 			g_sChar.m_cLocation.Y--;
+		}
+		else if (bridge == true)
+		{
+			if (upcheck(g_sChar, Maze, 'm'))
+			{
+				g_sChar.m_cLocation.Y--;
+			}
+		}
+		else
+		{
+			if (upcheck(g_sChar, Maze, 'g'))
+			{
+				g_sChar.m_cLocation.Y--;
+			}
 		}
 		ShootDirection = 1;
 		Player.Direction = "Up";
@@ -72,11 +86,25 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		//Beep(1440, 30);
 		if ((rightcheck(g_sChar, Maze, ' ')) ||
 			(rightcheck(g_sChar, Maze, 'I')) ||
-			(rightcheck(g_sChar, Maze, '1')) ||
-			(rightcheck(g_sChar, Maze, '2')) ||
+			(rightcheck(g_sChar, Maze, 'o')) ||
+			(rightcheck(g_sChar, Maze, 'b')) ||
 			(rightcheck(g_sChar, Maze, (char)240)))
 		{
 			g_sChar.m_cLocation.X++;
+		}
+		else if (bridge == true)
+		{
+			if (rightcheck(g_sChar, Maze, 'm'))
+			{
+				g_sChar.m_cLocation.X++;
+			}
+		}
+		else
+		{
+			if (rightcheck(g_sChar, Maze, 'g'))
+			{
+				g_sChar.m_cLocation.X++;
+			}
 		}
 		ShootDirection = 2;
 		Player.Direction = "Right";
@@ -87,11 +115,25 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		//Beep(1440, 30);
 		if ((downcheck(g_sChar, Maze, ' ')) ||
 			(downcheck(g_sChar, Maze, 'I')) ||
-			(downcheck(g_sChar, Maze, '1')) ||
-			(downcheck(g_sChar, Maze, '2')) ||
+			(downcheck(g_sChar, Maze, 'o')) ||
+			(downcheck(g_sChar, Maze, 'b')) ||
 			(downcheck(g_sChar, Maze, (char)240)))
 		{
 			g_sChar.m_cLocation.Y++;
+		}
+		else if (bridge == true)
+		{
+			if (downcheck(g_sChar, Maze, 'm'))
+			{
+				g_sChar.m_cLocation.Y++;
+			}
+		}
+		else
+		{
+			if (downcheck(g_sChar, Maze, 'g'))
+			{
+				g_sChar.m_cLocation.Y++;
+			}
 		}
 		ShootDirection = 3;
 		Player.Direction = "Down";
@@ -102,11 +144,25 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		//Beep(1440, 30);
 		if ((leftcheck(g_sChar, Maze, ' ')) ||
 			(leftcheck(g_sChar, Maze, 'I')) ||
-			(leftcheck(g_sChar, Maze, '1')) ||
-			(leftcheck(g_sChar, Maze, '2')) ||
+			(leftcheck(g_sChar, Maze, 'o')) ||
+			(leftcheck(g_sChar, Maze, 'b')) ||
 			(leftcheck(g_sChar, Maze, (char)240)))
 		{
 			g_sChar.m_cLocation.X--;
+		}
+		else if (bridge == true)
+		{
+			if (leftcheck(g_sChar, Maze, 'm'))
+			{
+				g_sChar.m_cLocation.X--;
+			}
+		}
+		else
+		{
+			if (leftcheck(g_sChar, Maze, 'g'))
+			{
+				g_sChar.m_cLocation.X--;
+			}
 		}
 		ShootDirection = 4;
 		Player.Direction = "Left";
@@ -116,7 +172,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 	{
 		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
 		{
-			if (doorcheck(Key, ItemNumber, Key))
+			if (doorcheck(Key, ItemNumber, Key, g_sChar))
 			{
 				Key.Checker[Key.id[ItemNumber]] = true;
 				Door.Checker[Key.id[ItemNumber]] = true;
@@ -124,7 +180,7 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 				Player.Key[Key.id[ItemNumber]] = true;
 				ItemNumber = NUM_OF_KEYS;
 			}
-			else if (doorcheck(Door, ItemNumber, Key))
+			else if (doorcheck(Door, ItemNumber, Key, g_sChar))
 			{
 				int Rows, Columns;
 				switch (g_eGamemode)
@@ -168,7 +224,14 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 		}
 		if ((upcheck(g_sChar, Maze, 's')) || (rightcheck(g_sChar, Maze, 's')) || (downcheck(g_sChar, Maze, 's')) || (leftcheck(g_sChar, Maze, 's')))
 		{
-			bridge = true;
+			if (bridge == false)
+			{
+				bridge = true;
+			}
+			else
+			{
+				bridge = false;
+			}
 			bSomethingHappened = true;
 		}
 		if ((upcheck(g_sChar, Maze, (char)3)) || (rightcheck(g_sChar, Maze, (char)3)) || (downcheck(g_sChar, Maze, (char)3)) || (leftcheck(g_sChar, Maze, (char)3)))

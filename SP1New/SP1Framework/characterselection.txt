@@ -18,3 +18,13 @@
 |                                                                     |
 |                                                                     |
 +---------------------------------------------------------------------+
+|                                                                     |
+| CONTROLS                                                            |
+| UP - Move Up              SPACE - Shoot                             |
+| RIGHT - Move Right        1 - Gun                                   |
+| DOWN - Move Down          2 - Portal Gun(Entrance)                  |
+| LEFT - Move Left          3 - Portal Gun(Exit)                      |
+| NUM 0 - Toggle Direction  P - Pause                                 |
+| Q - Toggle Weapon         ESC - Quit Game                           |
+|                                                                     |
++---------------------------------------------------------------------+

@@ -23,13 +23,15 @@ const int MAP2_ROWS = 31;
 const int NUM_OF_KEYS = 10;
 const int LEGEND_COLUMNS = 42;
 const int LEGEND_ROWS = 5;
+const int CONTROL_COLUMNS = 50;
+const int CONTROL_ROWS = 7;
 const int GUN_COLUMNS = 27;
 const int GUN_ROWS = 8;
 const int PORTAL_COLUMNS = 12;
 const int PORTAL_ROWS = 12;
 const int SPACEGUNSHIP_COLUMNS = 19;
 const int SPACEGUNSHIP_ROWS = 10;
-const int BOSS_HEALTH = 300;
+const int BOSS_HEALTH = 10;
 const int GENERAL_DIRECTION = 2; // RIGHT
 
 								 // Enumeration to store the control keys that your game will have
@@ -109,6 +111,7 @@ void splashScreenWait();    // waits for time to pass in splash screen
 void gameplay();            // gameplay logic
 							// moves the character, collision detection, physics, etc
 void processUserInput();    // checks if you should change states or do something else with the game, e.g. pause, exit
+void processLoseUserInput();
 void clearScreen();         // clears the current screen and draw from scratch 
 void renderSplashScreen();  // renders the splash screen
 void renderGame();          // renders the game stuff
@@ -117,6 +120,7 @@ void renderPausescreen();
 void renderenemy();
 void renderInfo();
 void renderLegend();
+void renderControl();
 void renderCharacter();     // renders the character into the buffer
 void renderbulletPRed();
 void renderbulletPBlue();
@@ -151,14 +155,10 @@ bool upcheck(SGameChar&, char**, char);
 bool rightcheck(SGameChar&, char**, char);
 bool downcheck(SGameChar&, char**, char);
 bool leftcheck(SGameChar&, char**, char);
-//bool upcheckB(SGameChar&, char**);
-//bool rightcheckB(SGameChar&, char**);
-//bool downcheckB(SGameChar&, char**);
-//bool leftcheckB(SGameChar&, char**);
 void actionshoot(SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, char**, double&, double&);
-void shoot(bool&, double&, double&, SGameChar&, SGameChar&);
-void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&);
-void shootPBlue(bool&, double&, double&, SGameChar&, SGameChar&);
+void shoot(bool&, double&, double&, SGameChar&, SGameChar&, char**);
+void shootPRed(bool&, double&, double&, SGameChar&, SGameChar&, char**);
+void shootPBlue(bool&, double&, double&, SGameChar&, SGameChar&, char**);
 void movebullet(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPRed(SGameChar&, SGameChar&, SGameChar&, char**);
 void movebulletPBlue(SGameChar&, SGameChar&, SGameChar&, char**);
@@ -172,17 +172,17 @@ int downenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameCha
 int leftenemy(char**, SGameChar&, SGameChar&, int&, PlayerInformation&, SGameChar &);
 void track(char**, SGameChar&, SGameChar&, int &, PlayerInformation &, SGameChar &);
 
-void moveenemy1(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy2(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy3(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy4(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy5(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void moveenemy6(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar &);
-void ShootEnemy(SGameChar &g_bullet, SGameChar &g_Enemy, PlayerInformation&);
+void moveenemy1(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void moveenemy2(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void moveenemy3(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void moveenemy4(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void moveenemy5(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void moveenemy6(char**, SGameChar&, SGameChar&, int&, int&, PlayerInformation&, SGameChar&);
+void ShootEnemy(SGameChar&, SGameChar&, PlayerInformation&);
 
 int bulletAfterPortal();
 
-bool doorcheck(KDInformation, int, KDInformation);
+bool doorcheck(KDInformation&, int&, KDInformation&, SGameChar&);
 void moveCharacter(double&, double&, SGameChar&, Console&, KDInformation&, KDInformation&,
 	char**, PlayerInformation&, SGameChar&, SGameChar&, int&, int&, EGAMEMODES&);
 void moveCharacterInBoss(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, bool&);
@@ -195,5 +195,10 @@ void changeDetail(WORD&, char&, int&, int&, double&, double&, bool&, EGAMEMODES&
 void renderCreationPreview();
 void renderCreationOptions();
 void renderCreationDetails();
+
+void renderTbullet();
+void turretshoott(SGameChar(&turret)[2], SGameChar(&g_turretbulletarray)[2], bool &aSomethingHappened, char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
+void turretshootT(SGameChar(&turret)[3], SGameChar(&g_turretbulletarray)[3], bool &aSomethingHappened, char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
+
 
 #endif // _GAME_H

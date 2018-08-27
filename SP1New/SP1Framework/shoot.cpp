@@ -52,17 +52,17 @@ void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, 
 		{
 		case 1:
 		{
-			shoot(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bullet, g_sChar);
+			shoot(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bullet, g_sChar, Maze);
 			break;
 		}
 		case 2:
 		{
-			shootPRed(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar);
+			shootPRed(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar, Maze);
 			break;
 		}
 		case 3:
 		{
-			shootPBlue(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar);
+			shootPBlue(aSomethingHappened, g_eBounceTime, g_eElapsedTime, g_bulletP, g_sChar, Maze);
 			break;
 		}
 		}
@@ -72,12 +72,12 @@ void actionshoot(SGameChar &g_sChar, SGameChar &g_bullet, SGameChar &g_bulletP, 
 	movebulletPBlue(g_bulletP, g_portalExit, g_sChar, Maze);
 }
 
-void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet, SGameChar &g_sChar)
+void shoot(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bullet, SGameChar &g_sChar, char **Maze)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (isKeyPressedShoot[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE] && (Maze[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] != (char)219))
 	{
 		g_bullet.m_cLocation.X = g_sChar.m_cLocation.X;
 		g_bullet.m_cLocation.Y = g_sChar.m_cLocation.Y;
@@ -102,7 +102,12 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 			if ((upcheck(g_bullet, Maze, ' ')) ||
 				(upcheck(g_bullet, Maze, '.')) ||
+				(upcheck(g_bullet, Maze, 'w')) ||
 				(upcheck(g_bullet, Maze, (char)240)))
+			{
+				g_bullet.m_cLocation.Y--;
+			}
+			else if ((bridge == true) && ((upcheck(g_bullet, Maze, 'b')) || ((upcheck(g_bullet, Maze, 'm')))))
 			{
 				g_bullet.m_cLocation.Y--;
 			}
@@ -122,7 +127,12 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 			if ((rightcheck(g_bullet, Maze, ' ')) ||
 				(rightcheck(g_bullet, Maze, '.')) ||
+				(rightcheck(g_bullet, Maze, 'w')) ||
 				(rightcheck(g_bullet, Maze, (char)240)))
+			{
+				g_bullet.m_cLocation.X++;
+			}
+			else if ((bridge == true) && ((rightcheck(g_bullet, Maze, 'b')) || ((rightcheck(g_bullet, Maze, 'm')))))
 			{
 				g_bullet.m_cLocation.X++;
 			}
@@ -142,7 +152,12 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 			if ((downcheck(g_bullet, Maze, ' ')) ||
 				(downcheck(g_bullet, Maze, '.')) ||
+				(downcheck(g_bullet, Maze, 'w')) ||
 				(downcheck(g_bullet, Maze, (char)240)))
+			{
+				g_bullet.m_cLocation.Y++;
+			}
+			else if ((bridge == true) && ((downcheck(g_bullet, Maze, 'b')) || ((downcheck(g_bullet, Maze, 'm')))))
 			{
 				g_bullet.m_cLocation.Y++;
 			}
@@ -162,7 +177,12 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 		{
 			if ((leftcheck(g_bullet, Maze, ' ')) ||
 				(leftcheck(g_bullet, Maze, '.')) ||
+				(leftcheck(g_bullet, Maze, 'w')) ||
 				(leftcheck(g_bullet, Maze, (char)240)))
+			{
+				g_bullet.m_cLocation.X--;
+			}
+			else if ((bridge == true) && ((leftcheck(g_bullet, Maze, 'b')) || ((leftcheck(g_bullet, Maze, 'm')))))
 			{
 				g_bullet.m_cLocation.X--;
 			}
@@ -182,12 +202,12 @@ void movebullet(SGameChar &g_bullet, SGameChar &g_portalEntrance, SGameChar &g_p
 	}
 }
 
-void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar)
+void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar, char** Maze)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (isKeyPressedShoot[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE] && (Maze[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] != (char)219))
 	{
 		switch (ShootDirection)
 		{
@@ -227,12 +247,12 @@ void shootPRed(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElaps
 	}
 }
 
-void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar)
+void shootPBlue(bool &aSomethingHappened, double &g_eBounceTime, double &g_eElapsedTime, SGameChar &g_bulletP, SGameChar &g_sChar, char** Maze)
 {
 	aSomethingHappened = false;
 	if (g_eBounceTime > g_eElapsedTime)
 		return;
-	if (isKeyPressedShoot[K_SPACE])
+	if (isKeyPressedShoot[K_SPACE] && (Maze[g_sChar.m_cLocation.Y - 1][g_sChar.m_cLocation.X] != (char)219))
 	{
 		switch (ShootDirection)
 		{
@@ -287,6 +307,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
+			else if ((bridge == true) && ((upcheck(g_bulletP, Maze, 'b')) || ((upcheck(g_bulletP, Maze, 'm')))))
+			{
+				g_bulletP.m_cLocation.Y--;
+			}
 			else if (Maze[g_bulletP.m_cLocation.Y - 2][g_bulletP.m_cLocation.X] != (char)219)
 			{
 				BulletposPRed = false;
@@ -313,6 +337,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 				(rightcheck(g_bulletP, Maze, '.')) ||
 				(rightcheck(g_bulletP, Maze, 'w')) ||
 				(rightcheck(g_bulletP, Maze, (char)240)))
+			{
+				g_bulletP.m_cLocation.X++;
+			}
+			else if ((bridge == true) && ((rightcheck(g_bulletP, Maze, 'b')) || ((rightcheck(g_bulletP, Maze, 'm')))))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -345,6 +373,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
+			else if ((bridge == true) && ((downcheck(g_bulletP, Maze, 'b')) || ((downcheck(g_bulletP, Maze, 'm')))))
+			{
+				g_bulletP.m_cLocation.Y++;
+			}
 			else if (Maze[g_bulletP.m_cLocation.Y][g_bulletP.m_cLocation.X] != (char)219)
 			{
 				BulletposPRed = false;
@@ -371,6 +403,10 @@ void movebulletPRed(SGameChar &g_bulletP, SGameChar &g_portalEntrance, SGameChar
 				(leftcheck(g_bulletP, Maze, '.')) ||
 				(leftcheck(g_bulletP, Maze, 'w')) ||
 				(leftcheck(g_bulletP, Maze, (char)240)))
+			{
+				g_bulletP.m_cLocation.X--;
+			}
+			else if ((bridge == true) && ((leftcheck(g_bulletP, Maze, 'b')) || ((leftcheck(g_bulletP, Maze, 'm')))))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
@@ -413,6 +449,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 			{
 				g_bulletP.m_cLocation.Y--;
 			}
+			else if ((bridge == true) && ((upcheck(g_bulletP, Maze, 'b')) || ((upcheck(g_bulletP, Maze, 'm')))))
+			{
+				g_bulletP.m_cLocation.Y--;
+			}
 			else if (Maze[g_bulletP.m_cLocation.Y - 2][g_bulletP.m_cLocation.X] != (char)219)
 			{
 				BulletposPBlue = false;
@@ -439,6 +479,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 				(rightcheck(g_bulletP, Maze, '.')) ||
 				(rightcheck(g_bulletP, Maze, 'w')) ||
 				(rightcheck(g_bulletP, Maze, (char)240)))
+			{
+				g_bulletP.m_cLocation.X++;
+			}
+			else if ((bridge == true) && ((rightcheck(g_bulletP, Maze, 'b')) || ((rightcheck(g_bulletP, Maze, 'm')))))
 			{
 				g_bulletP.m_cLocation.X++;
 			}
@@ -471,6 +515,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 			{
 				g_bulletP.m_cLocation.Y++;
 			}
+			else if ((bridge == true) && ((downcheck(g_bulletP, Maze, 'b')) || ((downcheck(g_bulletP, Maze, 'm')))))
+			{
+				g_bulletP.m_cLocation.Y++;
+			}
 			else if (Maze[g_bulletP.m_cLocation.Y][g_bulletP.m_cLocation.X] != (char)219)
 			{
 				BulletposPBlue = false;
@@ -497,6 +545,10 @@ void movebulletPBlue(SGameChar &g_bulletP, SGameChar &g_portalExit, SGameChar &g
 				(leftcheck(g_bulletP, Maze, '.')) ||
 				(leftcheck(g_bulletP, Maze, 'w')) ||
 				(leftcheck(g_bulletP, Maze, (char)240)))
+			{
+				g_bulletP.m_cLocation.X--;
+			}
+			else if ((bridge == true) && ((leftcheck(g_bulletP, Maze, 'b')) || ((leftcheck(g_bulletP, Maze, 'm')))))
 			{
 				g_bulletP.m_cLocation.X--;
 			}
