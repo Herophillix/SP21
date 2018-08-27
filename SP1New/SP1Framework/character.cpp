@@ -197,6 +197,12 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 					Columns = MAP2_COLUMNS;
 					break;
 				}
+				case S_STAGETHREE:
+				{
+					Rows = MAP3_ROWS;
+					Columns = MAP3_COLUMNS;
+					break;
+				}
 				}
 				for (int i = 0; i < Rows; i++)
 				{
@@ -244,7 +250,19 @@ void moveCharacter(double &g_dBounceTime, double &g_dElapsedTime, SGameChar &g_s
 	if ((g_sChar.m_cLocation.Y == charbossY) && (g_sChar.m_cLocation.X == charbossX))
 	{
 		bulletcondition = 1;
-		g_eGamemode = S_BOSSONE;
+		switch (g_eGamemode)
+		{
+		case S_STAGEONE:
+		{
+			g_eGamemode = S_BOSSONE;
+			break;
+		}
+		case S_STAGETWO:
+		{
+			g_eGamemode = S_BOSSTWO;
+			break;
+		}
+		}
 		g_bossElapsedTime = g_dElapsedTime;
 		for (int ItemNumber = 0; ItemNumber < NUM_OF_KEYS; ItemNumber++)
 		{

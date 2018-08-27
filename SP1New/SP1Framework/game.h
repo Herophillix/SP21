@@ -14,12 +14,14 @@ extern bool g_bQuitGame;
 extern bool bridge;
 extern bool health;
 extern double g_bossElapsedTime;
-const int NUM_COLUMNS = 160;
-const int NUM_ROWS = 50;
+const int NUM_COLUMNS = 180;
+const int NUM_ROWS = 60;
 const int MAP_COLUMNS = 64;
 const int MAP_ROWS = 32;
 const int MAP2_COLUMNS = 103;
 const int MAP2_ROWS = 31;
+const int MAP3_COLUMNS = 134;
+const int MAP3_ROWS = 32;
 const int NUM_OF_KEYS = 10;
 const int LEGEND_COLUMNS = 42;
 const int LEGEND_ROWS = 5;
@@ -68,8 +70,11 @@ enum EGAMEMODES
 {
 	S_STAGEONE,
 	S_BOSSONE,
-	S_CREATION,
-	S_STAGETWO
+	S_STAGETWO,
+	S_BOSSTWO,
+	S_STAGETHREE,
+	S_BOSSTHREE,
+	S_CREATION
 };
 // struct for the game character
 struct SGameChar
@@ -134,6 +139,7 @@ void renderLosescreen();
 void checkhealth();
 void initafterlose();
 void initstagetwo();
+void initstagethree();
 
 void Bossone();
 void BossoneVar(double&, double&, double&, SGameChar&, Console&, char**, PlayerInformation&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, SGameChar&, bool&, double(&g_bBounceTime)[6], vector<SGameChar>&, vector<SGameChar>&);

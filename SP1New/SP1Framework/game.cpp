@@ -30,6 +30,7 @@ string controlline;
 string gunline;
 string portalline;
 string stagetwoline;
+string stagethreeline;
 string loseline;
 string spacegunshipline;
 
@@ -47,6 +48,7 @@ char tempChar;
 char *BaseMaze[MAP_ROWS];
 char *Level1Maze[MAP_ROWS];
 char *Level2Maze[MAP2_ROWS];
+char *Level3Maze[MAP3_ROWS];
 char *SplashMaze[MAP_ROWS];
 char *Lose[MAP_ROWS];
 char *Pause[MAP_ROWS];
@@ -75,7 +77,7 @@ char Character;
 bool aSomethingHappened;
 
 PlayerInformation Player;
-KDInformation Key, DoorA, Key2, DoorB;
+KDInformation Key, DoorA, Key2, DoorB, Key3, DoorC;
 
 bool g_bStartGame = false;
 int g_bStartFrame = 0;
@@ -483,7 +485,6 @@ void init(void)
 					turretarrayT[TurretonMapT].m_cLocation.X = a;
 					TurretonMapT++;
 				}
-
 				if (Level2Maze[i][a] == 'k')
 				{
 					Key2.Location[KeyonMap].X = a;
@@ -622,6 +623,164 @@ void init(void)
 		}
 		creationScreen.close();
 	}
+	ifstream mapThree("map03.txt");
+	if (mapThree.is_open())
+	{
+		KeyonMap = 0;
+		DooronMap = 0;
+		for (int i = 0; i < MAP3_ROWS; i++)
+		{
+			Level3Maze[i] = new char[MAP3_COLUMNS];
+			getline(mapThree, stagethreeline);
+			for (int a = 0; a < MAP3_COLUMNS; a++)
+			{
+				if ((stagethreeline[a] == 43) || (stagethreeline[a] == 124) || (stagethreeline[a] == 45))
+				{
+					stagethreeline[a] = (char)219;
+				}
+				if (stagethreeline[a] == 'h')
+				{
+					stagethreeline[a] = (char)3;
+				}
+				Level3Maze[i][a] = stagethreeline[a];
+			}
+		}
+		//for (int i = 0; i < MAP3_ROWS; i++)
+		//{
+		//	for (int a = 0; a < MAP3_COLUMNS; a++)
+		//	{
+		//		/*if (Level3Maze[i][a] == 't')
+		//		{
+		//			turretarrayt[TurretonMapt].m_bActive = true;
+		//			turretarrayt[TurretonMapt].m_cLocation.Y = i;
+		//			turretarrayt[TurretonMapt].m_cLocation.X = a;
+		//			TurretonMapt++;
+		//		}
+		//		if (Level3Maze[i][a] == 'T')
+		//		{
+		//			turretarrayT[TurretonMapT].m_bActive = true;
+		//			turretarrayT[TurretonMapT].m_cLocation.Y = i + 1;
+		//			turretarrayT[TurretonMapT].m_cLocation.X = a;
+		//			TurretonMapT++;
+		//		}*/
+		//		if (Level3Maze[i][a] == 'k')
+		//		{
+		//			Key3.Location[KeyonMap].X = a;
+		//			Key3.Location[KeyonMap].Y = i + 1;
+		//			switch (KeyonMap)
+		//			{
+		//			case 0:
+		//			{
+		//				Key3.id[KeyonMap] = 0;
+		//				break;
+		//			}
+		//			case 1:
+		//			{
+		//				Key3.id[KeyonMap] = 3;
+		//				break;
+		//			}
+		//			case 2:
+		//			{
+		//				Key3.id[KeyonMap] = 1;
+		//				break;
+		//			}
+		//			case 3:
+		//			{
+		//				Key3.id[KeyonMap] = 2;
+		//				break;
+		//			}
+		//			case 4:
+		//			{
+		//				Key3.id[KeyonMap] = 5;
+		//				break;
+		//			}
+		//			case 5:
+		//			{
+		//				Key3.id[KeyonMap] = 7;
+		//				break;
+		//			}
+		//			case 6:
+		//			{
+		//				Key3.id[KeyonMap] = 6;
+		//				break;
+		//			}
+		//			case 7:
+		//			{
+		//				Key3.id[KeyonMap] = 4;
+		//				break;
+		//			}
+		//			case 8:
+		//			{
+		//				Key3.id[KeyonMap] = 8;
+		//				break;
+		//			}
+		//			}
+		//			Key3.isKey = true;
+		//			KeyonMap++;
+		//		}
+		//		else if (Level3Maze[i][a] == 'd')
+		//		{
+		//			for (int g = i - 1; g > 0; g--) // Up 
+		//			{
+		//				if (Level3Maze[g][a] == 'D')
+		//				{
+		//					DoorC.Sides[DooronMap].AdjacentSides[g].X = a;
+		//					DoorC.Sides[DooronMap].AdjacentSides[g].Y = g;
+		//					DoorC.Checker[DooronMap] = false;
+		//				}
+		//				else
+		//				{
+		//					break;
+		//				}
+		//			}
+		//			for (int f = a + 1; f < MAP2_COLUMNS; f++) //Right
+		//			{
+		//				if (Level3Maze[i][f] == 'D')
+		//				{
+		//					DoorC.Sides[DooronMap].AdjacentSides[f].X = f;
+		//					DoorC.Sides[DooronMap].AdjacentSides[f].Y = i;
+		//					DoorC.Checker[DooronMap] = false;
+		//				}
+		//				else
+		//				{
+		//					break;
+		//				}
+		//			}
+		//			for (int g = i + 1; g < MAP2_ROWS; g++) // Down
+		//			{
+		//				if (Level3Maze[g][a] == 'D')
+		//				{
+		//					DoorC.Sides[DooronMap].AdjacentSides[g].X = a;
+		//					DoorC.Sides[DooronMap].AdjacentSides[g].Y = g;
+		//					DoorC.Checker[DooronMap] = false;
+		//				}
+		//				else
+		//				{
+		//					break;
+		//				}
+		//			}
+		//			for (int f = a - 1; f > 1; f--) // Left
+		//			{
+		//				if (Level3Maze[i][f] == 'D')
+		//				{
+		//					DoorC.Sides[DooronMap].AdjacentSides[f].X = f;
+		//					DoorC.Sides[DooronMap].AdjacentSides[f].Y = i;
+		//					DoorC.Checker[DooronMap] = false;
+		//				}
+		//				else
+		//				{
+		//					break;
+		//				}
+		//			}
+		//			DoorC.Location[DooronMap].X = a;
+		//			DoorC.Location[DooronMap].Y = i + 1;
+		//			DoorC.id[DooronMap] = DooronMap;
+		//			DoorC.Checker[DooronMap] = false;
+		//			DooronMap++;
+		//		}
+		//	}
+		//}
+	}
 	Player.Health = 5;
 	Player.Points = 0;
 	Player.CurrentWeapon = 1;
@@ -682,7 +841,21 @@ void initstagetwo()
 	g_portalEntrance.m_cLocation.Y = 0;
 	g_portalExit.m_cLocation.X = 0;
 	g_portalExit.m_cLocation.Y = 0;
-	charbossX = 98;
+	charbossX = 4;
+	charbossY = 3;
+}
+
+void initstagethree()
+{
+	bossHealth = BOSS_HEALTH;
+	Player.Points += 10000 / ((int)(g_dElapsedTime - g_bossElapsedTime));
+	g_sChar.m_cLocation.X = 2;
+	g_sChar.m_cLocation.Y = 3;
+	g_portalEntrance.m_cLocation.X = 0;
+	g_portalEntrance.m_cLocation.Y = 0;
+	g_portalExit.m_cLocation.X = 0;
+	g_portalExit.m_cLocation.Y = 0;
+	charbossX = 24;
 	charbossY = 28;
 }
 
@@ -1254,7 +1427,7 @@ void renderGame()
 			renderCreationPreview();
 			renderCreationDetails();
 		}
-		else if ((g_eGamemode == S_STAGEONE))
+		else if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_STAGETHREE))
 		{
 			renderMap();        // renders the map to the buffer first 
 			renderInfo();
@@ -1281,7 +1454,7 @@ void renderGame()
 			renderbulletPBlue();
 			renderTbullet();
 		}
-		else if (g_eGamemode == S_BOSSONE)
+		else if ((g_eGamemode == S_BOSSONE) || (g_eGamemode == S_BOSSTWO))
 		{
 			renderBossmap();
 			renderInfo();
@@ -1520,6 +1693,18 @@ void renderMap()
 	{
 		aline.resize(MAP2_COLUMNS, ' ');
 		Rowrender = MAP2_ROWS;
+		break;
+	}
+	case S_BOSSTWO:
+	{
+		aline.resize(MAP_COLUMNS, ' ');
+		Rowrender = MAP_ROWS;
+		break;
+	}
+	case S_STAGETHREE:
+	{
+		aline.resize(MAP3_COLUMNS, ' ');
+		Rowrender = MAP3_ROWS;
 		break;
 	}
 	}
@@ -1793,6 +1978,10 @@ void renderInfo()
 			break;
 		case S_STAGETWO: c.X = MAP2_COLUMNS + 2;
 			break;
+		case S_BOSSTWO: c.X = MAP_COLUMNS + 2;
+			break;
+		case S_STAGETHREE: c.X = MAP3_COLUMNS + 2;
+			break;
 		}
 		c.Y = i + 1;
 		int keySpacing = c.X + Info[3].length();
@@ -1836,7 +2025,7 @@ void renderInfo()
 		//	}
 		//}
 	}
-	if (g_eGamemode == S_BOSSONE)
+	if ((g_eGamemode == S_BOSSONE) || (g_eGamemode == S_BOSSTWO))
 	{
 		int ColorNumber;
 		for (int b = 0; b < SPACEGUNSHIP_ROWS; b++)
@@ -1906,6 +2095,10 @@ void renderInfo()
 				break;
 			case S_STAGETWO: a.X = MAP2_COLUMNS + 2;
 				break;
+			case S_BOSSTWO: a.X = MAP2_COLUMNS + 2;
+				break;
+			case S_STAGETHREE: a.X = MAP3_COLUMNS + 2;
+				break;
 			}
 			a.Y = SpriteRow[2] + 1;
 			for (int yt = 0; yt < GUN_COLUMNS; yt++)
@@ -1919,7 +2112,7 @@ void renderInfo()
 	{
 		for (int b = 0; b < PORTAL_ROWS; b++)
 		{
-			if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE))
+			if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE) || (g_eGamemode == S_BOSSTWO))
 			{
 				a.X = MAP_COLUMNS + 2;
 			}
@@ -1958,13 +2151,17 @@ void renderLegend()
 	{
 		COORD c;
 		c.X = 1;
-		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE))
+		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE) || (g_eGamemode == S_BOSSTWO))
 		{
 			c.Y = MAP_ROWS + i + 2;
 		}
 		else if (g_eGamemode == S_STAGETWO)
 		{
 			c.Y = MAP2_ROWS + i + 2;
+		}
+		else if (g_eGamemode == S_STAGETHREE)
+		{
+			c.Y = MAP3_ROWS + i + 2;
 		}
 		legendline.resize(LEGEND_COLUMNS, ' ');
 		for (int a = 0; a < LEGEND_COLUMNS; a++)
@@ -2025,7 +2222,7 @@ void renderControl()
 	for (int i = 0; i < CONTROL_ROWS; i++)
 	{
 		COORD c;	
-		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE))
+		if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_BOSSONE) || (g_eGamemode == S_BOSSTWO))
 		{
 			c.X = MAP_COLUMNS + 2;
 		}
@@ -2084,6 +2281,39 @@ void renderCharacter()
 		{
 			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		}
+		break;
+	}
+	case S_BOSSTWO:
+	{
+		if (characterIsHit == true)
+		{
+			playerIsHitFrame++;
+			if (playerIsHitFrame % 10 == 9)
+			{
+				if (charColor == 0x02)
+				{
+					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, 0x0);
+				}
+				else
+				{
+					g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+				}
+			}
+			if (playerIsHitFrame > 100)
+			{
+				characterIsHit = false;
+				playerIsHitFrame = 0;
+			}
+		}
+		else
+		{
+			g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
+		}
+		break;
+	}
+	case S_STAGETHREE:
+	{
+		g_Console.writeToBuffer(g_sChar.m_cLocation, charIcon, charColor);
 		break;
 	}
 	}
@@ -2231,59 +2461,6 @@ void renderToScreen()
 	g_Console.flushBufferToConsole();
 }
 
-//Gameplay
-
-void gameplay()            // gameplay logic
-{
-	switch (g_eGamemode)
-	{
-	case S_CREATION: createCharacter();
-		break;
-	case S_STAGEONE: Stageone();
-		break;
-	case S_BOSSONE: Bossone();
-		break;
-	case S_STAGETWO: Stageone();
-		break;
-	}
-}
-
-void createCharacter()
-{
-	changeCharacter(charColor, charIcon, charOption, charDetail, g_createBounceTime, g_dElapsedTime, isDetail, g_eGamemode);
-}
-
-void Stageone()
-{
-	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exitmoveenemy(Maze, g_enemy, g_sChar, timer, Direction,Player,g_bullet);
-	moveenemy(BaseMaze, g_enemy, g_sChar, timer, Direction, Player, g_bullet);
-	moveenemy1(BaseMaze, g_enemy1, g_sChar, timer1, one, Player, g_bullet);
-	moveenemy2(BaseMaze, g_enemy2, g_sChar, timer2, two, Player, g_bullet);
-	moveenemy3(BaseMaze, g_enemy3, g_sChar, timer, Direction3, Player, g_bullet);
-	moveenemy4(BaseMaze, g_enemy4, g_sChar, timer, Direction4, Player, g_bullet);
-	moveenemy5(BaseMaze, g_enemy5, g_sChar, timer, Direction5, Player, g_bullet);
-	moveenemy6(BaseMaze, g_enemy6, g_sChar, timer, Direction6, Player, g_bullet);
-	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
-	if (g_eGamemode == S_STAGEONE)
-	{
-		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);	 // moves the character, collision detection, physics, etc, sound can be played here too.
-	}
-	else if (g_eGamemode == S_STAGETWO)
-	{
-		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key2, DoorB, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
-		turretshoott(turretarrayt, g_turretbulletarrayt, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
-		turretshootT(turretarrayT, g_turretbulletarrayT, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
-	}
-	information();
-	checkhealth();
-}
-
-void Bossone()
-{
-	BossoneVar(g_dBounceTime, g_eBounceTime, g_dElapsedTime, g_sChar, g_Console, BossMap, Player, g_bossMainGun, g_boss,
-		g_bossSubGun1, g_bossSubGun2, g_Wordbullet, charWordBullet, g_bBounceTime, g_bossSubBullet, g_bossSubBullet2);
-}
-
 void renderBossChar()
 {
 	//render boss @ location onto first map 
@@ -2356,10 +2533,22 @@ void renderBossHealth()
 		{
 			if (bossHealth <= 0)
 			{
-				g_eGamemode = S_STAGETWO;
-				initstagetwo();
+				switch (g_eGamemode)
+				{
+				case S_BOSSONE:
+				{
+					g_eGamemode = S_STAGETWO;
+					initstagetwo();
+					break;
+				}
+				case S_BOSSTWO:
+				{
+					g_eGamemode = S_STAGETHREE;
+					initstagethree();
+					break;
+				}
+				}
 				changeMap();
-
 			}
 			break;
 
@@ -2367,6 +2556,63 @@ void renderBossHealth()
 		}
 
 	}
+}
+
+//Gameplay
+
+void gameplay()            // gameplay logic
+{
+	switch (g_eGamemode)
+	{
+	case S_CREATION: createCharacter();
+		break;
+	case S_STAGEONE: Stageone();
+		break;
+	case S_BOSSONE: Bossone();
+		break;
+	case S_STAGETWO: Stageone();
+		break;
+	case S_BOSSTWO: Bossone();
+		break;
+	case S_STAGETHREE: Stageone();
+		break;
+	}
+}
+
+void createCharacter()
+{
+	changeCharacter(charColor, charIcon, charOption, charDetail, g_createBounceTime, g_dElapsedTime, isDetail, g_eGamemode);
+}
+
+void Stageone()
+{
+	processUserInput(); // checks if you should change states or do something else with the game, e.g. pause, exitmoveenemy(Maze, g_enemy, g_sChar, timer, Direction,Player,g_bullet);
+	moveenemy(BaseMaze, g_enemy, g_sChar, timer, Direction, Player, g_bullet);
+	moveenemy1(BaseMaze, g_enemy1, g_sChar, timer1, one, Player, g_bullet);
+	moveenemy2(BaseMaze, g_enemy2, g_sChar, timer2, two, Player, g_bullet);
+	moveenemy3(BaseMaze, g_enemy3, g_sChar, timer, Direction3, Player, g_bullet);
+	moveenemy4(BaseMaze, g_enemy4, g_sChar, timer, Direction4, Player, g_bullet);
+	moveenemy5(BaseMaze, g_enemy5, g_sChar, timer, Direction5, Player, g_bullet);
+	moveenemy6(BaseMaze, g_enemy6, g_sChar, timer, Direction6, Player, g_bullet);
+	actionshoot(g_sChar, g_bullet, g_bulletP, g_portalEntrance, g_portalExit, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+	if ((g_eGamemode == S_STAGEONE) || (g_eGamemode == S_STAGETHREE))
+	{
+		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key, DoorA, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);	 // moves the character, collision detection, physics, etc, sound can be played here too.
+	}
+	else if (g_eGamemode == S_STAGETWO)
+	{
+		moveCharacter(g_dBounceTime, g_dElapsedTime, g_sChar, g_Console, Key2, DoorB, BaseMaze, Player, g_portalEntrance, g_portalExit, charbossX, charbossY, g_eGamemode);
+		turretshoott(turretarrayt, g_turretbulletarrayt, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+		turretshootT(turretarrayT, g_turretbulletarrayT, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+	}
+	information();
+	checkhealth();
+}
+
+void Bossone()
+{
+	BossoneVar(g_dBounceTime, g_eBounceTime, g_dElapsedTime, g_sChar, g_Console, BossMap, Player, g_bossMainGun, g_boss,
+		g_bossSubGun1, g_bossSubGun2, g_Wordbullet, charWordBullet, g_bBounceTime, g_bossSubBullet, g_bossSubBullet2);
 }
 
 void information()
@@ -2378,19 +2624,6 @@ void changeMap()
 {
 	switch (g_eGameState)
 	{
-		//case S_PAUSE:
-		//{
-		//	delete[] * BaseMaze;
-		//	*BaseMaze = new char[MAP_COLUMNS];
-		//	for (int i = 0; i < MAP_ROWS; i++)
-		//	{
-		//		for (int a = 0; a < MAP_COLUMNS; a++)
-		//		{
-		//			BaseMaze[i][a] = Pause[i][a];
-		//		}
-		//	}
-		//	break;
-		//}
 	case S_GAME:
 	{
 		switch (g_eGamemode)
@@ -2436,7 +2669,33 @@ void changeMap()
 			}
 			break;
 		}
+		case S_BOSSTWO:
+		{
+			delete[] * BaseMaze;
+			*BaseMaze = new char[MAP_COLUMNS];
+			for (int i = 0; i < MAP_ROWS; i++)
+			{
+				for (int a = 0; a < MAP_COLUMNS; a++)
+				{
+					BaseMaze[i][a] = BossMap[i][a];
+				}
+			}
+			break;
+		case S_STAGETHREE:
+		{
+			delete[] * BaseMaze;
+			*BaseMaze = new char[MAP3_COLUMNS];
+			for (int i = 0; i < MAP3_ROWS; i++)
+			{
+				for (int a = 0; a < MAP3_COLUMNS; a++)
+				{
+					BaseMaze[i][a] = Level3Maze[i][a];
+				}
+			}
+			break;
+		}
 		break;
+		}
 		}
 	}
 	}
