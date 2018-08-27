@@ -1,0 +1,112 @@
+GAME.H
+
+void renderTbullet();
+void turretshoott(SGameChar(&turret)[2], SGameChar (&g_turretbulletarray)[2], bool &aSomethingHappened, char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
+void turretshootT(SGameChar(&turret)[3], SGameChar(&g_turretbulletarray)[3], bool &aSomethingHappened, char **Maze, double &g_eBounceTime, double &g_eElapsedTime);
+
+GAME.CPP
+SGameChar turret, turret1;
+SGameChar turretT, turretT1, turretT2;
+SGameChar g_turretbullet, g_turretbullet1, g_turretbullet2;
+SGameChar turretarrayt[2] = { turret, turret1 };
+SGameChar turretarrayT[3] = { turretT, turretT1,turretT2 };
+SGameChar g_turretbulletarrayt[2] = { g_turretbullet, g_turretbullet1 };
+SGameChar g_turretbulletarrayT[3] = { g_turretbullet, g_turretbullet1,g_turretbullet2 };
+
+VOID INIT
+
+if (Level2Maze[i][a] == 't')
+				{
+					turretarrayt[TurretonMapt].m_bActive = true;
+					turretarrayt[TurretonMapt].m_cLocation.Y = i;
+					turretarrayt[TurretonMapt].m_cLocation.X = a;
+					TurretonMapt++;
+				}
+				if (Level2Maze[i][a] == 'T')
+				{
+					turretarrayT[TurretonMapT].m_bActive = true;
+					turretarrayT[TurretonMapT].m_cLocation.Y = i+1;
+					turretarrayT[TurretonMapT].m_cLocation.X = a;
+					TurretonMapT++;
+				}
+
+
+void renderGame()
+{
+	if (g_eGameState == S_GAME)
+	{
+		if (g_eGamemode == S_CREATION)
+		{
+			renderCreation();
+			renderCreationOptions();
+			renderCreationPreview();
+			renderCreationDetails();
+		}
+		else if ((g_eGamemode == S_STAGEONE))
+		{
+			renderMap();        // renders the map to the buffer first 
+			renderInfo();
+			renderLegend();
+			renderenemy();
+			renderCharacter();  // renders the character into the buffer
+			renderBossChar();
+			renderbullet();
+			renderbulletPRed();
+			renderbulletPBlue();
+		}
+		else if (g_eGamemode == S_STAGETWO)
+		{
+			renderMap();        // renders the map to the buffer first 
+			renderInfo();
+			renderLegend();
+			renderenemy();
+			renderCharacter();  // renders the character into the buffer
+			renderBossChar();
+			renderbullet();
+			renderbulletPRed();
+			renderbulletPBlue();
+			renderTbullet();
+		}
+		else if (g_eGamemode == S_BOSSONE)
+		{
+			renderBossmap();
+			renderInfo();
+			renderLegend();
+			renderCharacter();
+			//renderbossattack();
+			renderShootbossbullet();
+			renderBossHealth();
+		}
+	}
+	else if (g_eGameState == S_PAUSE)
+	{
+		renderPausescreen();
+		renderInfo();
+		renderLegend();
+	}
+	else if (g_eGameState == S_LOSE)
+	{
+		renderLosescreen();
+		renderInfo();
+		renderLegend();
+	}
+}
+
+void renderTbullet()
+{
+		WORD Char = baseColor;
+		for (int TurretBullett = 0; TurretBullett < 2; TurretBullett++)
+		{
+			g_Console.writeToBuffer(g_turretbulletarrayt[TurretBullett].m_cLocation, (char)254, Char);
+		}
+		for (int TurretBulletT = 0; TurretBulletT < 3; TurretBulletT++)
+		{
+			g_Console.writeToBuffer(g_turretbulletarrayT[TurretBulletT].m_cLocation, (char)254, Char);
+		}
+}
+
+GAMEMODE==STAGE2
+
+turretshoott(turretarrayt, g_turretbulletarrayt, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+turretshootT(turretarrayT, g_turretbulletarrayT, aSomethingHappened, BaseMaze, g_eBounceTime, g_eElapsedTime);
+
