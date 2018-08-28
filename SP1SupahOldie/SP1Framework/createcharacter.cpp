@@ -8,7 +8,7 @@ void getInputCreate()
 	isKeyPressedCreate[K_RIGHT] = isKeyPressed(VK_RIGHT);
 	isKeyPressedCreate[K_E] = isKeyPressed(0x45);
 }
-void changeCharacter(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode)
+void changeCharacter(WORD &charColor, unsigned char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode)
 {
 	if (isDetail == true)
 	{
@@ -46,7 +46,7 @@ void changeCharacter(WORD &charColor, char &charIcon, int &charOption, int &char
 		didSomething = false;
 	}
 }
-void changeDetail(WORD &charColor, char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode)
+void changeDetail(WORD &charColor, unsigned char &charIcon, int &charOption, int &charDetail, double &g_createBounceTime, double &g_dElapsedTime, bool &isDetail, EGAMEMODES &g_eGamemode)
 {
 	bool didSomething = false;
 	if (g_createBounceTime > g_dElapsedTime)

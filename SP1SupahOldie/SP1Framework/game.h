@@ -193,8 +193,8 @@ void pause();
 
 void createCharacter();
 void renderCreation();
-void changeCharacter(WORD&, char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
-void changeDetail(WORD&, char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
+void changeCharacter(WORD&, unsigned char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
+void changeDetail(WORD&, unsigned char&, int&, int&, double&, double&, bool&, EGAMEMODES&);
 void renderCreationPreview();
 void renderCreationOptions();
 void renderCreationDetails();

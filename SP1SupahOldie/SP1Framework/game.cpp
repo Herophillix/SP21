@@ -34,15 +34,20 @@ string loseline;
 string spacegunshipline;
 string topScore[5];
 string topName[5] = {"  ", };
-char topInitials[3] = {'#', '#', '#'};
+string topIcon[5] = { "   ", };
+string topColor[5] = { "  ", };
+unsigned char topChar[5];
 string finalPoints;
+char topInitials[3] = {'#', '#', '#'};
+int topPoints[5];
+bool scoreUpdated = false;
 
 WORD Char = 0x02;
 WORD Spaceguncolor = 0x20;
 WORD charColor = 0x02;
 WORD baseColor = 0x0b;
 WORD baseColor2 = 0x0b;
-char charIcon = (char)6;
+unsigned char charIcon = (char)6;
 WORD charTempColor;
 int  charOption = 0;
 int	 charDetail = 0;
@@ -1633,22 +1638,26 @@ void renderTopFive()
 {
 	COORD Initials;
 	COORD Points;
+	COORD Icon;
 	Initials.X = 9;
 	Initials.Y = 12;
 	Points.X = 34;
 	Points.Y = 12;
-	for (int i = 0; i < 5; i++, Points.Y++, Initials.Y++)
+	Icon.X = 23;
+	Icon.Y = 12;
+	for (int i = 0; i < 5; i++, Points.Y++, Initials.Y++, Icon.Y++)
 	{
 		Initials.X = 9;
 		Points.X = 34;
-		if (topName[i] != "")
+		Icon.X = 23;
+		if (topName[i] != "")//initals - 3 letters
 		{
 			for (int j = 0; j < 3; j++, Initials.X += 2)
 			{
 				g_Console.writeToBuffer(Initials, topName[i][j], baseColor);
 			}
 		}
-		for (int j = 0; j < 6; j++)
+		for (int j = 0; j < 6; j++) // set top 5 scores to printable form
 		{
 			if (topScore[i][j] == ' ')
 			{
@@ -1656,7 +1665,7 @@ void renderTopFive()
 				j = 6;
 			}
 		}
-		for (int j = 0; j < 6; j++, Points.X += 2)
+		for (int j = 0; j < 6; j++, Points.X += 2) // print top 5 scores
 		{
 			while (topScore[i].length() < 6)
 			{
@@ -1664,6 +1673,8 @@ void renderTopFive()
 			}
 			g_Console.writeToBuffer(Points, topScore[i][j], baseColor);
 		}
+
+		g_Console.writeToBuffer(Icon, topChar[i], stoi(topColor[i],nullptr,16)); //print icons
 	}
 }
 
@@ -2549,10 +2560,185 @@ void pause()
 
 void score()
 {
-	currentNameInput(g_dElapsedTime, topInitials);
-	if ((topInitials[3] != '#') && (g_abKeyPressed[K_ENTER]))
+	if (scoreUpdated == false)
 	{
-		
+		currentNameInput(g_dElapsedTime, topInitials);
+		if ((topInitials[2] != '#') && (g_abKeyPressed[K_ENTER]))
+		{
+			int playerPosition = 6;
+			int newTopStorage[5];
+			string tempTopString[5];
+			string tempOldString[5];
+			string tempIconString[5];
+			string tempIconChar = to_string((int)charIcon);
+			string tempColorString[5];
+			bool playerTop = false;
+
+			while (tempIconChar.length() < 3)
+			{
+				tempIconChar = "0" + tempIconChar;
+			}
+
+			stringstream charStream;
+			charStream << hex << charColor;
+			string tempCharColor(charStream.str());
+
+			while (tempCharColor.length() < 2)
+			{
+				tempCharColor = "0" + tempCharColor;
+			}
+
+			for (int i = 0; i < 5; i++)
+			{
+				if ((playerTop == true))
+				{
+					if (i != 4)
+					{
+						newTopStorage[i + 1] = topPoints[i];
+					}
+				}
+				else if ((stoi(finalPoints, nullptr, 10) >= topPoints[i]) && (playerTop == false))
+				{
+					newTopStorage[i + 1] = topPoints[i];
+					newTopStorage[i] = stoi(finalPoints, nullptr, 10);
+					playerPosition = i;
+					playerTop = true;
+				}
+				else
+				{
+					newTopStorage[i] = topPoints[i];
+				}
+			}
+			for (int i = 0; i < 5; i++)
+			{
+				tempTopString[i] = to_string(newTopStorage[i]);
+				tempOldString[i] = to_string(topPoints[i]);
+				tempIconString[i] = to_string((int)topChar[i]);
+
+				stringstream charStream;
+				charStream << hex << stoi(topColor[i], nullptr, 16);
+				string streamResult(charStream.str());
+
+				tempColorString[i] = streamResult;
+				
+				while (tempTopString[i].length() < 6)
+				{
+					tempTopString[i] = "0" + tempTopString[i];
+				}
+				while (tempOldString[i].length() < 6)
+				{
+					tempOldString[i] = "0" + tempOldString[i];
+				}
+				while (tempIconString[i].length() < 3)
+				{
+					tempIconString[i] = "0" + tempIconString[i];
+				}
+				while (tempColorString[i].length() < 2)
+				{
+					tempColorString[i] = "0" + tempColorString[i];
+				}
+
+				if (playerPosition == i)
+				{
+					tempTopString[i] = tempTopString[i] + tempIconChar + tempCharColor;
+					for (int j = 2; j > -1; j--)
+					{
+						tempTopString[i] = topInitials[j] + tempTopString[i];
+					}
+				}
+				else
+				{
+					if (i < playerPosition)
+						tempTopString[i] = topName[i] + tempTopString[i] + tempIconString[i] + tempColorString[i];
+					else
+						tempTopString[i] = topName[i - 1] + tempTopString[i] + tempIconString[i-1] + tempColorString[i-1];
+				}
+
+				tempOldString[i] = topName[i] + tempOldString[i] + tempIconString[i] + tempColorString[i];
+			}
+
+			long length;
+			string scoreChangeLine;
+			//fstream writeHighScore;
+			//writeHighScore.open("highscore.txt");
+			////int i = 0;
+			//if (writeHighScore.is_open())
+			//{
+			//	//while (getline(writeHighScore, scoreChangeLine))
+			//	//{
+			//	//	if (scoreChangeLine.find(tempOldString[i]) != string::npos)
+			//	//	{
+			//	//		length = writeHighScore.tellg();
+			//	//		writeHighScore.seekg((length - scoreChangeLine.length()) + 3 /* length of initals*/ - 1); //coz start with 0 I think
+			//	//		writeHighScore.write("", tempTopString[i].length());
+			//	//		cout << scoreChangeLine << 
+			//	//	}
+			//	//}
+			//	for (int i = 0; i < 5; i++)
+			//	{
+			//		getline(writeHighScore, scoreChangeLine);
+
+			//		int spot = scoreChangeLine.find(tempOldString[i]);
+			//		if (spot >= 0)
+			//		{
+			//			string findString = scoreChangeLine.substr(0, spot);
+			//			findString += tempTopString[i];
+			//			findString += scoreChangeLine.substr(spot + tempOldString[i].length(), scoreChangeLine.length());
+			//			scoreChangeLine = findString;
+			//		}
+
+			//		writeHighScore << scoreChangeLine << endl;
+			//	}
+			//}
+			//else
+			//{
+			//	cerr << "highscore.txt could not be open";
+			//}
+
+			ofstream writeHighScore("temptext.txt");
+
+			for (int i = 0; i < 5; i++)
+			{
+				writeHighScore << tempTopString[i] << endl;
+			}
+
+			writeHighScore.close();
+
+			remove("highscore.txt");
+			rename("temptext.txt", "highscore.txt");
+
+			ifstream highScore("highscore.txt");
+			string scoreLine;
+			if (highScore.is_open())
+			{
+				for (int i = 0; i < 5; i++)
+				{
+					getline(highScore, scoreLine);
+					topScore[i].resize(6, ' ');
+					topName[i].resize(3, '~');
+					for (int j = 0; j < 3; j++)
+					{
+						topName[i][j] = scoreLine[j];
+					}
+					for (int j = 3; j < 9 ; j++)
+					{
+						topScore[i][j - 3] = scoreLine[j];
+					}
+					topPoints[i] = stoi(topScore[i], nullptr, 10);
+					for (int j = 9; j < 12; j++)
+					{
+						topIcon[i][j - 9] = scoreLine[j];
+					}
+					topChar[i] = (char)stoi(topIcon[i], nullptr, 10);
+					for (int j = 12; j < 14; j++)
+					{
+						topColor[i][j - 12] = scoreLine[j];
+					}
+				}
+			}
+
+			scoreUpdated = true;
+		}
 	}
 }
 
@@ -2578,13 +2764,25 @@ void checkhealth()
 				getline(highScore, scoreLine);
 				topScore[i].resize(6, ' ');
 				topName[i].resize(3, '~');
-				for (int j = 0; ((j < 3) && (scoreLine != "")); j++)
+				topIcon[i].resize(3, '0');
+				topColor[i].resize(2, '0');
+				for (int j = 0; j < 3; j++)
 				{
 					topName[i][j] = scoreLine[j];
 				}
-				for (int j = 3; ((scoreLine != "") && (scoreLine[j] != '\0')); j++)
+				for (int j = 3; j < 9; j++)
 				{
-					topScore[i][j-3] = scoreLine[j];
+					topScore[i][j - 3] = scoreLine[j];
+				}
+				topPoints[i] = stoi(topScore[i], nullptr, 10);
+				for (int j = 9; j < 12; j++)
+				{
+					topIcon[i][j - 9] = scoreLine[j];
+				}
+				topChar[i] = (unsigned char)stoi(topIcon[i], nullptr, 10);
+				for (int j = 12; j < 14; j++)
+				{
+					topColor[i][j - 12] = scoreLine[j];
 				}
 			}
 		}
